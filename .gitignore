@@ -1,2 +1,4 @@
 arduino/main/.vscode/
 
+arduino/main/arduino_secrets.h
+webapp/database_connect.php
