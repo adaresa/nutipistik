@@ -22,7 +22,6 @@ void setup() {
   while (!Serial);
   Serial.println("start");
   connectWifi();
-  Udp.begin(localPort);
 
   WiFiDrv::pinMode(25, OUTPUT); //GREEN
   WiFiDrv::pinMode(26, OUTPUT); //RED
