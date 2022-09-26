@@ -1,6 +1,7 @@
 /* 
 Communicates with the webserver
 */
+
 int findVal(String txt, String looking_for){
   String result;
   String match = "#_" + looking_for;
@@ -20,7 +21,6 @@ int findVal(String txt, String looking_for){
           result += txt[i];
           i += 1;
         }
-        
         return result.toInt();
       }
     }
@@ -44,10 +44,7 @@ int makeRequest(WiFiClient client, String search, String field="") {
     delay(1);
     timeout++;
     if(timeout>10000) {
-      Serial.println("Failed connection");
-      WiFi.disconnect();
-      connectWifi();
-      break;
+      resetFunc();
       }
   }
   while (client.available()) {
@@ -59,10 +56,9 @@ int makeRequest(WiFiClient client, String search, String field="") {
     client.flush();
     client.stop();
   }
+
   if (search) {
     return (findVal(response, search));
   }
-  return -1;
+  return 0;
 }
-
-

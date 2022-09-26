@@ -27,4 +27,7 @@ String getRequestAddress(){
   return ("https://dashboard.elering.ee/api/nps/price?start=" + timescope + "&end=" + timescope);  
 }
 
-
+int updateHour() {
+  unsigned long epoch = WiFi.getTime();
+  return hour(epoch);
+}

@@ -6,6 +6,8 @@ Connects Arduino Rev2 to WiFi
 #include <WiFiNINA.h>
 #include <SPI.h>
 
+void(* resetFunc) (void) = 0;
+
 void connectWifi() {
   char ssid[] = SECRET_SSID;        // your network SSID (name)
   char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
@@ -15,6 +17,6 @@ void connectWifi() {
     status = WiFi.begin(ssid, pass);
     delay(5000);
   }
-  Serial.println("Connected to wifi");
+  // Serial.println("Connected to wifi");
   digitalWrite(25, HIGH);
 }

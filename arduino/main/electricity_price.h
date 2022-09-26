@@ -4,10 +4,13 @@ char server[] = "dashboard.elering.ee";
 
 double getCurrentPrice(WiFiClient client, String serverPath){
   String response;
+  //Serial.println(serverPath);
   if (client.connectSSL(server, 443)) {
     // Make a HTTP request:
     client.print("GET ");
     client.println(serverPath);
+    client.println("Host: dashboard.elering.ee");
+    client.println("Connection: close");
     client.println();
   }
   int timeout = 0;
@@ -15,10 +18,7 @@ double getCurrentPrice(WiFiClient client, String serverPath){
     delay(1);
     timeout++;
     if(timeout>10000) {
-      Serial.println("Failed connection");
-      WiFi.disconnect();
-      connectWifi();
-      break;
+      resetFunc();
       }
   }
   while (client.available()) {
@@ -37,9 +37,6 @@ double getCurrentPrice(WiFiClient client, String serverPath){
     Serial.println(err.c_str());
   }
   double data = doc["data"]["ee"][0]["price"];
-  // Serial.println(double);
+  Serial.println(data);
   return data;
 }
-
-
-
