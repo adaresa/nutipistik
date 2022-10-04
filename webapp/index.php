@@ -17,7 +17,7 @@ $sec = "15";
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 </head>
 	
-	
+
 	
 	
 	
@@ -84,7 +84,53 @@ echo "</table>
 ";	
 ?>
 		
+				
+<?php
+include("database_connect.php");
+
+if (mysqli_connect_errno()) {
+  echo "Failed to connect to MySQL: " . mysqli_connect_error();
+}
+
+$result = mysqli_query($con,"SELECT * FROM ESPtable2");//table select
+
+echo "<table class='table' style='font-size: 30px;'>
+	<thead>
+		<tr>
+		<th>Lambi olek</th>	
+		</tr>
+	</thead>
+	
+    <tbody>
+      <tr class='active'>
+        <td>LED väljund</td>
+      </tr>  
+		";
+	  
+while($row = mysqli_fetch_array($result)) {
+
+ 	$cur_sent_bool_1 = $row['SENT_BOOL_1'];
+
+	if($cur_sent_bool_1 == 1){
+    $label_sent_bool_1 = "label-success";
+	$text_sent_bool_1 = "Sees";
+	}
+	else{
+    $label_sent_bool_1 = "label-danger";
+	$text_sent_bool_1 = "Väljas";
+	}
 		
+	  echo "<tr class='info'>";
+		echo "<td>
+		<span class='label $label_sent_bool_1'>"
+			. $text_sent_bool_1 . "</td>
+	    </span>";
+	  echo "</tr>
+	  </tbody>"; 
+}
+echo "</table>";
+?>
+
 <?php
 include("database_connect.php");
 
@@ -126,52 +172,6 @@ while($row = mysqli_fetch_array($result)) {
 echo "</table>
 <br>
 ";		
-?>
-				
-<?php
-include("database_connect.php");
-
-if (mysqli_connect_errno()) {
-  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-}
-
-$result = mysqli_query($con,"SELECT * FROM ESPtable2");//table select
-
-echo "<table class='table' style='font-size: 30px;'>
-	<thead>
-		<tr>
-		<th>Lambi olek</th>	
-		</tr>
-	</thead>
-	
-    <tbody>
-      <tr class='active'>
-        <td>Indicator 1</td>
-      </tr>  
-		";
-	  
-while($row = mysqli_fetch_array($result)) {
-
- 	$cur_sent_bool_1 = $row['SENT_BOOL_1'];
-
-	if($cur_sent_bool_1 == 1){
-    $label_sent_bool_1 = "label-success";
-	$text_sent_bool_1 = "Active";
-	}
-	else{
-    $label_sent_bool_1 = "label-danger";
-	$text_sent_bool_1 = "Inactive";
-	}
-		
-	  echo "<tr class='info'>";
-		echo "<td>
-		<span class='label $label_sent_bool_1'>"
-			. $text_sent_bool_1 . "</td>
-	    </span>";
-	  echo "</tr>
-	  </tbody>"; 
-}
-echo "</table>";
 ?>
 		
 <?php

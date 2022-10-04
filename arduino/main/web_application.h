@@ -31,7 +31,7 @@ int findVal(String txt, String looking_for){
 int makeRequest(WiFiClient client, String search, String field="") {
   String response;
   String request = "GET /TX.php?id=99999&pw=2580" + field + " HTTP/1.1";
-  // Serial.println(request);
+  Serial.println(request);
 
   if (client.connectSSL("nutipistik.fun", 443)) {
     client.println(request);

@@ -8,6 +8,7 @@ double getCurrentPrice(WiFiClient client, String serverPath){
   if (client.connectSSL(server, 443)) {
     // Make a HTTP request:
     client.print("GET ");
+    // Serial.println(serverPath); // print request path
     client.println(serverPath);
     client.println("Host: dashboard.elering.ee");
     client.println("Connection: close");

@@ -16,7 +16,7 @@ String getRequestAddress(){
   }
   String dayS = String(day(epoch));
   if (dayS.length() == 1){
-    monthS = "0" + monthS;
+    dayS = "0" + dayS;
   }
   String hourS = String(hour(epoch));
   if (hourS.length() == 1){

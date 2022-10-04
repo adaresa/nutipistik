@@ -34,12 +34,11 @@ void loop() {
     resetFunc();
   }
 
-  String request = updatePrice();
-
   unsigned long current_time = millis();
-  if ((unsigned long)(current_time - timer_state) >= PERIOD_30S) { // run every 10 sec
+  if ((unsigned long)(current_time - timer_state) >= PERIOD_30S) { // run every 30 sec
     timer_state = current_time;
 
+    String request = updatePrice();
     val = makeRequest(client, "b1", request);
     if (val && !lamp_on){
       Serial.println("on");
