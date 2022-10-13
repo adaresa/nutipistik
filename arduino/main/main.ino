@@ -24,8 +24,6 @@ void setup() {
   connectWifi();
 
   WiFiDrv::pinMode(25, OUTPUT); //GREEN
-  WiFiDrv::pinMode(26, OUTPUT); //RED
-  WiFiDrv::pinMode(27, OUTPUT); //BLUE
   WiFiDrv::analogWrite(25, 0);
 }
 
