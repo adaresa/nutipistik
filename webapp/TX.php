@@ -12,6 +12,9 @@ foreach($_REQUEST as $key => $value)  //Save the received value to the hey varia
 	if($key == "td"){
 		$day = $value;
 	}
+	if($key == "tm"){
+		$day_tomorrow = $value;
+	}
 	if($key == "val"){
 		$val = $value;
 	}
@@ -54,6 +57,12 @@ if (mysqli_connect_errno()) {
 if(isset($day)){
 	// update the day
 	mysqli_query($con,"UPDATE ElectricityPrices SET td{$day} = $val WHERE id=$unit AND PASSWORD=$pass");
+}
+
+// if $day_tomorrow is set
+if(isset($day_tomorrow)){
+	// update the day
+	mysqli_query($con,"UPDATE ElectricityPrices SET tm{$day_tomorrow} = $val WHERE id=$unit AND PASSWORD=$pass");
 }
 
 //Now we update the values in database
