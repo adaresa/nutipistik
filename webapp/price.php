@@ -20,41 +20,43 @@ include_once('includes/header.php'); ?>
 
 
 <div id="page-wrapper">
-	<?php
 
-	include("database_connect.php");
+	<!-- Current electricity price -->
+	<div>
+		<?php
 
-	if (mysqli_connect_errno()) {
-		echo "Failed to connect to MySQL: " . mysqli_connect_error();
-	}
+		include("database_connect.php");
 
-	$result = mysqli_query($con, "SELECT * FROM ESPtable2"); //table select
+		if (mysqli_connect_errno()) {
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
 
-
-	echo "<table class='table' style='font-size: 30px;'>
-	<thead>
-		<tr>
-		<th>Elektrihind</th>	
-		</tr>
-	</thead>
-	
-    <tbody>
-      <tr class='active'>
-        <td>Praegune</td>
-      </tr>  
-		";
+		$result = mysqli_query($con, "SELECT * FROM ESPtable2"); //table select
 
 
-	while ($row = mysqli_fetch_array($result)) {
-		echo "<tr class='info'>";
-		echo "<td>" . $row['SENT_NUMBER_1'] . " EUR/MWh</td>";
-		echo "</tr>
-	</tbody>";
-	}
-	echo "</table>
-<br>
-";
-	?>
+		echo 
+		"<table class='table' style='font-size: 30px;'>
+		<thead>
+			<tr>
+			<th>Elektrihind</th>	
+			</tr>
+		</thead>
+		
+		<tbody>
+		<tr class='active'>
+			<td>Praegune</td>
+		</tr>  
+			";
+
+
+		while ($row = mysqli_fetch_array($result)) {
+			echo "<tr class='info'>";
+			echo "<td>" . $row['SENT_NUMBER_1'] . " EUR/MWh</td>";
+			echo "</tr></tbody>";
+		}
+		echo "</table><br>";
+		?>
+	</div>
 </div>
 
 <?php include_once('includes/footer.php'); ?>
