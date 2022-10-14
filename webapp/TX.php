@@ -99,7 +99,7 @@ if($row['id'] == $unit){
 
 		//Next line will echo the data back to the Arduino
 		// Control type, price limit, button state, current price
-		echo " #$control_type,$button_state,$price_limit,$current_price,";
+		echo "$control_type,$button_state,$price_limit,$current_price";
 	
 }
 

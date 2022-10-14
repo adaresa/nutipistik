@@ -24,7 +24,7 @@ include 'includes/header.php'; ?>
 						header('LOCATION:panel.php');
 						die();
 					} { // if username and password are not correct
-						echo "<div class='alert alert-danger alert-dismissable fade in'>Username and Password do not match.</div>";
+						echo "<div class='alert alert-danger alert-dismissable fade in'>Vale kasutajanimi või parool.</div>";
 					}
 				}
 				?>
