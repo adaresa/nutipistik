@@ -72,20 +72,22 @@ include_once('includes/header.php'); ?>
 
 		while ($row = mysqli_fetch_array($result)) {
 			$tomorrow_exists = $row['tm0'] != 0;
+			$today = date("d.m");
+			$tomorrow = date("d.m", strtotime("+1 day"));
 
 			echo"
 			<table class='table' style='font-size: 30px;'>
 			<thead>
 				<tr>
-				<th>Elektrihinnad</th>	
+				<th>Elektrihinnad (EUR/MWh)</th>	
 				</tr>
 			</thead>
 
 			<tbody>
 			<tr class='active'>
 				<td>CET</td>
-				<td>Täna</td>";
-				if ($tomorrow_exists) {	echo "<td>Homme</td>";}
+				<td>Täna ($today)</td>";
+				if ($tomorrow_exists) {	echo "<td>Homme ($tomorrow)</td>";}
 			echo "</tr>";
 
 			for ($i = 0; $i <= 23; $i++) {
@@ -104,8 +106,8 @@ include_once('includes/header.php'); ?>
 				}
 
 				# Todays and tomorrows (if exists) prices
-				echo "<td>" . $row['td'.$i] . " EUR/MWh</td>";
-				if ($tomorrow_exists) {	echo "<td>" . $row['tm'.$i] . " EUR/MWh</td>";}
+				echo "<td>" . $row['td'.$i] ."";
+				if ($tomorrow_exists) {	echo "<td>" . $row['tm'.$i] ."";}
 				echo "</tr>";
 			}
 			echo "</tbody></table><br>";
