@@ -9,6 +9,13 @@ The ESP will send a link like the one above but with more than just b1. It will 
 foreach($_REQUEST as $key => $value)  //Save the received value to the hey variable. Save each cahracter after the "&"
 {
 	//Now we detect if we recheive the id, the password, unit, or a value to update
+	if($key == "td"){
+		$day = $value;
+	}
+	if($key == "val"){
+		$val = $value;
+	}
+
 	if($key =="id"){
 	$unit = $value;
 	}	
@@ -41,6 +48,12 @@ include("database_connect.php"); 	//We include the database_connect.php which ha
 // Check  the connection
 if (mysqli_connect_errno()) {
   echo "Failed to connect to MySQL: " . mysqli_connect_error();
+}
+
+// if $day is set
+if(isset($day)){
+	// update the day
+	mysqli_query($con,"UPDATE ElectricityPrices SET td{$day} = $val WHERE id=$unit AND PASSWORD=$pass");
 }
 
 //Now we update the values in database

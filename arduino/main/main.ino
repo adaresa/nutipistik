@@ -7,12 +7,9 @@
 
 WiFiClient client;
 
-int current_hour = -1;
-const unsigned long PERIOD_60S = 1UL*60UL*1000UL; // 1 minute
-const unsigned long PERIOD_30S = 30UL*1000UL; // 30 seconds
+const unsigned long PERIOD_30S = 10UL*1000UL; // 10 seconds
 unsigned long timer_state = 0;
 bool start_timer = 0;
-int pricecheckCount = 0;
 
 void setup() {
   // Open serial communications and wait for port to open:
@@ -23,7 +20,6 @@ void setup() {
 
   WiFiDrv::pinMode(25, OUTPUT); //GREEN
   WiFiDrv::analogWrite(25, 0);
-  updatePrice();
   makeRequest(client);
 }
 
@@ -62,29 +58,5 @@ void loop() {
         makeRequest(client, "&un=2&b1=0");
       }
     }
-
-    pricecheckCount++;
-  }
-
-  if (pricecheckCount == 2) {
-    updatePrice();
-    pricecheckCount = 0;
-  }
-}
-
-void updatePrice(){
-
-  String request;
-
-  int hour = updateHour();
-  if (current_hour != hour) {
-    current_hour = hour;
-    String url = getRequestAddress();
-    double price = getCurrentPrice(client, url);
-    request += String("&un=1&n1=" + String(price));
-  }
-
-  if (request != "") {
-    makeRequest(client, request);
   }
 }
