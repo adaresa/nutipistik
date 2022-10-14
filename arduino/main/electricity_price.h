@@ -4,7 +4,7 @@ char server[] = "dashboard.elering.ee";
 
 double getCurrentPrice(WiFiClient client, String serverPath){
   String response;
-  //Serial.println(serverPath);
+  // Serial.println(serverPath);
   if (client.connectSSL(server, 443)) {
     // Make a HTTP request:
     client.print("GET ");
@@ -26,6 +26,7 @@ double getCurrentPrice(WiFiClient client, String serverPath){
     char c = client.read();
     response += c;
   }
+  Serial.println("\n");
   if (!client.connected()) {
     client.flush();
     client.stop();

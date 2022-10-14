@@ -10,11 +10,9 @@ WiFiClient client;
 int current_hour = -1;
 const unsigned long PERIOD_60S = 1UL*60UL*1000UL; // 1 minute
 const unsigned long PERIOD_30S = 30UL*1000UL; // 30 seconds
-unsigned long timer_price = 0;
 unsigned long timer_state = 0;
-bool val = 0;
-bool lamp_on = 0;
 bool start_timer = 0;
+int pricecheckCount = 0;
 
 void setup() {
   // Open serial communications and wait for port to open:
@@ -25,6 +23,8 @@ void setup() {
 
   WiFiDrv::pinMode(25, OUTPUT); //GREEN
   WiFiDrv::analogWrite(25, 0);
+  updatePrice();
+  makeRequest(client);
 }
 
 void loop() {
@@ -36,45 +36,55 @@ void loop() {
   if ((unsigned long)(current_time - timer_state) >= PERIOD_30S) { // run every 30 sec
     timer_state = current_time;
 
-    String request = updatePrice();
-    val = makeRequest(client, "b1", request);
-    if (val && !lamp_on){
-      Serial.println("on");
-      WiFiDrv::analogWrite(25, 255);
-      val = makeRequest(client, "", "&un=2&b1=1");
-      lamp_on = 1;
+    // Working based on price limit
+    if (values[0] == "1") {
+      double price_limit = values[2].toDouble();
+      double price_current = values[3].toDouble();
+      if (price_current < price_limit) {
+        WiFiDrv::analogWrite(25, 255);
+        makeRequest(client, "&un=2&b1=1");
+      }
+      else {
+        WiFiDrv::analogWrite(25, 0);
+        makeRequest(client, "&un=2&b1=0");
+      }
     }
-    else if (!val && lamp_on) {
-      Serial.println("off");
-      WiFiDrv::analogWrite(25, 0);
-      val = makeRequest(client, "", "&un=2&b1=0");
-      lamp_on = 0;
+    
+    // Working as a switch
+    if (values[0] == "2") {
+      // if values[1] == "1" then turn on lamp, else turn off lamp
+      if (values[1] == "1") {
+        WiFiDrv::analogWrite(25, 255);
+        makeRequest(client, "&un=2&b1=1");
+      }
+      else {
+        WiFiDrv::analogWrite(25, 0);
+        makeRequest(client, "&un=2&b1=0");
+      }
     }
+
+    pricecheckCount++;
+  }
+
+  if (pricecheckCount == 2) {
+    updatePrice();
+    pricecheckCount = 0;
   }
 }
 
-String updatePrice(){
+void updatePrice(){
+
   String request;
-  if (start_timer) {
-    unsigned long current_time = millis();
-    if ((unsigned long)(current_time - timer_price) >= PERIOD_60S) { // run every 1 min
-      timer_price = current_time;
-      int hour = updateHour();
-      if (current_hour != hour) {
-        current_hour = hour;
-        String url = getRequestAddress();
-        double price = getCurrentPrice(client, url);
-        request += String("&un=1&n1=" + String(price));
-      }
-    }
-  }
-  else {
-    start_timer = 1;
-    int hour = updateHour();
+
+  int hour = updateHour();
+  if (current_hour != hour) {
     current_hour = hour;
     String url = getRequestAddress();
     double price = getCurrentPrice(client, url);
     request += String("&un=1&n1=" + String(price));
   }
-  return request;
+
+  if (request != "") {
+    makeRequest(client, request);
+  }
 }

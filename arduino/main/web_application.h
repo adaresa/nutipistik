@@ -2,33 +2,30 @@
 Communicates with the webserver
 */
 
-int findVal(String txt, String looking_for){
-  String result;
-  String match = "#_" + looking_for;
-  bool found;
+String values[4];
+
+void findVal(String txt){
+  int count = 0;
+  String word = "";
+
   for(int i = 0; i < txt.length(); i++){
-    if (txt[i] == '#') {
-      found = 1;
-      i += 1;
-      for (int j = 0; j < match.length(); j++){
-        if (txt[i+j] != match[j]) {
-          found = 0;
+    if (txt[i] == '#') { 
+      for(int j = i+1; j < txt.length(); j++) {
+        if (txt[j] != ','){
+          word += txt[j];
+        }
+        else {
+          values[count] = word;
+          word = "";
+          count++;
         }
       }
-      if (found){
-        i += match.length();
-        while (txt[i] != '#'){
-          result += txt[i];
-          i += 1;
-        }
-        return result.toInt();
-      }
+      break;
     }
   }
-  return -1;
 }
 
-int makeRequest(WiFiClient client, String search, String field="") {
+void makeRequest(WiFiClient client, String field="") {
   String response;
   String request = "GET /TX.php?id=99999&pw=2580" + field + " HTTP/1.1";
   Serial.println(request);
@@ -57,8 +54,5 @@ int makeRequest(WiFiClient client, String search, String field="") {
     client.stop();
   }
 
-  if (search) {
-    return (findVal(response, search));
-  }
-  return 0;
+  findVal(response);
 }

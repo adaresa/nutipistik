@@ -67,14 +67,17 @@ if($row['id'] == $unit){
 	
 		//We update the values for the boolean and numebers we receive from the Arduino, then we echo the boolean
 		//and numbers and the text from the database back to the Arduino
-		$bs = $row['BUTTON_STATE'];	
+		$button_state = $row['BUTTON_STATE'];	
 		
-		$pl = $row['PRICE_LIMIT'];	
+		$price_limit = $row['PRICE_LIMIT'];	
 
-		$ct = $row['CONTROL_TYPE'];
+		$control_type = $row['CONTROL_TYPE'];
+
+		$current_price = $row['SENT_NUMBER_1'];
 
 		//Next line will echo the data back to the Arduino
-		echo " ##_ct$ct##_bs$bs##_pl$pl##";
+		// Control type, price limit, button state, current price
+		echo " #$control_type,$button_state,$price_limit,$current_price,";
 	
 }
 
