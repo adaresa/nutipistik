@@ -109,7 +109,6 @@ include_once('includes/header.php'); ?>
 				echo "</tr>";
 			}
 			echo "</tbody></table><br>";
-			
 		}
 		?>
 	</div>

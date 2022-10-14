@@ -23,7 +23,7 @@ url = "https://dashboard.elering.ee/api/nps/price?start=" + start + "&end=" + en
 response = urllib3.PoolManager().request('GET', url)
 data = json.loads(response.data.decode('utf-8'))
 
-print(url)
+# print(url)
 price_dict = {}
 
 # get all from "data", "ee" in the json
