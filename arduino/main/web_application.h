@@ -2,32 +2,17 @@
 Communicates with the webserver
 */
 
-String values[4];
-
-void findVal(String txt){
-  int count = 0;
-  String word = "";
-
+char findVal(String txt){
   for(int i = 0; i < txt.length(); i++){
     if (txt[i] == '#') { 
-      for(int j = i+1; j < txt.length(); j++) {
-        if (txt[j] != ','){
-          word += txt[j];
-        }
-        else {
-          values[count] = word;
-          word = "";
-          count++;
-        }
-      }
-      break;
+      return txt[i+1];
     }
   }
 }
 
-void makeRequest(WiFiClient client, String field="") {
+char makeRequest(WiFiClient client, String field="") {
   String response;
-  String request = "GET /TX.php?id=99999&pw=2580" + field + " HTTP/1.1";
+  String request = "GET /RX.php?id=99999&pw=2580" + field + " HTTP/1.1";
   // Serial.println(request);
 
   if (client.connectSSL("nutipistik.fun", 443)) {
@@ -54,5 +39,5 @@ void makeRequest(WiFiClient client, String field="") {
     client.stop();
   }
 
-  findVal(response);
+  return findVal(response);
 }

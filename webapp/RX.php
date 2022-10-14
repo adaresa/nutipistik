@@ -12,6 +12,9 @@ foreach($_REQUEST as $key => $value)
     if($key =="up"){
         $output = $value;
     }
+    if($key == "arduino"){
+        $arduino = $value;
+    }
 }
 
 include("database_connect.php");
@@ -26,6 +29,11 @@ if (mysqli_connect_errno()) {
 if(isset($output)){
     // update the output
     mysqli_query($con,"UPDATE ESPtable2 SET OUTPUT_STATE = $output WHERE id=$unit AND PASSWORD=$pass");
+}
+
+if(isset($arduino)){
+    // update what state is arduino in
+    mysqli_query($con,"UPDATE ESPtable2 SET SENT_BOOL_1 = $arduino WHERE id=$unit AND PASSWORD=$pass");
 }
 
 //Get all the values form the table on the database

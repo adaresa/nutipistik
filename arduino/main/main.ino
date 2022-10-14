@@ -20,7 +20,6 @@ void setup() {
 
   WiFiDrv::pinMode(25, OUTPUT); //GREEN
   WiFiDrv::analogWrite(25, 0);
-  makeRequest(client);
 }
 
 void loop() {
@@ -32,31 +31,14 @@ void loop() {
   if ((unsigned long)(current_time - timer_state) >= PERIOD_30S) { // run every 30 sec
     timer_state = current_time;
 
-    // Working based on price limit
-    if (values[0] == "1") {
-      double price_limit = values[2].toDouble();
-      double price_current = values[3].toDouble();
-      if (price_current < price_limit) {
-        WiFiDrv::analogWrite(25, 255);
-        makeRequest(client, "&un=2&b1=1");
-      }
-      else {
-        WiFiDrv::analogWrite(25, 0);
-        makeRequest(client, "&un=2&b1=0");
-      }
+    char output = makeRequest(client);
+    if(output == '1'){
+      WiFiDrv::analogWrite(25, 255);
+      makeRequest(client, "&arduino=1");
     }
-    
-    // Working as a switch
-    if (values[0] == "2") {
-      // if values[1] == "1" then turn on lamp, else turn off lamp
-      if (values[1] == "1") {
-        WiFiDrv::analogWrite(25, 255);
-        makeRequest(client, "&un=2&b1=1");
-      }
-      else {
-        WiFiDrv::analogWrite(25, 0);
-        makeRequest(client, "&un=2&b1=0");
-      }
+    else{
+      WiFiDrv::analogWrite(25, 0);
+      makeRequest(client, "&arduino=0");
     }
   }
 }
