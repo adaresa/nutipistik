@@ -13,6 +13,7 @@
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="shortcut icon" href="assets/icon/favicon.ico" type="image/x-icon"/>
 
     <!-- MetisMenu CSS -->
     <link href="assets/js/metisMenu/metisMenu.min.css" rel="stylesheet">
