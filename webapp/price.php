@@ -76,33 +76,49 @@ include_once('includes/header.php'); ?>
 			$tomorrow = date("d.m", strtotime("+1 day"));
 
 			echo"
-			<table class='table' style='font-size: 30px;'>
-			<thead>
-				<tr>
-				<th>Elektrihinnad (EUR/MWh)</th>	
-				</tr>
-			</thead>
-
-			<tbody>
-			<tr class='active'>
-				<td>CET</td>
-				<td>Täna ($today)</td>";
-				if ($tomorrow_exists) {	echo "<td>Homme ($tomorrow)</td>";}
-			echo "</tr>";
-
-			for ($i = 0; $i <= 23; $i++) {
-				echo "<tr'>";
-				
-				# if ($i < 10), then add a zero in front of the number
-				if ($i < 10) { echo "<td>0".$i." - "; } else { echo "<td>".$i." - "; }
-				if ($i < 9) { echo "0".($i+1)."</td>"; } else {	echo ($i+1)."</td>"; }
-
-				# Todays and tomorrows (if exists) prices
-				echo "<td>" . $row['td'.$i] ."";
-				if ($tomorrow_exists) {	echo "<td>" . $row['tm'.$i] ."";}
-				echo "</tr>";
+			<style>
+			.nopadding {
+				display:block;
+				height: 580px;
+				overflow:auto;
 			}
-			echo "</tbody></table><br>";
+			.nopadding thead th {
+				position: sticky;
+				top: 0px;
+			}
+			</style>
+
+			<table style='font-size: 30px;'>
+				<thead>
+					<tr>
+						<th style='padding-left:8px; padding-bottom:10px;'>Elektrihinnad (EUR/MWh)</th>
+					</tr>
+				</thead>
+			</table>
+
+			<table class='table nopadding' style='font-size: 30px;'>
+				<thead>
+					<tr class='active'>
+						<th>CET</td>
+						<th>Täna ($today)</td>";
+						if ($tomorrow_exists) {	echo "<th>Homme ($tomorrow)</td>";}
+					echo "</tr>";
+				echo"</thead>
+
+				<tbody>";
+					for ($i = 0; $i <= 23; $i++) {
+						echo "<tr>";
+							# if ($i < 10), then add a zero in front of the number
+							if ($i < 10) { echo "<td style='padding-right: 70px;'>0".$i." - "; } else { echo "<td>".$i." - "; }
+							if ($i < 9) { echo "0".($i+1)."</td>"; } else {	echo ($i+1)."</td>"; }
+
+							# Todays and tomorrows (if exists) prices
+							echo "<td>" . $row['td'.$i] ."</td>";
+							if ($tomorrow_exists) {	echo "<td>" . $row['tm'.$i] ."</td>";}
+						echo "</tr>";
+			}
+			echo "</tbody>
+			</table><br>";
 		}
 		?>
 	</div>
