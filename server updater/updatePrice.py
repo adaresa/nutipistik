@@ -63,7 +63,7 @@ if len(price_dict) == 24:
         i+=1
     # set all tomorrow prices to 0
     for i in range(24, 48):
-        url = getUpdateTomorrowPriceURL(i, 0)
+        url = getUpdateTomorrowPriceURL(i-24, 0)
         response = urllib3.PoolManager().request('GET', url)
         
 elif len(price_dict) == 48:
@@ -73,6 +73,6 @@ elif len(price_dict) == 48:
             response = urllib3.PoolManager().request('GET', url)
             i+=1
         else:
-            url = getUpdateTomorrowPriceURL(i, value)
+            url = getUpdateTomorrowPriceURL(i-24, value)
             response = urllib3.PoolManager().request('GET', url)
             i+=1

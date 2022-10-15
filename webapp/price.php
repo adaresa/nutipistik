@@ -94,16 +94,8 @@ include_once('includes/header.php'); ?>
 				echo "<tr'>";
 				
 				# if ($i < 10), then add a zero in front of the number
-				if ($i < 10) {
-					echo "<td>0".$i." - ";
-				} else {
-					echo "<td>".$i." - ";
-				}
-				if ($i < 9) {
-					echo "0".($i+1)."</td>";
-				} else {
-					echo ($i+1)."</td>";
-				}
+				if ($i < 10) { echo "<td>0".$i." - "; } else { echo "<td>".$i." - "; }
+				if ($i < 9) { echo "0".($i+1)."</td>"; } else {	echo ($i+1)."</td>"; }
 
 				# Todays and tomorrows (if exists) prices
 				echo "<td>" . $row['td'.$i] ."";
