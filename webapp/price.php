@@ -99,7 +99,7 @@ include_once('includes/header.php'); ?>
 			<table class='table nopadding' style='font-size: 30px;'>
 				<thead>
 					<tr class='active'>
-						<th>CET</td>
+						<th style='padding-right: 120px;'>CET</td>
 						<th>Täna ($today)</td>";
 						if ($tomorrow_exists) {	echo "<th>Homme ($tomorrow)</td>";}
 					echo "</tr>";
@@ -109,7 +109,7 @@ include_once('includes/header.php'); ?>
 					for ($i = 0; $i <= 23; $i++) {
 						echo "<tr>";
 							# if ($i < 10), then add a zero in front of the number
-							if ($i < 10) { echo "<td style='padding-right: 70px;'>0".$i." - "; } else { echo "<td>".$i." - "; }
+							if ($i < 10) { echo "<td>0".$i." - "; } else { echo "<td>".$i." - "; }
 							if ($i < 9) { echo "0".($i+1)."</td>"; } else {	echo ($i+1)."</td>"; }
 
 							# Todays and tomorrows (if exists) prices
