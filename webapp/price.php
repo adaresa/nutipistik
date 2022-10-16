@@ -51,7 +51,7 @@ include_once('includes/header.php'); ?>
 
 		while ($row = mysqli_fetch_array($result)) {
 			echo "<tr class='info'>";
-			echo "<td>" . $row['SENT_NUMBER_1'] . " EUR/MWh</td>";
+			echo "<td>" . $row['CURRENT_PRICE'] . " EUR/MWh</td>";
 			echo "</tr></tbody>";
 		}
 		echo "</table><br>";

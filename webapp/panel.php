@@ -198,20 +198,20 @@ include_once('includes/header.php'); ?>
 
 		while ($row = mysqli_fetch_array($result)) {
 
-			$cur_sent_bool_1 = $row['SENT_BOOL_1'];
+			$cur_ARDUINO_OUTPUT = $row['ARDUINO_OUTPUT'];
 
-			if ($cur_sent_bool_1 == 1) {
-				$label_sent_bool_1 = "label-success";
-				$text_sent_bool_1 = "Sees";
+			if ($cur_ARDUINO_OUTPUT == 1) {
+				$label_ARDUINO_OUTPUT = "label-success";
+				$text_ARDUINO_OUTPUT = "Sees";
 			} else {
-				$label_sent_bool_1 = "label-danger";
-				$text_sent_bool_1 = "Väljas";
+				$label_ARDUINO_OUTPUT = "label-danger";
+				$text_ARDUINO_OUTPUT = "Väljas";
 			}
 
 			echo "<tr class='info'>";
 			echo "<td>
-			<span class='label $label_sent_bool_1'>"
-				. $text_sent_bool_1 . "</td>
+			<span class='label $label_ARDUINO_OUTPUT'>"
+				. $text_ARDUINO_OUTPUT . "</td>
 			</span>";
 			echo "</tr>
 		</tbody>";

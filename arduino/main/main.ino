@@ -7,9 +7,11 @@
 
 WiFiClient client;
 
-const unsigned long PERIOD_30S = 10UL*1000UL; // 10 seconds
+const unsigned long PERIOD_30S = 30UL*1000UL; // 30 seconds
 unsigned long timer_state = 0;
 bool start_timer = 0;
+
+char current_state = '0';
 
 void setup() {
   // Open serial communications and wait for port to open:
@@ -32,13 +34,19 @@ void loop() {
     timer_state = current_time;
 
     char output = makeRequest(client);
-    if(output == '1'){
+
+    if(current_state == '0' && output == '1'){
+      Serial.println("on");
+      current_state = '1';
       WiFiDrv::analogWrite(25, 255);
       makeRequest(client, "&arduino=1");
     }
-    else{
+    else if(current_state == '1' && output == '0'){
+      Serial.println("off");
+      current_state = '0';
       WiFiDrv::analogWrite(25, 0);
       makeRequest(client, "&arduino=0");
     }
+
   }
 }

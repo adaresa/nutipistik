@@ -38,7 +38,7 @@ foreach($_REQUEST as $key => $value)  //Save the received value to the hey varia
 	else if($update_number == 2)
 	{
 		if($key =="b1"){
-			$sent_bool_1 = $value;
+			$ARDUINO_OUTPUT = $value;
 		}			
 	}
 
@@ -66,13 +66,13 @@ if(isset($day_tomorrow)){
 }
 
 //Now we update the values in database
-if($update_number == 1)	//If the received data is for SENT_NUMBER_1, we update that value
+if($update_number == 1)	//If the received data is for CURRENT_PRICE, we update that value
 	{
-		mysqli_query($con,"UPDATE ESPtable2 SET SENT_NUMBER_1 = $sent_nr_1 WHERE id=$unit AND PASSWORD=$pass");	
+		mysqli_query($con,"UPDATE ESPtable2 SET CURRENT_PRICE = $sent_nr_1 WHERE id=$unit AND PASSWORD=$pass");	
 	}
-else if($update_number == 2)	//If the received data is for SENT_BOOL_1, we update that value
+else if($update_number == 2)	//If the received data is for ARDUINO_OUTPUT, we update that value
 	{
-		mysqli_query($con,"UPDATE ESPtable2 SET SENT_BOOL_1 = $sent_bool_1 WHERE id=$unit AND PASSWORD=$pass");	
+		mysqli_query($con,"UPDATE ESPtable2 SET ARDUINO_OUTPUT = $ARDUINO_OUTPUT WHERE id=$unit AND PASSWORD=$pass");	
 	}
 
 
@@ -95,7 +95,7 @@ if($row['id'] == $unit){
 
 		$control_type = $row['CONTROL_TYPE'];
 
-		$current_price = $row['SENT_NUMBER_1'];
+		$current_price = $row['CURRENT_PRICE'];
 
 		//Next line will echo the data back to the Arduino
 		// Control type, price limit, button state, current price

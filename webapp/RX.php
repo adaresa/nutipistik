@@ -33,7 +33,7 @@ if(isset($output)){
 
 if(isset($arduino)){
     // update what state is arduino in
-    mysqli_query($con,"UPDATE ESPtable2 SET SENT_BOOL_1 = $arduino WHERE id=$unit AND PASSWORD=$pass");
+    mysqli_query($con,"UPDATE ESPtable2 SET ARDUINO_OUTPUT = $arduino WHERE id=$unit AND PASSWORD=$pass");
 }
 
 //Get all the values form the table on the database
