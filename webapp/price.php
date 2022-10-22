@@ -51,7 +51,7 @@ include_once('includes/header.php'); ?>
 
 		while ($row = mysqli_fetch_array($result)) {
 			echo "<tr class='info'>";
-			echo "<td>" . $row['CURRENT_PRICE'] . " EUR/MWh</td>";
+			echo "<td>" . $row['CURRENT_PRICE'] . " €/MWh</td>";
 			echo "</tr></tbody>";
 		}
 		echo "</table><br>";
@@ -91,7 +91,7 @@ include_once('includes/header.php'); ?>
 			<table style='font-size: 30px;'>
 				<thead>
 					<tr>
-						<th style='padding-left:8px; padding-bottom:10px;'>Elektrihinnad (EUR/MWh)</th>
+						<th style='padding-left:8px; padding-bottom:10px;'>Elektrihinnad (€/MWh)</th>
 					</tr>
 				</thead>
 			</table>

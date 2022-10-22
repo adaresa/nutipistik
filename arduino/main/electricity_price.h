@@ -20,7 +20,7 @@ double getCurrentPrice(WiFiClient client, String serverPath){
     timeout++;
     if(timeout>10000) {
       resetFunc();
-      }
+    }
   }
   while (client.available()) {
     char c = client.read();

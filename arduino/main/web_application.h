@@ -10,7 +10,8 @@ char findVal(String txt){
   }
 }
 
-char makeRequest(WiFiClient client, String field="") {
+char makeRequest(String field="") {
+  WiFiClient client;
   String response;
   String request = "GET /RX.php?id=99999&pw=2580" + field + " HTTP/1.1";
   // Serial.println(request);
@@ -27,7 +28,7 @@ char makeRequest(WiFiClient client, String field="") {
     timeout++;
     if(timeout>10000) {
       resetFunc();
-      }
+    }
   }
   while (client.available()) {
     char c = client.read();

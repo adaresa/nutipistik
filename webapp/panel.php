@@ -63,6 +63,7 @@ include_once('includes/header.php'); ?>
 				<select name='controlType'>
 					<option "; if($control_type == 1) { echo "selected"; } echo" value='1'>Piirhind</option>
 					<option "; if($control_type == 2) { echo "selected"; } echo" value='2'>Lüliti</option>
+					<option "; if($control_type == 3) { echo "selected"; } echo" value='3'>Odavad tunnid</option>
 				</select>
 				<input type='submit' name='submit' value='Muuda' />
 			</form>";
@@ -90,21 +91,24 @@ include_once('includes/header.php'); ?>
 		$result = mysqli_query($con, "SELECT * FROM ESPtable2"); //table select
 
 		if ($control_type == 1) {
-			$text = "Piirhind";
-			echo "<table class='table' style='font-size: 30px;'>
-			<thead>
-				<tr>
-				<th>Juhtimine</th>	
-				</tr>
-			</thead>
-		
-			<tbody>
-			<tr class='active'>
-				<td>$text</td>
-			</tr>  
-			";
-
 			while ($row = mysqli_fetch_array($result)) {
+
+				$text = "Sees kui praegune elektrihind on alla piirhinna";
+				$current_price = $row['CURRENT_PRICE'];
+
+
+				echo "<table class='table' style='font-size: 30px;'>
+				<thead>
+					<tr>
+					<th>Juhtimine</th>	
+					</tr>
+				</thead>
+			
+				<tbody>
+				<tr class='active'>
+					<td>$text<br>Praegune elektrihind: $current_price €/MWh</td>
+				</tr>  
+				";
 
 				echo "<tr class='success'>";
 				$column6 = "PRICE_LIMIT";
@@ -122,20 +126,21 @@ include_once('includes/header.php'); ?>
 
 				echo "</table><br>";
 
-		} else if ($control_type == 2) {
-			$text = "Lüliti";
+		} 
+		else if ($control_type == 2) {
+			$text = "Juhtimine läbi lüliti";
 			echo "<table class='table' style='font-size: 30px;'>
-		<thead>
-			<tr>
-			<th>Juhtimine</th>	
-			</tr>
-		</thead>
-		
-		<tbody>
-		<tr class='active'>
-			<td>$text</td>
-		</tr>  
-			";
+			<thead>
+				<tr>
+				<th>Juhtimine</th>	
+				</tr>
+			</thead>
+			
+			<tbody>
+			<tr class='active'>
+				<td>$text</td>
+			</tr>  
+				";
 
 			while ($row = mysqli_fetch_array($result)) {
 
@@ -155,17 +160,57 @@ include_once('includes/header.php'); ?>
 				}
 
 				echo "<td><form action= update_values.php method= 'post'>
-			<input type='hidden' name='value' value=$inv_current_bool_1  size='15' >
-			<input type='hidden' name='unit' value=$unit_id >
-			<input type='hidden' name='column' value=$column1 >
-			<input type= 'submit' name= 'change_but' style='font-size: 30px; text-align:center; background-color: $color_current_bool_1' value=$text_current_bool_1></form></td>";
+				<input type='hidden' name='value' value=$inv_current_bool_1  size='15' >
+				<input type='hidden' name='unit' value=$unit_id >
+				<input type='hidden' name='column' value=$column1 >
+				<input type= 'submit' name= 'change_but' style='font-size: 30px; text-align:center; background-color: $color_current_bool_1' value=$text_current_bool_1></form></td>";
 
-				echo "</tr>
-			</tbody>";
+					echo "</tr>
+				</tbody>";
 			}
 			echo "</table>
-		<br>
-		";
+			<br>
+			";
+		}
+		else if ($control_type == 3) {
+			while ($row = mysqli_fetch_array($result)) {
+				$i_odavamat_tundi = min(max($row['CHEAPEST_HOURS'], 1), 24);
+
+				if ($i_odavamat_tundi == 1) {
+					$text = "Sees päeva $i_odavamat_tundi odavaim tund";
+				} else {
+					$text = "Sees päeva $i_odavamat_tundi odavamat tundi";
+				}
+
+				echo "<table class='table' style='font-size: 30px;'>
+				<thead>
+					<tr>
+					<th>Juhtimine</th>	
+					</tr>
+				</thead>
+			
+				<tbody>
+				<tr class='active'>
+					<td>$text</td>
+				</tr>  
+				";
+
+				echo "<tr class='success'>";
+
+				$column = "CHEAPEST_HOURS";
+
+
+				echo "<td><form action= update_values.php method= 'post'>";
+					$i_odavamat_tundi = min(max($i_odavamat_tundi, 1), 24); echo"
+					<input type='text' name='value' style='width: 120px;' value=$i_odavamat_tundi  size='15' >
+					<input type='hidden' name='unit' style='width: 120px;' value=$unit_id >
+					<input type='hidden' name='column' style='width: 120px;' value=$column >
+					<input type= 'submit' name= 'change_but' style='width: 120px; text-align:center;' value='Muuda'></form></td>";
+
+				echo "</tr>
+						</tbody>";}
+
+				echo "</table><br>";
 		}
 
 
@@ -192,7 +237,7 @@ include_once('includes/header.php'); ?>
 		
 		<tbody>
 		<tr class='active'>
-			<td>LED tuli</td>
+			<td>Voolupesa</td>
 		</tr>  
 			";
 
