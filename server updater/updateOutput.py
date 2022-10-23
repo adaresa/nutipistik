@@ -1,6 +1,7 @@
 import urllib3
 from serverSecret import *
 from OutputFuncs import *
+import time
 
 def switchOutput(state):
     print(state)
@@ -8,6 +9,7 @@ def switchOutput(state):
     urllib3.PoolManager().request('GET', url)
 
 def lambda_handler(x, y):
+    time.sleep(10)
     url = getServerValueURL()
 
     response = urllib3.PoolManager().request('GET', url)
@@ -30,11 +32,13 @@ def lambda_handler(x, y):
         elif i == 3:
             values["current_price"] = response[i]
         elif i == 4:
+            values['unit'] = response[i]
+        elif i == 5:
             values["cheapest_hours"] = response[i]
-            
+    
     if values["control_type"] == "1": # Price limit
         print("Control type: Price Limit")
-        if PriceLimitOutput(values["current_price"], values["price_limit"]):
+        if PriceLimitOutput(values["current_price"], values["price_limit"], values['unit']):
             switchOutput(1)
         else:
             switchOutput(0)
@@ -52,3 +56,4 @@ def lambda_handler(x, y):
             switchOutput(1)
         else:
             switchOutput(0)
+            

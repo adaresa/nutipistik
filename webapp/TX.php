@@ -97,11 +97,13 @@ if($row['id'] == $unit){
 
 		$current_price = $row['CURRENT_PRICE'];
 
+		$unit = $row['ENERGY_TYPE'];
+
 		$cheapest_hours = $row['CHEAPEST_HOURS'];
 
 		//Next line will echo the data back to the Arduino
 		// Control type, price limit, button state, current price
-		echo "$control_type,$button_state,$price_limit,$current_price,$cheapest_hours";
+		echo "$control_type,$button_state,$price_limit,$current_price,$unit,$cheapest_hours";
 	
 }
 

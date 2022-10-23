@@ -11,7 +11,8 @@ $page = $_SERVER['PHP_SELF'];
 $sec = "15";
 
 
-include_once('includes/header.php'); ?>
+include_once('includes/header.php');
+include_once('includes/energyConverter.php'); ?>
 
 <head>
 	<!-- This will make the page auto-refresh each $sec seconds -->
@@ -54,6 +55,7 @@ include_once('includes/header.php'); ?>
 		//loop through the table and print the data into the table
 		while ($row = mysqli_fetch_array($result)) {
 			echo "<tr class='success'><td>"; // <tr class='success'> means that the row will be green 	
+			$unit = $row['ENERGY_TYPE']; // Grab the unit of the energy type
 			$unit_id = $row['id'];
 			$column = "CONTROL_TYPE";
 			$control_type = $row['CONTROL_TYPE'];
@@ -106,20 +108,19 @@ include_once('includes/header.php'); ?>
 			
 				<tbody>
 				<tr class='active'>
-					<td>$text<br>Praegune elektrihind: $current_price €/MWh</td>
+					<td>$text<br>Praegune elektrihind: " . convert_unit($current_price) . " €/" . $unit . "</td>
 				</tr>  
 				";
 
 				echo "<tr class='success'>";
 				$column6 = "PRICE_LIMIT";
-				$current_num_1 = $row['PRICE_LIMIT'];
-
+				$price_limit = $row['PRICE_LIMIT'];
 
 				echo "<td><form action= update_values.php method= 'post'>
-					<input type='text' name='value' style='width: 120px;' value=$current_num_1  size='15' >
+					<input type='text' name='value' style='width: 120px;' value=$price_limit  size='15' >
 					<input type='hidden' name='unit' style='width: 120px;' value=$unit_id >
 					<input type='hidden' name='column' style='width: 120px;' value=$column6 >
-					<input type= 'submit' name= 'change_but' style='width: 120px; text-align:center;' value='Muuda'></form></td>";
+					<input type='submit' name='change_but'; text-align:center;' value='Muuda (" . $unit . ")'></form></td>";
 
 				echo "</tr>
 						</tbody>";}
@@ -147,23 +148,23 @@ include_once('includes/header.php'); ?>
 				echo "<tr class='success'>"; // <tr class='success'> means that the row will be green 		
 				$unit_id = $row['id'];
 				$column1 = "BUTTON_STATE";
-				$current_bool_1 = $row['BUTTON_STATE'];
+				$current_button_state = $row['BUTTON_STATE'];
 
-				if ($current_bool_1 == 1) {
-					$inv_current_bool_1 = 0;
-					$text_current_bool_1 = "ON";
-					$color_current_bool_1 = "#6ed829";
+				if ($current_button_state == 1) {
+					$inv_current_button_state = 0;
+					$text_current_button_state = "ON";
+					$color_current_button_state = "#6ed829";
 				} else {
-					$inv_current_bool_1 = 1;
-					$text_current_bool_1 = "OFF";
-					$color_current_bool_1 = "#e04141";
+					$inv_current_button_state = 1;
+					$text_current_button_state = "OFF";
+					$color_current_button_state = "#e04141";
 				}
 
 				echo "<td><form action= update_values.php method= 'post'>
-				<input type='hidden' name='value' value=$inv_current_bool_1  size='15' >
+				<input type='hidden' name='value' value=$inv_current_button_state  size='15' >
 				<input type='hidden' name='unit' value=$unit_id >
 				<input type='hidden' name='column' value=$column1 >
-				<input type= 'submit' name= 'change_but' style='font-size: 30px; text-align:center; background-color: $color_current_bool_1' value=$text_current_bool_1></form></td>";
+				<input type= 'submit' name= 'change_but' style='font-size: 30px; text-align:center; background-color: $color_current_button_state' value=$text_current_button_state></form></td>";
 
 					echo "</tr>
 				</tbody>";

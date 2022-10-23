@@ -2,7 +2,12 @@ import datetime
 import json
 import urllib3
     
-def PriceLimitOutput(current_price, price_limit): # If current price is lower than price limit
+def PriceLimitOutput(current_price, price_limit, unit): # If current price is lower than price limit
+    if unit == "kWh":
+        price_limit = float(price_limit) * 1000
+        # round current_price from, for example, 123.6 to 120.0
+        current_price = round(float(current_price), -1)
+        
     if float(current_price) <= float(price_limit):
         return True
     else:

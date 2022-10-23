@@ -11,7 +11,8 @@ $page = $_SERVER['PHP_SELF'];
 $sec = "15";
 
 
-include_once('includes/header.php'); ?>
+include_once('includes/header.php');
+include_once('includes/energyConverter.php'); ?>
 
 <head>
 	<!-- This will make the page auto-refresh each $sec seconds -->
@@ -33,7 +34,6 @@ include_once('includes/header.php'); ?>
 
 		$result = mysqli_query($con, "SELECT * FROM ESPtable2"); //table select
 
-
 		echo 
 		"<table class='table' style='font-size: 30px;'>
 		<thead>
@@ -50,8 +50,10 @@ include_once('includes/header.php'); ?>
 
 
 		while ($row = mysqli_fetch_array($result)) {
+			$unit = $row['ENERGY_TYPE'];
+
 			echo "<tr class='info'>";
-			echo "<td>" . $row['CURRENT_PRICE'] . " €/MWh</td>";
+			echo "<td>" . convert_unit($row['CURRENT_PRICE']) . " €/" . $unit . "</td>";
 			echo "</tr></tbody>";
 		}
 		echo "</table><br>";
@@ -71,6 +73,7 @@ include_once('includes/header.php'); ?>
 		$result = mysqli_query($con, "SELECT * FROM ElectricityPrices"); //table select
 
 		while ($row = mysqli_fetch_array($result)) {
+			date_default_timezone_set('Europe/Tallinn');
 			$tomorrow_exists = $row['tm0'] != 0;
 			$today = date("d.m");
 			$tomorrow = date("d.m", strtotime("+1 day"));
@@ -91,7 +94,7 @@ include_once('includes/header.php'); ?>
 			<table style='font-size: 30px;'>
 				<thead>
 					<tr>
-						<th style='padding-left:8px; padding-bottom:10px;'>Elektrihinnad (€/MWh)</th>
+						<th style='padding-left:8px; padding-bottom:10px;'>Elektrihinnad (€/" . $unit . ")</th>
 					</tr>
 				</thead>
 			</table>
@@ -113,8 +116,8 @@ include_once('includes/header.php'); ?>
 							if ($i < 9) { echo "0".($i+1)."</td>"; } else {	echo ($i+1)."</td>"; }
 
 							# Todays and tomorrows (if exists) prices
-							echo "<td>" . $row['td'.$i] ."</td>";
-							if ($tomorrow_exists) {	echo "<td>" . $row['tm'.$i] ."</td>";}
+							echo "<td>" . convert_unit($row['td'.$i]) ."</td>";
+							if ($tomorrow_exists) {	echo "<td>" . convert_unit($row['tm'.$i]) ."</td>";}
 						echo "</tr>";
 			}
 			echo "</tbody>
