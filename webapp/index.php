@@ -2,9 +2,22 @@
 require_once('secret.php'); // get correct username and password
 session_start();
 echo isset($_SESSION['index']);
+
 if (isset($_SESSION['index'])) {
 	header('LOCATION:panel.php');
 	die();
+}
+
+# Check if user has selected to remember the login
+if (isset($_COOKIE['remember'])) {
+	# Check if the cookie is valid
+	if ($_COOKIE['remember'] == '123') {
+		# Set the session
+		$_SESSION['index'] = true;
+		# Redirect to the panel
+		header('LOCATION:panel.php');
+		die();
+	}
 }
 
 include 'includes/header.php'; ?>
@@ -20,6 +33,12 @@ include 'includes/header.php'; ?>
 					$username = $_POST['username'];
 					$password = $_POST['password'];
 					if ($username == $_USERNAME && $password == $_PASSWORD) {
+						if (isset($_POST['remember'])) {
+							$token = '123';
+							# Set the cookie
+							setcookie('remember', $token, time() + (86400 * 30), "/"); # 30 days							
+						}
+
 						$_SESSION['index'] = true;
 						header('LOCATION:panel.php');
 						die();
@@ -37,6 +56,10 @@ include 'includes/header.php'; ?>
 				<div class="form-group">
 					<label for="pwd">Parool:</label>
 					<input type="password" class="form-control" id="pwd" name="password" required>
+				</div>
+				<!-- Remember me -->
+				<div class="checkbox">
+					<label><input type="checkbox" id="remember" name="remember">Jäta mind meelde</label>
 				</div>
 				<!-- Submit -->
 				<button type="submit" name="submit" class="btn btn-success">Sisene</button>
