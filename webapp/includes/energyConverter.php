@@ -14,15 +14,16 @@ function convert_unit($str) {
     $result = mysqli_query($con, "SELECT * FROM ESPtable2");
 
     while ($row = mysqli_fetch_array($result)) {
-
+        $vat = $row['VAT'];
         $energy_type = $row['ENERGY_TYPE'];
 
+        $str = $str * (1 + ($vat / 100));
 
         if ($energy_type == "kWh") {
             # convert EUR/MWh to EUR/kWh
             $price = $str / 1000;
-            # round price to 2 decimals after comma
-            $price = round($price, 2);
+            # round price to 3 decimals after comma
+            $price = round($price, 3);
         }
         # else price is already in €/MWh
         else {

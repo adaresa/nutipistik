@@ -24,9 +24,15 @@ def lambda_handler(x, y):
 
     # print(url)
     price_dict = {}
+    
+    # Get the selected region
+    url = getServerValueURL()
 
-    # get all from "data", "ee" in the json
-    for i in data["data"]["ee"]:
+    # Get the values from the server
+    values = getServerValues(url)
+
+    # get all from "data", values[region] in the json
+    for i in data["data"][values["region"]]:
         # populate price_dict with "timestamp": "price"
         price_dict[i["timestamp"]] = i["price"]
 
@@ -39,8 +45,8 @@ def lambda_handler(x, y):
     #     print(f"{i+1}. {key}, {value}")
     #     i+=1
         
-    # to find current_price, make request to https://dashboard.elering.ee/api/nps/price/EE/current
-    url = "https://dashboard.elering.ee/api/nps/price/EE/current"
+    # to find current_price, make request to https://dashboard.elering.ee/api/nps/price/'values[region]'/current
+    url = "https://dashboard.elering.ee/api/nps/price/" + values["region"] + "/current"
     response = urllib3.PoolManager().request('GET', url)
     data = json.loads(response.data.decode('utf-8'))
     current_price = data["data"][0]["price"]
@@ -54,6 +60,7 @@ def lambda_handler(x, y):
 
     # get date in Europe/Tallinn
     date_est = dateutil.tz.gettz('Europe/Tallinn')
+    date_est = datetime.datetime.now(date_est).date()
 
     # for each hour in price_dict, make POST request to https://nutipistik.fun/
     i = 0
@@ -78,7 +85,7 @@ def lambda_handler(x, y):
             url = getUpdateTomorrowPriceURL(i-24, 0)
             response = urllib3.PoolManager().request('GET', url)
             
-    elif len(price_dict) == 48:
+    elif len(price_dict) >= 48:
         for key, value in price_dict.items():
             if i < 24:
                 url = getUpdateTodayPriceURL(i, value)

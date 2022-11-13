@@ -36,8 +36,9 @@ include_once('includes/header.php'); ?>
 
     while ($row = mysqli_fetch_array($result)) {
         $unit_id = $row['id'];
-        $column = 'ENERGY_TYPE';
         $energyType = $row['ENERGY_TYPE'];
+        $vat = $row['VAT'];
+        $region = $row['REGION'];
 
         echo"<div>
             <div class='row'>
@@ -49,7 +50,7 @@ include_once('includes/header.php'); ?>
                 <div class='col-lg-12'>
                     <div class='panel panel-default'>
                         <div class='panel-heading'>
-                            Üldseaded
+                            Üldine
                         </div>
                         <div class='panel-body
                             <div class='table-responsive'>
@@ -57,12 +58,12 @@ include_once('includes/header.php'); ?>
                                     <thead>
                                         <tr>
                                             <th>Nimi</th>
-                                            <th>Seadistamine</th>
+                                            <th>Valik</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                            
-                                        <tr class='odd gradeX'>
+                                    <tbody>";
+                                        // Elektrihinna ühik
+                                        echo"<tr class='odd gradeX'>
                                             <td>Elektrihinna ühik</td>
                                             <td>
                                                 <form action='settings.php' method='post'>
@@ -76,18 +77,56 @@ include_once('includes/header.php'); ?>
 
                                                 if (isset($_POST['energyType'])) {
                                                     $energyType = $_POST['energyType'];
-                                                    if (!empty($energyType)) {
-                                                        $query = "UPDATE ESPtable2 SET ENERGY_TYPE = '$energyType' WHERE id = '$unit_id'";
-                                                        $result = mysqli_query($con, $query);
-                                                        echo "<meta http-equiv='refresh' content='0'>";
-                                                    }
+                                                    $query = "UPDATE ESPtable2 SET ENERGY_TYPE = '$energyType' WHERE id = '$unit_id'";
+                                                    $result = mysqli_query($con, $query);
+                                                    echo "<meta http-equiv='refresh' content='0'>";
                                                 }
                                                 echo"
+                                            </td>
+                                        </tr>";
+                                        // Sisalda käibemaks
+                                        echo"<tr>
+                                            <td>Sisalda käibemaks (%)</td>
+                                            <td>
+                                                <form action='settings.php' method='post'>
+                                                    <input type='text' name='vat' value='$vat'>
+                                                    <input type='submit' name='change_but' value='Salvesta'>
+                                                </form>";
 
+                                                if (isset($_POST['vat'])) {
+                                                    $vat = $_POST['vat'];
+                                                    $query2 = "UPDATE ESPtable2 SET VAT = '$vat' WHERE id = '$unit_id'";
+                                                    $result = mysqli_query($con, $query2);
+                                                    echo "<meta http-equiv='refresh' content='0'>";
+                                                }
+                                                echo"
+                                            </td>
+                                        </tr>";
+                                        // Regioon
+                                        echo"<tr>
+                                            <td>Regioon</td>
+                                            <td>
+                                                <form action='settings.php' method='post'>
+                                                    <select name='region'>
+                                                        <option "; if($region == '1') { echo "selected"; } echo" value='1'>Eesti</option>
+                                                        <option "; if($region == '2') { echo "selected"; } echo" value='2'>Soome</option>
+                                                        <option "; if($region == '3') { echo "selected"; } echo" value='3'>Läti</option>
+                                                        <option "; if($region == '4') { echo "selected"; } echo" value='4'>Leedu</option>
+                                                    </select>
 
+                                                    <input type='submit' name='change_but' value='Salvesta'>
+                                                </form>";
 
+                                                if (isset($_POST['region'])) {
+                                                    $region = $_POST['region'];
+                                                    $query3 = "UPDATE ESPtable2 SET REGION = '$region' WHERE id = '$unit_id'";
+                                                    $result = mysqli_query($con, $query3);
+                                                    echo "<meta http-equiv='refresh' content='0'>";
+                                                }
+                                                echo"
                                             </td>
                                         </tr>
+
                                     </tbody>
                                 </table>
                             </div>

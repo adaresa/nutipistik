@@ -66,6 +66,7 @@ include_once('includes/energyConverter.php'); ?>
 					<option "; if($control_type == 1) { echo "selected"; } echo" value='1'>Piirhind</option>
 					<option "; if($control_type == 2) { echo "selected"; } echo" value='2'>Lüliti</option>
 					<option "; if($control_type == 3) { echo "selected"; } echo" value='3'>Odavad tunnid</option>
+
 				</select>
 				<input type='submit' name='submit' value='Muuda' />
 			</form>";
@@ -92,9 +93,8 @@ include_once('includes/energyConverter.php'); ?>
 		}
 		$result = mysqli_query($con, "SELECT * FROM ESPtable2"); //table select
 
-		if ($control_type == 1) {
-			while ($row = mysqli_fetch_array($result)) {
-
+		while ($row = mysqli_fetch_array($result)) {
+			if ($control_type == 1) {
 				$text = "Sees kui praegune elektrihind on alla piirhinna";
 				$current_price = $row['CURRENT_PRICE'];
 
@@ -123,27 +123,24 @@ include_once('includes/energyConverter.php'); ?>
 					<input type='submit' name='change_but'; text-align:center;' value='Muuda (" . $unit . ")'></form></td>";
 
 				echo "</tr>
-						</tbody>";}
+						</tbody>";
 
 				echo "</table><br>";
-
-		} 
-		else if ($control_type == 2) {
-			$text = "Juhtimine läbi lüliti";
-			echo "<table class='table' style='font-size: 30px;'>
-			<thead>
-				<tr>
-				<th>Juhtimine</th>	
-				</tr>
-			</thead>
-			
-			<tbody>
-			<tr class='active'>
-				<td>$text</td>
-			</tr>  
-				";
-
-			while ($row = mysqli_fetch_array($result)) {
+			} 
+			else if ($control_type == 2) {
+				$text = "Juhtimine läbi lüliti";
+				echo "<table class='table' style='font-size: 30px;'>
+				<thead>
+					<tr>
+					<th>Juhtimine</th>	
+					</tr>
+				</thead>
+				
+				<tbody>
+				<tr class='active'>
+					<td>$text</td>
+				</tr>  
+					";
 
 				echo "<tr class='success'>"; // <tr class='success'> means that the row will be green 		
 				$unit_id = $row['id'];
@@ -168,13 +165,12 @@ include_once('includes/energyConverter.php'); ?>
 
 					echo "</tr>
 				</tbody>";
+
+				echo "</table>
+				<br>
+				";
 			}
-			echo "</table>
-			<br>
-			";
-		}
-		else if ($control_type == 3) {
-			while ($row = mysqli_fetch_array($result)) {
+			else if ($control_type == 3) {
 				$i_odavamat_tundi = min(max($row['CHEAPEST_HOURS'], 1), 24);
 
 				if ($i_odavamat_tundi == 1) {
@@ -209,9 +205,24 @@ include_once('includes/energyConverter.php'); ?>
 					<input type= 'submit' name= 'change_but' style='width: 120px; text-align:center;' value='Muuda'></form></td>";
 
 				echo "</tr>
-						</tbody>";}
+						</tbody>";
 
 				echo "</table><br>";
+			}
+			// Selected hours
+			else if ($control_type == 4) {
+				$text = "-";
+				echo "<table class='table' style='font-size: 30px;'>
+				<thead>
+					<tr>
+					<th>Juhtimine</th>	
+					</tr>
+				</thead>";
+				
+			
+					
+					
+			}
 		}
 
 

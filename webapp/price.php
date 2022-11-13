@@ -33,23 +33,26 @@ include_once('includes/energyConverter.php'); ?>
 		}
 
 		$result = mysqli_query($con, "SELECT * FROM ESPtable2"); //table select
-
-		echo 
-		"<table class='table' style='font-size: 30px;'>
-		<thead>
-			<tr>
-			<th>Elektrihind</th>	
-			</tr>
-		</thead>
-		
-		<tbody>
-		<tr class='active'>
-			<td>Praegune</td>
-		</tr>  
-			";
-
-
 		while ($row = mysqli_fetch_array($result)) {
+			// 1 = Eesti, 2 = Soome, 3 = Läti, 4 = Leedu
+			$regions = array("Eesti", "Soome", "Läti", "Leedu");
+			$region = $regions[$row['REGION'] - 1];
+
+			echo 
+			"<table class='table' style='font-size: 30px;'>
+			<thead>
+				<tr>
+				<th>Elektrihind</th>	
+				</tr>
+			</thead>
+			
+			<tbody>
+			<tr class='active'>
+				<td>Praegune ($region)</td>
+			</tr>  
+				";
+
+
 			$unit = $row['ENERGY_TYPE'];
 
 			echo "<tr class='info'>";
@@ -102,7 +105,7 @@ include_once('includes/energyConverter.php'); ?>
 			<table class='table nopadding' style='font-size: 30px;'>
 				<thead>
 					<tr class='active'>
-						<th style='padding-right: 120px;'>CET</td>
+						<th style='padding-right: 120px;'>EET</td>
 						<th>Täna ($today)</td>";
 						if ($tomorrow_exists) {	echo "<th>Homme ($tomorrow)</td>";}
 					echo "</tr>";

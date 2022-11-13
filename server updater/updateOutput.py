@@ -11,30 +11,7 @@ def switchOutput(state):
 def lambda_handler(x, y):
     time.sleep(10)
     url = getServerValueURL()
-
-    response = urllib3.PoolManager().request('GET', url)
-
-    values = {
-        "control_type": "",
-        "switch_state": "",
-        "price_limit": "",
-        "current_price": ""
-    }
-
-    response = response.data.decode('utf-8').strip().split(",")
-    for i in range(len(response)):
-        if i == 0:
-            values["control_type"] = response[i]
-        elif i == 1:
-            values["switch_state"] = response[i]
-        elif i == 2:
-            values["price_limit"] = response[i]
-        elif i == 3:
-            values["current_price"] = response[i]
-        elif i == 4:
-            values['unit'] = response[i]
-        elif i == 5:
-            values["cheapest_hours"] = response[i]
+    values = getServerValues(url)
     
     if values["control_type"] == "1": # Price limit
         print("Control type: Price Limit")

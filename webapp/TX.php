@@ -77,7 +77,7 @@ else if($update_number == 2)	//If the received data is for ARDUINO_OUTPUT, we up
 
 
 //In case that you need the time from the internet, use this line
-date_default_timezone_set('UTC');
+date_default_timezone_set('Europe/Tallinn');
 $t1 = date("gi"); 	//This will return 1:23 as 123
 
 //Get all the values form the table on the database
@@ -89,6 +89,8 @@ if($row['id'] == $unit){
 	
 		//We update the values for the boolean and numebers we receive from the Arduino, then we echo the boolean
 		//and numbers and the text from the database back to the Arduino
+		$region = $row['REGION'];
+
 		$button_state = $row['BUTTON_STATE'];	
 		
 		$price_limit = $row['PRICE_LIMIT'];	
@@ -96,6 +98,8 @@ if($row['id'] == $unit){
 		$control_type = $row['CONTROL_TYPE'];
 
 		$current_price = $row['CURRENT_PRICE'];
+		$vat = $row['VAT'];
+		if ($vat) { $current_price *= 1.2; }
 
 		$unit = $row['ENERGY_TYPE'];
 
@@ -103,7 +107,7 @@ if($row['id'] == $unit){
 
 		//Next line will echo the data back to the Arduino
 		// Control type, price limit, button state, current price
-		echo "$control_type,$button_state,$price_limit,$current_price,$unit,$cheapest_hours";
+		echo "region:$region,control_type:$control_type,switch_state:$button_state,price_limit:$price_limit,current_price:$current_price,unit:$unit,cheapest_hours:$cheapest_hours";
 	
 }
 
