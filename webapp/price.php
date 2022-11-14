@@ -6,19 +6,8 @@ if (!isset($_SESSION['index'])) {
 	die();
 }
 
-// This will make the page auto-refresh each 15 seconds
-$page = $_SERVER['PHP_SELF'];
-$sec = "15";
-
-
 include_once('includes/header.php');
 include_once('includes/energyConverter.php'); ?>
-
-<head>
-	<!-- This will make the page auto-refresh each $sec seconds -->
-	<meta http-equiv="refresh" content="<?php echo $sec ?>;URL='<?php echo $page ?>'">
-</head>
-
 
 <div id="page-wrapper">
 

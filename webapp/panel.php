@@ -6,21 +6,17 @@ if (!isset($_SESSION['index'])) {
 	die();
 }
 
-// This will make the page auto-refresh each 15 seconds
-$page = $_SERVER['PHP_SELF'];
-$sec = "15";
-
-
 include_once('includes/header.php');
-include_once('includes/energyConverter.php'); ?>
+include_once('includes/energyConverter.php');
+
+// This will make the page auto-refresh each 30 seconds
+$page = $_SERVER['PHP_SELF'];
+$sec = "30"; ?>
 
 <head>
 	<!-- This will make the page auto-refresh each $sec seconds -->
 	<meta http-equiv="refresh" content="<?php echo $sec ?>;URL='<?php echo $page ?>'">
 </head>
-
-
-
 
 <div id="page-wrapper">
 
@@ -306,7 +302,8 @@ include_once('includes/energyConverter.php'); ?>
 
 		while ($row = mysqli_fetch_array($result)) {
 
-			$cur_ARDUINO_OUTPUT = $row['ARDUINO_OUTPUT'];
+			#$cur_ARDUINO_OUTPUT = $row['ARDUINO_OUTPUT'];
+			$cur_ARDUINO_OUTPUT = $row['OUTPUT_STATE'];
 
 			if ($cur_ARDUINO_OUTPUT == 1) {
 				$label_ARDUINO_OUTPUT = "label-success";

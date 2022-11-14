@@ -6,20 +6,7 @@ if (!isset($_SESSION['index'])) {
 	die();
 }
 
-// This will make the page auto-refresh each 15 seconds
-$page = $_SERVER['PHP_SELF'];
-$sec = '15';
-
-
 include_once('includes/header.php'); ?>
-
-<head>
-	<!-- This will make the page auto-refresh each $sec seconds -->
-	<meta http-equiv='refresh' content='<?php echo $sec ?>;URL='<?php echo $page ?>''>
-</head>
-
-
-
 
 <div id='page-wrapper'>
     <?php
@@ -62,23 +49,25 @@ include_once('includes/header.php'); ?>
                                         </tr>
                                     </thead>
                                     <tbody>";
-                                        // Elektrihinna ühik
-                                        echo"<tr class='odd gradeX'>
-                                            <td>Elektrihinna ühik</td>
+                                        // Riik
+                                        echo"<tr>
+                                            <td>Riik</td>
                                             <td>
                                                 <form action='settings.php' method='post'>
-                                                    <select name='energyType'>
-                                                        <option "; if($energyType == 'kWh') { echo "selected"; } echo" value='kWh'>kWh</option>
-                                                        <option "; if($energyType == 'MWh') { echo "selected"; } echo" value='MWh'>MWh</option>
+                                                    <select name='region'>
+                                                        <option "; if($region == '1') { echo "selected"; } echo" value='1'>Eesti</option>
+                                                        <option "; if($region == '2') { echo "selected"; } echo" value='2'>Soome</option>
+                                                        <option "; if($region == '3') { echo "selected"; } echo" value='3'>Läti</option>
+                                                        <option "; if($region == '4') { echo "selected"; } echo" value='4'>Leedu</option>
                                                     </select>
 
                                                     <input type='submit' name='change_but' value='Salvesta'>
                                                 </form>";
 
-                                                if (isset($_POST['energyType'])) {
-                                                    $energyType = $_POST['energyType'];
-                                                    $query = "UPDATE ESPtable2 SET ENERGY_TYPE = '$energyType' WHERE id = '$unit_id'";
-                                                    $result = mysqli_query($con, $query);
+                                                if (isset($_POST['region'])) {
+                                                    $region = $_POST['region'];
+                                                    $query3 = "UPDATE ESPtable2 SET REGION = '$region' WHERE id = '$unit_id'";
+                                                    $result = mysqli_query($con, $query3);
                                                     echo "<meta http-equiv='refresh' content='0'>";
                                                 }
                                                 echo"
@@ -102,31 +91,28 @@ include_once('includes/header.php'); ?>
                                                 echo"
                                             </td>
                                         </tr>";
-                                        // Regioon
+                                        // Elektrihinna ühik
                                         echo"<tr>
-                                            <td>Regioon</td>
+                                            <td>Elektrihinna ühik</td>
                                             <td>
                                                 <form action='settings.php' method='post'>
-                                                    <select name='region'>
-                                                        <option "; if($region == '1') { echo "selected"; } echo" value='1'>Eesti</option>
-                                                        <option "; if($region == '2') { echo "selected"; } echo" value='2'>Soome</option>
-                                                        <option "; if($region == '3') { echo "selected"; } echo" value='3'>Läti</option>
-                                                        <option "; if($region == '4') { echo "selected"; } echo" value='4'>Leedu</option>
+                                                    <select name='energyType'>
+                                                        <option "; if($energyType == 'kWh') { echo "selected"; } echo" value='kWh'>kWh</option>
+                                                        <option "; if($energyType == 'MWh') { echo "selected"; } echo" value='MWh'>MWh</option>
                                                     </select>
 
                                                     <input type='submit' name='change_but' value='Salvesta'>
                                                 </form>";
 
-                                                if (isset($_POST['region'])) {
-                                                    $region = $_POST['region'];
-                                                    $query3 = "UPDATE ESPtable2 SET REGION = '$region' WHERE id = '$unit_id'";
-                                                    $result = mysqli_query($con, $query3);
+                                                if (isset($_POST['energyType'])) {
+                                                    $energyType = $_POST['energyType'];
+                                                    $query = "UPDATE ESPtable2 SET ENERGY_TYPE = '$energyType' WHERE id = '$unit_id'";
+                                                    $result = mysqli_query($con, $query);
                                                     echo "<meta http-equiv='refresh' content='0'>";
                                                 }
                                                 echo"
                                             </td>
                                         </tr>
-
                                     </tbody>
                                 </table>
                             </div>
