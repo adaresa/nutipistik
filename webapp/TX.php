@@ -95,6 +95,7 @@ if($row['id'] == $unit){
 	
 	//We update the values for the boolean and numebers we receive from the Arduino, then we echo the boolean
 	//and numbers and the text from the database back to the Arduino
+
 	$region = $row['REGION'];
 
 	$button_state = $row['BUTTON_STATE'];	
@@ -109,11 +110,17 @@ if($row['id'] == $unit){
 
 	$cheapest_hours = $row['CHEAPEST_HOURS'];
 
+	if ($control_type == 1) {
+		$result = 'region:'.$region.',control_type:1,price_limit:'.$price_limit.',current_price:'.$current_price;
+	} else if ($control_type == 2) {
+		$result = 'region:'.$region.',control_type:2,switch_state:'.$button_state;
+	} else if ($control_type == 3) {
+		$result = 'region:'.$region.',control_type:3,cheapest_hours:'.$cheapest_hours;
+	} else if ($control_type == 4) {
+		$result = 'region:'.$region.',control_type:4,selected_hour:'.$selected_hour;
+	}
 
-	//Next line will echo the data back to the Arduino
-	// Control type, price limit, button state, current price
-	echo "region:$region,control_type:$control_type,switch_state:$button_state,price_limit:$price_limit,current_price:$current_price,unit:$unit,cheapest_hours:$cheapest_hours,selected_hour:$selected_hour";
-	
+	echo $result;
 }
 
 }// End of the while loop

@@ -1,7 +1,6 @@
 import urllib3
 from serverSecret import *
 from OutputFuncs import *
-import time
 
 def switchOutput(state):
     print(state)
@@ -9,7 +8,7 @@ def switchOutput(state):
     urllib3.PoolManager().request('GET', url)
 
 def lambda_handler(x, y):
-    time.sleep(10)
+    #time.sleep(10)
     url = getServerValueURL()
     values = getServerValues(url)
     
@@ -40,3 +39,5 @@ def lambda_handler(x, y):
             switchOutput(1)
         else:
             switchOutput(0)
+
+lambda_handler(0, 0)
