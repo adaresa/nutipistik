@@ -66,6 +66,7 @@ include_once('includes/energyConverter.php'); ?>
 					<option "; if($control_type == 1) { echo "selected"; } echo" value='1'>Piirhind</option>
 					<option "; if($control_type == 2) { echo "selected"; } echo" value='2'>Lüliti</option>
 					<option "; if($control_type == 3) { echo "selected"; } echo" value='3'>Odavad tunnid</option>
+					<option "; if($control_type == 4) { echo "selected"; } echo" value='4'>Valitud tunnid</option>
 
 				</select>
 				<input type='submit' name='submit' value='Muuda' />
@@ -93,7 +94,10 @@ include_once('includes/energyConverter.php'); ?>
 		}
 		$result = mysqli_query($con, "SELECT * FROM ESPtable2"); //table select
 
+		$result2 = mysqli_query($con, "SELECT * FROM SelectedHours"); //table select
+
 		while ($row = mysqli_fetch_array($result)) {
+			// Price limit
 			if ($control_type == 1) {
 				$text = "Sees kui praegune elektrihind on alla piirhinna";
 				$current_price = $row['CURRENT_PRICE'];
@@ -127,6 +131,7 @@ include_once('includes/energyConverter.php'); ?>
 
 				echo "</table><br>";
 			} 
+			// Switch
 			else if ($control_type == 2) {
 				$text = "Juhtimine läbi lüliti";
 				echo "<table class='table' style='font-size: 30px;'>
@@ -170,6 +175,7 @@ include_once('includes/energyConverter.php'); ?>
 				<br>
 				";
 			}
+			// Cheapest hours
 			else if ($control_type == 3) {
 				$i_odavamat_tundi = min(max($row['CHEAPEST_HOURS'], 1), 24);
 
@@ -211,17 +217,62 @@ include_once('includes/energyConverter.php'); ?>
 			}
 			// Selected hours
 			else if ($control_type == 4) {
-				$text = "-";
-				echo "<table class='table' style='font-size: 30px;'>
+				$text = "Sees valitud tundidel";
+				# Current time in GMT+2, e.g. 01:07
+				$current_time = date("H:i", time() + 7200);
+
+				echo "
+				<style>
+					.no-wrap 
+					{
+						white-space: nowrap;
+					}
+				</style>
+				
+				<table class='table' style='font-size: 30px;'>
 				<thead>
 					<tr>
 					<th>Juhtimine</th>	
 					</tr>
-				</thead>";
+				</thead>
 				
-			
-					
-					
+				<tbody>
+					<tr class='active'>
+						<td colspan='6'>$text<br>Praegune kellaaeg: $current_time</td>
+					</tr>
+					<tr>";
+
+				while($row2 = mysqli_fetch_array($result2)) {
+					for ($i = 0; $i <= 23; $i++) {
+
+						if ($i % 6 == 0) {
+							echo "</tr><tr>";
+						}
+
+						$selected_hour = $row2["Selected$i"];
+						$range = sprintf("%02d", $i) . " - " . sprintf("%02d", $i + 1);
+						$column = "Selected$i";
+
+						if ($selected_hour == 1) {
+							$inv_selected_hour = 0;
+							$color_selected_hour = "#6ed829";
+						} else {
+							$inv_selected_hour = 1;
+							$color_selected_hour = "#e04141";
+						}
+
+						echo "<td><form action= update_values.php method= 'post'>
+						<input type='hidden' name='value' value=$inv_selected_hour  size='15' >
+						<input type='hidden' name='unit' value=$unit_id >
+						<input type='hidden' name='column' value=$column >
+						<input type='hidden' name='table' value='SelectedHours' >
+						<input type= 'submit' name= 'change_but' style='font-size: 30px; text-align:center; background-color: $color_selected_hour' value='$range'></form></td>";
+					}
+
+
+				}
+				echo "</tr></tbody></table>";
+				
 			}
 		}
 

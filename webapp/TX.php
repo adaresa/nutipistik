@@ -46,6 +46,7 @@ foreach($_REQUEST as $key => $value)  //Save the received value to the hey varia
 
 
 include("database_connect.php"); 	//We include the database_connect.php which has the data for the connection to the database
+include_once('includes/energyConverter.php');
 
 
 // Check  the connection
@@ -78,7 +79,12 @@ else if($update_number == 2)	//If the received data is for ARDUINO_OUTPUT, we up
 
 //In case that you need the time from the internet, use this line
 date_default_timezone_set('Europe/Tallinn');
-$t1 = date("gi"); 	//This will return 1:23 as 123
+
+$t2 = date("G"); 	//This will return 1 as 1
+$result2 = mysqli_query($con,"SELECT * FROM SelectedHours");
+while($row2 = mysqli_fetch_array($result2)) {
+	$selected_hour = $row2['Selected'.$t2];
+}
 
 //Get all the values form the table on the database
 $result = mysqli_query($con,"SELECT * FROM ESPtable2");	//table select is ESPtable2, must be the same on yor database
@@ -87,27 +93,26 @@ $result = mysqli_query($con,"SELECT * FROM ESPtable2");	//table select is ESPtab
 while($row = mysqli_fetch_array($result)) {
 if($row['id'] == $unit){
 	
-		//We update the values for the boolean and numebers we receive from the Arduino, then we echo the boolean
-		//and numbers and the text from the database back to the Arduino
-		$region = $row['REGION'];
+	//We update the values for the boolean and numebers we receive from the Arduino, then we echo the boolean
+	//and numbers and the text from the database back to the Arduino
+	$region = $row['REGION'];
 
-		$button_state = $row['BUTTON_STATE'];	
-		
-		$price_limit = $row['PRICE_LIMIT'];	
+	$button_state = $row['BUTTON_STATE'];	
+	
+	$price_limit = $row['PRICE_LIMIT'];	
 
-		$control_type = $row['CONTROL_TYPE'];
+	$control_type = $row['CONTROL_TYPE'];
 
-		$current_price = $row['CURRENT_PRICE'];
-		$vat = $row['VAT'];
-		if ($vat) { $current_price *= 1.2; }
+	$current_price = convert_unit($row['CURRENT_PRICE']);
 
-		$unit = $row['ENERGY_TYPE'];
+	$unit = $row['ENERGY_TYPE'];
 
-		$cheapest_hours = $row['CHEAPEST_HOURS'];
+	$cheapest_hours = $row['CHEAPEST_HOURS'];
 
-		//Next line will echo the data back to the Arduino
-		// Control type, price limit, button state, current price
-		echo "region:$region,control_type:$control_type,switch_state:$button_state,price_limit:$price_limit,current_price:$current_price,unit:$unit,cheapest_hours:$cheapest_hours";
+
+	//Next line will echo the data back to the Arduino
+	// Control type, price limit, button state, current price
+	echo "region:$region,control_type:$control_type,switch_state:$button_state,price_limit:$price_limit,current_price:$current_price,unit:$unit,cheapest_hours:$cheapest_hours,selected_hour:$selected_hour";
 	
 }
 

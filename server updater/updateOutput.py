@@ -15,7 +15,7 @@ def lambda_handler(x, y):
     
     if values["control_type"] == "1": # Price limit
         print("Control type: Price Limit")
-        if PriceLimitOutput(values["current_price"], values["price_limit"], values['unit']):
+        if PriceLimitOutput(values["current_price"], values["price_limit"]):
             switchOutput(1)
         else:
             switchOutput(0)
@@ -34,3 +34,9 @@ def lambda_handler(x, y):
         else:
             switchOutput(0)
             
+    elif values["control_type"] == "4": # Selected hours
+        print("Control type: Selected hours")
+        if SwitchOutput(values["selected_hour"]):
+            switchOutput(1)
+        else:
+            switchOutput(0)
