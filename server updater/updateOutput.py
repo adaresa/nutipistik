@@ -39,5 +39,3 @@ def lambda_handler(x, y):
             switchOutput(1)
         else:
             switchOutput(0)
-
-lambda_handler(0, 0)
