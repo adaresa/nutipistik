@@ -150,11 +150,11 @@ $sec = "30"; ?>
 
 				if ($current_button_state == 1) {
 					$inv_current_button_state = 0;
-					$text_current_button_state = "ON";
+					$text_current_button_state = "SEES";
 					$color_current_button_state = "#6ed829";
 				} else {
 					$inv_current_button_state = 1;
-					$text_current_button_state = "OFF";
+					$text_current_button_state = "VÄLJAS";
 					$color_current_button_state = "#e04141";
 				}
 

@@ -1,6 +1,6 @@
 <?php
 
-//We loop through and grab variables from the received the URL
+//We loop through and grab variables from the received URL
 foreach($_REQUEST as $key => $value)
 {
 	if($key =="id"){

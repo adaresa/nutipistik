@@ -1,8 +1,7 @@
 <?php
-//This file will get the values when you click any of the ON/OFF buttons or change buttons on the index.php file
-//We get that value and send it to the datapase table and by that update the values
+
 $value = $_POST['value'];		//Get the value
-$unit = $_POST['unit'];			//Get the id if the unit where we want to update the value
+$unit = $_POST['unit'];			//Get the id of the unit where we want to update the value
 $column = $_POST['column'];		//Which coulumn of the database, could be the RECEIVED_BOOL1, etc...
 $table = $_POST['table'];		//Which table of the database, could be the RECEIVED_BOOL1, etc...
 

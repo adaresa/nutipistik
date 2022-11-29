@@ -97,8 +97,8 @@ include_once('includes/header.php'); ?>
                                             <td>
                                                 <form action='settings.php' method='post'>
                                                     <select name='energyType'>
-                                                        <option "; if($energyType == 'kWh') { echo "selected"; } echo" value='kWh'>kWh</option>
-                                                        <option "; if($energyType == 'MWh') { echo "selected"; } echo" value='MWh'>MWh</option>
+                                                        <option "; if($energyType == 'kWh') { echo "selected"; } echo" value='kWh'>€/kWh</option>
+                                                        <option "; if($energyType == 'MWh') { echo "selected"; } echo" value='MWh'>€/MWh</option>
                                                     </select>
 
                                                     <input type='submit' name='change_but' value='Salvesta'>
