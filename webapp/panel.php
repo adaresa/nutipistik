@@ -53,6 +53,7 @@ $sec = "30"; ?>
 			echo "<tr class='success'><td>"; // <tr class='success'> means that the row will be green 	
 			$unit = $row['ENERGY_TYPE']; // Grab the unit of the energy type
 			$unit_id = $row['id'];
+			$vat = $row['VAT']; // Grab the VAT of the energy type
 			$column = "CONTROL_TYPE";
 			$control_type = $row['CONTROL_TYPE'];
 
@@ -108,7 +109,7 @@ $sec = "30"; ?>
 			
 				<tbody>
 				<tr class='active'>
-					<td>$text<br>Praegune elektrihind: " . convert_unit($current_price) . " €/" . $unit . "</td>
+					<td>$text<br>Praegune elektrihind: " . convert_unit($current_price, $unit, $vat) . " €/" . $unit . "</td>
 				</tr>  
 				";
 
