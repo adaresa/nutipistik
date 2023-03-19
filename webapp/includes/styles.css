@@ -151,3 +151,16 @@ input[type='submit']:active {
     visibility: visible;
     opacity: 1;
 }
+
+/* -------------- Styles for line chart ---------------- */
+
+.chart-container {
+    width: 100%;
+    height: calc(100vh - 250px);
+    position: relative;
+}
+
+#todayChart {
+    width: 100%;
+    height: 100%;
+}

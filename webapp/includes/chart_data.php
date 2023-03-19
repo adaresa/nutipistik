@@ -1,33 +1,49 @@
-<?php 
+<?php
 include("../database_connect.php");
 include("energyConverter.php");
-global $con;
 
-// Add these two lines
+// Make sure the session is started.
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+$device_id = $_SESSION['device_id'];
+
+$sql = "SELECT ElectricityPrices.*, ESPtable2.ENERGY_TYPE, ESPtable2.VAT
+        FROM ElectricityPrices
+        JOIN ESPtable2 ON ElectricityPrices.id = 99999
+        WHERE ESPtable2.id = $device_id";
+
+$result = mysqli_query($con, $sql);
+
 error_reporting(E_ALL);
 ini_set('log_errors', 1);
 ini_set('error_log', 'custom_error_log.log');
 
-if (!$con) {
-    error_log("Error connecting to the database: " . mysqli_connect_error());
-    die("Error connecting to the database: " . mysqli_connect_error());
-}
-
-$sql = "SELECT ElectricityPrices.*, ESPtable2.ENERGY_TYPE
-        FROM ElectricityPrices
-        JOIN ESPtable2 ON ElectricityPrices.id = ESPtable2.id
-        WHERE ElectricityPrices.id = 99999";
-
-$result = mysqli_query($con, $sql);
 
 if (!$result) {
     error_log("Query error: " . mysqli_error($con));
-    die("Query error: " . mysqli_error($con));
+    header('Content-Type: application/json');
+    echo json_encode(['error' => 'Query error: ' . mysqli_error($con)]);
+    exit();
+}
+
+// Check if the query returned any rows.
+if (mysqli_num_rows($result) == 0) {
+    error_log("No rows found for device_id: $device_id");
+    header('Content-Type: application/json');
+    echo json_encode(['error' => "No data found for device_id: $device_id"]);
+    exit();
 }
 
 $hours = [];
 $todayPrices = [];
 $tomorrowPrices = [];
+
+// Initialize variables with default values.
+$unit = '';
+$vat = 0;
+$tomorrow_exists = false;
 
 while ($row = mysqli_fetch_array($result)) {
     date_default_timezone_set('Europe/Tallinn');
@@ -48,9 +64,7 @@ while ($row = mysqli_fetch_array($result)) {
 $js_hours = $hours;
 $js_today_prices = ['unit' => $unit, 'prices' => $todayPrices];
 $js_tomorrow_prices = $tomorrow_exists ? ['unit' => $unit, 'prices' => $tomorrowPrices] : null;
-error_log("Hours: " . print_r($hours, true));
-error_log("Today Prices: " . print_r($todayPrices, true));
-error_log("Tomorrow Prices: " . print_r($tomorrowPrices, true));
+
 header('Content-Type: application/json');
 echo json_encode([
     'hours' => $js_hours,

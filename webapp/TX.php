@@ -62,9 +62,7 @@ if (isset($output)) {
 
 // Update values in the database based on update_number
 if ($update_number == 1) {
-    mysqli_query($con, "UPDATE ESPtable2 SET CURRENT_PRICE = $sent_nr_1 WHERE id=$unit AND PASSWORD=$pass");
-} elseif ($update_number == 2) {
-    mysqli_query($con, "UPDATE ESPtable2 SET ARDUINO_OUTPUT = $ARDUINO_OUTPUT WHERE id=$unit AND PASSWORD=$pass");
+    mysqli_query($con, "UPDATE ElectricityPrices SET CURRENT_PRICE = $sent_nr_1 WHERE id=$unit AND PASSWORD=$pass");
 }
 
 $result = mysqli_query($con, "SELECT * FROM ESPtable2");
