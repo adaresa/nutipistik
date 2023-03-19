@@ -103,6 +103,8 @@ input[type='submit']:active {
     margin-left: 5px;
     /* add a small margin to separate the description and the button */
     position: relative;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /* Add the following style to remove spaces between the inline elements */

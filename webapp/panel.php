@@ -44,8 +44,12 @@ if (mysqli_connect_errno()) {
             
             <tbody>
             <tr class='active'>
-                <td>Tüüp</td>
-                <td>Pistikupesa olek</td>
+                <td>Režiim</td>
+                <td>
+                    <span style='display: inline-block; vertical-align: middle;'>Pistikupesa olek</span>
+                    <button id='SocketInfo' class='infoButton' style='display: inline-block; vertical-align: middle;'>?</button>
+                    <span class='desc' style='display: none;'></span>
+                </td>
             </tr>";
 
             //loop through the table and print the data into the table
@@ -268,11 +272,14 @@ if (mysqli_connect_errno()) {
 
     // remove the current tooltip
     function removeTooltip() {
-        const tooltip = document.querySelector('.desc');
-        if (tooltip) {
-            tooltip.remove();
-        }
+        const tooltips = document.querySelectorAll('.desc');
+        tooltips.forEach(tooltip => {
+            if (!tooltip.dataset.protected) {
+                tooltip.remove();
+            }
+        });
     }
+
 
     // update the description, tooltip based on the control type
     function updateDescription(controlType) {
@@ -302,10 +309,13 @@ if (mysqli_connect_errno()) {
     }
 
     // create the tooltip
-    function createTooltip(element, descText) {
+    function createTooltip(element, descText, protectTooltip = false) {
         var desc = document.createElement('span');
         desc.className = 'desc';
         desc.textContent = descText;
+        if (protectTooltip) {
+            desc.dataset.protected = 'true';
+        }
         element.parentNode.insertBefore(desc, element.nextSibling); // Insert the tooltip as a sibling element
 
         element.addEventListener('mouseenter', function (e) {
@@ -323,7 +333,6 @@ if (mysqli_connect_errno()) {
             desc.style.left = (mouseX + offsetX) + 'px';
             desc.style.top = (mouseY + offsetY) + 'px';
         });
-
 
         element.addEventListener('mouseleave', function () {
             desc.style.visibility = 'hidden';
@@ -405,6 +414,8 @@ if (mysqli_connect_errno()) {
         var unitId = controlTypeSelect.getAttribute('data-unit-id');
         var controlType = controlTypeSelect.value;
 
+        var socketInfoText = 'Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga 10 sekundi järel.'
+        createTooltip(document.getElementById('SocketInfo'), socketInfoText, true);
         updateControlParametersVisibility(controlType);
         updateDescription(controlType);
         startAutoUpdateOutputState(unitId, 5000); // Update every 5000ms (5 seconds)
