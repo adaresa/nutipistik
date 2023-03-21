@@ -18,7 +18,7 @@ def lambda_handler(x, y):
     end = end.strftime("%Y-%m-%dT%H%%3A%M%%3A%S.999Z")
 
     # make request to https://dashboard.elering.ee/api/nps/price?
-    url = "https://dashboard.elering.ee/api/nps/price?start=" + start + "&end=" + end
+    url = f"https://dashboard.elering.ee/api/nps/price?start={start}&end={end}"
     response = urllib3.PoolManager().request('GET', url)
     data = json.loads(response.data.decode('utf-8'))
 

@@ -414,7 +414,7 @@ if (mysqli_connect_errno()) {
         var unitId = controlTypeSelect.getAttribute('data-unit-id');
         var controlType = controlTypeSelect.value;
 
-        var socketInfoText = 'Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga 10 sekundi järel.'
+        var socketInfoText = 'Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga 10 sekundi tagant.'
         createTooltip(document.getElementById('SocketInfo'), socketInfoText, true);
         updateControlParametersVisibility(controlType);
         updateDescription(controlType);

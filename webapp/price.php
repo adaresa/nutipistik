@@ -15,7 +15,7 @@ include_once('includes/energyConverter.php'); ?>
         <div class="col-lg-12">
             <h1 class="page-header">Elektrihind</h1>
         </div>
-        
+
         <!-- Button to switch between table and line chart -->
         <button id="toggleView" class="btn btn-primary">Näita graafikut</button>
 
@@ -54,11 +54,17 @@ include_once('includes/energyConverter.php'); ?>
             fill: false,
         };
 
+        const datasets = [todayData];
+
+        if (tomorrowPrices) {
+            datasets.push(tomorrowData);
+        }
+
         const config = {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: hours,
-                datasets: [todayData, tomorrowData],
+                datasets: datasets,
             },
             options: {
                 responsive: true,
