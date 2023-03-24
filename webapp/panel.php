@@ -139,7 +139,7 @@ if (mysqli_connect_errno()) {
                 <form action='update_values.php' method='post'>
                     <input type='number' step='0.001' name='priceLimit' value='$price_limit' class='custom-input'/>
                     <input type='hidden' name='unitID' value='$unit_id' />
-                    <input type='submit' name='submit' value='Uuenda' />
+                    <input type='submit' name='submit' value='Salvesta' />
                 </form>
                 </td></tr>";
 
@@ -171,7 +171,7 @@ if (mysqli_connect_errno()) {
                 <form action='update_values.php' method='post'>
                     <input type='number' name='cheapHours' value='$cheap_hours' class='custom-input'/>
                     <input type='hidden' name='unitID' value='$unit_id' />
-                    <input type='submit' name='submit' value='Uuenda' />
+                    <input type='submit' name='submit' value='Salvesta' />
                 </form>";
                 echo "</td></tr>";
 
