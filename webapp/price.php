@@ -109,8 +109,7 @@ include_once('includes/energyConverter.php'); ?>
 
         new Chart(ctx, config);
     }
-</script>
-<script>
+
     function initChart(hours, todayPrices, tomorrowPrices) {
         console.log('Hours:', hours);
         console.log('Today Prices:', todayPrices);
@@ -135,10 +134,7 @@ include_once('includes/energyConverter.php'); ?>
                 console.error('Error fetching data:', error);
             });
     }
-</script>
 
-
-<script>
     document.addEventListener('DOMContentLoaded', function () {
         const toggleButton = document.getElementById('toggleView');
 
