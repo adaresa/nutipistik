@@ -62,16 +62,16 @@ include_once "includes/header.php";
                                 </tr>
                                 <tr>
                                     <td>Praegune parool</td>
-                                    <td><input type='password' name='current_password' class='custom-input' required>
+                                    <td><input type='password' name='current_password' class='custom-input' required title='password'>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Uus parool</td>
-                                    <td><input type='password' name='new_password' class='custom-input' required></td>
+                                    <td><input type='password' name='new_password' class='custom-input' required title='new password'></td>
                                 </tr>
                                 <tr>
                                     <td>Uuesti uus parool</td>
-                                    <td><input type='password' name='confirm_new_password' class='custom-input'
+                                    <td><input type='password' name='confirm_new_password' class='custom-input title='confirm new password'
                                             required></td>
                                 </tr>
                             </tbody>

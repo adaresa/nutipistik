@@ -54,7 +54,7 @@ include_once "includes/header.php";
                                     <tr>
                                         <td>Riik</td>
                                         <td>
-                                            <select name='region' class='controlType'>
+                                            <select name='region' class='controlType' title='region'>
                                                 <option ";
         if ($region == "1") {
             echo "selected";
@@ -83,7 +83,7 @@ include_once "includes/header.php";
                                     <tr>
                                         <td>Sisalda käibemaks (%)</td>
                                         <td>
-                                            <input type='number' name='vat' value='$vat' class='custom-input'>
+                                            <input type='number' name='vat' value='$vat' class='custom-input' title='vat'>
                                         </td>
                                     </tr>";
         // Elektrihinna ühik
@@ -91,7 +91,7 @@ include_once "includes/header.php";
                                     <tr>
                                         <td>Elektrihinna ühik</td>
                                         <td>
-                                            <select name='energyType' class='controlType'>
+                                            <select name='energyType' class='controlType' title='energyType'>
                                                 <option ";
         if ($energyType == "kWh") {
             echo "selected";

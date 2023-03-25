@@ -41,6 +41,7 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
+            -webkit-user-select: none; /* For Safari 3+ and Safari on iOS 3+ */
             user-select: none;
         }
 
@@ -113,7 +114,7 @@
                 <!-- Add the dropdown menu here -->
                 <ul class="nav navbar-top-links navbar-right">
                     <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" title="dropdown">
                             <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-user">

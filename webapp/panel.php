@@ -62,7 +62,7 @@ if (mysqli_connect_errno()) {
                 $output_state = $row['OUTPUT_STATE'];
 
                 echo "
-                <select name='controlType' class='controlType' data-unit-id='$unit_id'>
+                <select name='controlType' class='controlType' data-unit-id='$unit_id' title='controlType'>
                     <option ";
                 if ($control_type == 1) {
                     echo "selected";
@@ -153,7 +153,7 @@ if (mysqli_connect_errno()) {
                 <tr class='success' data-control-type='1'><td>
                 <form action='update_values.php' method='post'>
                     <div class='price-input-wrapper'>
-                        <input type='number' step='0.001' name='priceLimit' value='$price_limit' class='custom-input'/>
+                        <input type='number' step='0.001' name='priceLimit' value='$price_limit' class='custom-input' title='priceLimit' />
                         <span class='unit'>€/$unit</span>
                     </div>
                     <input type='hidden' name='unitID' value='$unit_id' />
@@ -187,7 +187,7 @@ if (mysqli_connect_errno()) {
                 // Cheap Hours
                 echo "<tr class='success' data-control-type='3'><td>
                 <form action='update_values.php' method='post'>
-                    <input type='number' name='cheapHours' value='$cheap_hours' class='custom-input'/>
+                    <input type='number' name='cheapHours' value='$cheap_hours' class='custom-input' title='cheapHours' />
                     <input type='hidden' name='unitID' value='$unit_id' />
                     <input type='submit' name='submit' value='Salvesta' />
                 </form>";

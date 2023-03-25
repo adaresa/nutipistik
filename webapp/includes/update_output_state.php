@@ -1,4 +1,5 @@
 <?php
+header('Cache-Control: no-cache');
 include_once("../database_connect.php");
 
 if (isset($_POST['unit_id'])) {
