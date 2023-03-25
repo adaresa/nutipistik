@@ -9,8 +9,9 @@ if (!isset($_SESSION['index'])) {
 $device_id = $_SESSION['device_id'];
 
 include_once('includes/header.php');
-include_once('includes/energyConverter.php');
 include_once("database_connect.php");
+include_once('includes/energyConverter.php');
+include_once('includes/cheapestHours.php');
 
 if (mysqli_connect_errno()) {
     echo "Failed to connect to MySQL: " . mysqli_connect_error();
@@ -136,8 +137,11 @@ if (mysqli_connect_errno()) {
                         <span id='description'></span>
                         <button id='infoButton' class='infoButton'>?</button>
                         <span id='extendedDescription' class='desc'></span>";
-                echo "<p class='small-text' data-control-type='1'>Praegune elektrihind: " . convert_unit($current_electricity_price, $unit, $vat) . ' €/'. $unit . "</p>";
-                echo "<p class='small-text' data-control-type='1'>Päeva keskmine elektrihind: " . convert_unit($average_electricity_price, $unit, $vat) . ' €/'. $unit . "</p>";
+                // PRICE LIMIT
+                echo "<p class='small-text' data-control-type='1'>Praegune elektrihind: <strong>" . convert_unit($current_electricity_price, $unit, $vat) . '</strong> €/'. $unit . "</p>";
+                echo "<p class='small-text' data-control-type='1'>Päeva keskmine elektrihind: <strong>" . convert_unit($average_electricity_price, $unit, $vat) . '</strong> €/'. $unit . "</p>";
+                // CHEAPEST HOURS
+                echo "<p class='small-text' data-control-type='3'>". get_cheapest_hours() ."</p>";
 
                 echo "
                     </td>
