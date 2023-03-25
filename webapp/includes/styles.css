@@ -86,6 +86,31 @@ input[type='submit']:active {
     font-weight: 300;
 }
 
+.price-input-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.unit {
+    position: absolute;
+    right: 35px;
+    top: 50%;
+    transform: translateY(-50%) translateY(4px); /* Adjust the transform to better center the text */
+    pointer-events: none;
+    color: #999;
+    font-weight: 300;
+    font-size: 12px;
+}
+
+/* -------------- Styles for other text elements ---------------- */
+
+/* Subtext under controlType */
+.small-text {
+    font-size: 14px;
+    color: #777;
+    margin-top: 4px;
+}
+
 
 /* -------------- Styles for the info button, tooltip ---------------- */
 

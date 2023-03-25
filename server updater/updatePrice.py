@@ -95,3 +95,11 @@ def lambda_handler(x, y):
                 url = getUpdateTomorrowPriceURL(i-24, value)
                 response = urllib3.PoolManager().request('GET', url)
                 i+=1
+                
+    # Calculate the average price for the current day
+    today_prices = list(price_dict.values())[:24]
+    average_price = sum(today_prices) / len(today_prices)
+    
+    # Update the average price
+    url = getUpdateAveragePriceURL(average_price)
+    response = urllib3.PoolManager().request('GET', url)
