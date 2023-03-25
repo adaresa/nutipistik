@@ -9,8 +9,9 @@ if (!isset($_SESSION['index'])) {
 $device_id = $_SESSION['device_id'];
 
 include_once('includes/header.php');
-include_once('includes/energyConverter.php');
 include_once("database_connect.php");
+include_once('includes/energyConverter.php');
+include_once('includes/cheapestHours.php');
 
 if (mysqli_connect_errno()) {
     echo "Failed to connect to MySQL: " . mysqli_connect_error();
@@ -44,16 +45,18 @@ if (mysqli_connect_errno()) {
             
             <tbody>
             <tr class='active'>
-                <td>Tüüp</td>
-                <td>Pistikupesa olek</td>
+                <td>Režiim</td>
+                <td>
+                    <span style='display: inline-block; vertical-align: middle;'>Pistikupesa olek</span>
+                    <button id='SocketInfo' class='infoButton' style='display: inline-block; vertical-align: middle;'>?</button>
+                    <span class='desc' style='display: none;'></span>
+                </td>
             </tr>";
 
             //loop through the table and print the data into the table
             while ($row = mysqli_fetch_array($result)) {
                 echo "<tr class='success'><td>";
-                $unit = $row['ENERGY_TYPE'];
                 $unit_id = $row['id'];
-                $vat = $row['VAT'];
                 $column = "CONTROL_TYPE";
                 $control_type = $row['CONTROL_TYPE'];
                 $output_state = $row['OUTPUT_STATE'];
@@ -100,13 +103,28 @@ if (mysqli_connect_errno()) {
         <!-- Control parameters -->
         <div>
             <?php
-            if (mysqli_connect_errno()) {
-                echo "Failed to connect to MySQL: " . mysqli_connect_error();
-            }
-
             $result = mysqli_query($con, "SELECT * FROM ESPtable2 WHERE id = '$device_id'");
+            while ($row = mysqli_fetch_array($result)) {
+                $unit_id = $row['id'];
+                $price_limit = $row['PRICE_LIMIT'];
+                $switch_state = $row['BUTTON_STATE'];
+                $cheap_hours = $row['CHEAPEST_HOURS'];
+                $selected_hours = $row['SELECTED_HOURS'];
+                $control_type = $row['CONTROL_TYPE'];
 
-            echo "<table class='table' style='font-size: 30px;'>
+                $unit = $row['ENERGY_TYPE'];
+                $vat = $row['VAT'];
+                $current_electricity_price = 0;
+                $average_electricity_price = 0;
+                $price_result = mysqli_query($con, "SELECT CURRENT_PRICE, AVERAGE_PRICE FROM ElectricityPrices WHERE id = 99999");
+                if ($price_row = mysqli_fetch_array($price_result)) {
+                    $current_electricity_price = $price_row["CURRENT_PRICE"];
+                    $average_electricity_price = $price_row["AVERAGE_PRICE"];
+                }
+
+
+
+                echo "<table class='table' style='font-size: 30px;'>
             <thead>
                 <tr>
                 <th>Juhtimine</th>
@@ -115,27 +133,31 @@ if (mysqli_connect_errno()) {
 
             <tbody>
             <tr class='active'>
-                <td>
-                    <span id='description'></span>
-                    <button id='infoButton' class='infoButton'>?</button>
-                    <span id='extendedDescription' class='desc'></span>
-                </td>
-            </tr>";
+                    <td>
+                        <span id='description'></span>
+                        <button id='infoButton' class='infoButton'>?</button>
+                        <span id='extendedDescription' class='desc'></span>";
+                // PRICE LIMIT
+                echo "<p class='small-text' data-control-type='1'>Praegune elektrihind: <strong>" . convert_unit($current_electricity_price, $unit, $vat) . '</strong> €/'. $unit . "</p>";
+                echo "<p class='small-text' data-control-type='1'>Päeva keskmine elektrihind: <strong>" . convert_unit($average_electricity_price, $unit, $vat) . '</strong> €/'. $unit . "</p>";
+                // CHEAPEST HOURS
+                echo "<p class='small-text' data-control-type='3'>". get_cheapest_hours() ."</p>";
 
-            while ($row = mysqli_fetch_array($result)) {
-                $unit_id = $row['id'];
-                $price_limit = $row['PRICE_LIMIT'];
-                $switch_state = $row['BUTTON_STATE'];
-                $cheap_hours = $row['CHEAPEST_HOURS'];
-                $selected_hours = $row['SELECTED_HOURS'];
+                echo "
+                    </td>
+                </tr>";
+
 
                 // Price Limit
                 echo "
                 <tr class='success' data-control-type='1'><td>
                 <form action='update_values.php' method='post'>
-                    <input type='number' step='0.001' name='priceLimit' value='$price_limit' class='custom-input'/>
+                    <div class='price-input-wrapper'>
+                        <input type='number' step='0.001' name='priceLimit' value='$price_limit' class='custom-input'/>
+                        <span class='unit'>€/$unit</span>
+                    </div>
                     <input type='hidden' name='unitID' value='$unit_id' />
-                    <input type='submit' name='submit' value='Uuenda' />
+                    <input type='submit' name='submit' value='Salvesta' />
                 </form>
                 </td></tr>";
 
@@ -167,7 +189,7 @@ if (mysqli_connect_errno()) {
                 <form action='update_values.php' method='post'>
                     <input type='number' name='cheapHours' value='$cheap_hours' class='custom-input'/>
                     <input type='hidden' name='unitID' value='$unit_id' />
-                    <input type='submit' name='submit' value='Uuenda' />
+                    <input type='submit' name='submit' value='Salvesta' />
                 </form>";
                 echo "</td></tr>";
 
@@ -268,11 +290,14 @@ if (mysqli_connect_errno()) {
 
     // remove the current tooltip
     function removeTooltip() {
-        const tooltip = document.querySelector('.desc');
-        if (tooltip) {
-            tooltip.remove();
-        }
+        const tooltips = document.querySelectorAll('.desc');
+        tooltips.forEach(tooltip => {
+            if (!tooltip.dataset.protected) {
+                tooltip.remove();
+            }
+        });
     }
+
 
     // update the description, tooltip based on the control type
     function updateDescription(controlType) {
@@ -302,10 +327,13 @@ if (mysqli_connect_errno()) {
     }
 
     // create the tooltip
-    function createTooltip(element, descText) {
+    function createTooltip(element, descText, protectTooltip = false) {
         var desc = document.createElement('span');
         desc.className = 'desc';
         desc.textContent = descText;
+        if (protectTooltip) {
+            desc.dataset.protected = 'true';
+        }
         element.parentNode.insertBefore(desc, element.nextSibling); // Insert the tooltip as a sibling element
 
         element.addEventListener('mouseenter', function (e) {
@@ -323,7 +351,6 @@ if (mysqli_connect_errno()) {
             desc.style.left = (mouseX + offsetX) + 'px';
             desc.style.top = (mouseY + offsetY) + 'px';
         });
-
 
         element.addEventListener('mouseleave', function () {
             desc.style.visibility = 'hidden';
@@ -349,7 +376,7 @@ if (mysqli_connect_errno()) {
 
     // update the visibility of control type specific parameters
     function updateControlParametersVisibility(controlType) {
-        document.querySelectorAll('.success[data-control-type]').forEach(function (row) {
+        document.querySelectorAll('[data-control-type]').forEach(function (row) {
             if (row.getAttribute('data-control-type') === controlType) {
                 row.style.display = '';
             } else {
@@ -405,6 +432,8 @@ if (mysqli_connect_errno()) {
         var unitId = controlTypeSelect.getAttribute('data-unit-id');
         var controlType = controlTypeSelect.value;
 
+        var socketInfoText = 'Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga 10 sekundi tagant.'
+        createTooltip(document.getElementById('SocketInfo'), socketInfoText, true);
         updateControlParametersVisibility(controlType);
         updateDescription(controlType);
         startAutoUpdateOutputState(unitId, 5000); // Update every 5000ms (5 seconds)

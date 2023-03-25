@@ -18,7 +18,7 @@ def lambda_handler(x, y):
     end = end.strftime("%Y-%m-%dT%H%%3A%M%%3A%S.999Z")
 
     # make request to https://dashboard.elering.ee/api/nps/price?
-    url = "https://dashboard.elering.ee/api/nps/price?start=" + start + "&end=" + end
+    url = f"https://dashboard.elering.ee/api/nps/price?start={start}&end={end}"
     response = urllib3.PoolManager().request('GET', url)
     data = json.loads(response.data.decode('utf-8'))
 
@@ -95,3 +95,11 @@ def lambda_handler(x, y):
                 url = getUpdateTomorrowPriceURL(i-24, value)
                 response = urllib3.PoolManager().request('GET', url)
                 i+=1
+                
+    # Calculate the average price for the current day
+    today_prices = list(price_dict.values())[:24]
+    average_price = sum(today_prices) / len(today_prices)
+    
+    # Update the average price
+    url = getUpdateAveragePriceURL(average_price)
+    response = urllib3.PoolManager().request('GET', url)

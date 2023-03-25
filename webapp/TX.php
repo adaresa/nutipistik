@@ -32,8 +32,8 @@ foreach ($_REQUEST as $key => $value) {
             $sent_nr_1 = $value;
         }
     } elseif ($update_number == 2) {
-        if ($key == "b1") {
-            $ARDUINO_OUTPUT = $value;
+        if ($key == "n2") {
+            $sent_nr_2 = $value;
         }
     }
 }
@@ -62,9 +62,11 @@ if (isset($output)) {
 
 // Update values in the database based on update_number
 if ($update_number == 1) {
-    mysqli_query($con, "UPDATE ESPtable2 SET CURRENT_PRICE = $sent_nr_1 WHERE id=$unit AND PASSWORD=$pass");
-} elseif ($update_number == 2) {
-    mysqli_query($con, "UPDATE ESPtable2 SET ARDUINO_OUTPUT = $ARDUINO_OUTPUT WHERE id=$unit AND PASSWORD=$pass");
+    mysqli_query($con, "UPDATE ElectricityPrices SET CURRENT_PRICE = $sent_nr_1 WHERE id=$unit AND PASSWORD=$pass");
+}
+
+if ($update_number == 2) {
+    mysqli_query($con, "UPDATE ElectricityPrices SET AVERAGE_PRICE = $sent_nr_2 WHERE id=$unit AND PASSWORD=$pass");
 }
 
 $result = mysqli_query($con, "SELECT * FROM ESPtable2");

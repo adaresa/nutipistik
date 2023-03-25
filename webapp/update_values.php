@@ -14,7 +14,7 @@ if (isset($_POST['submit'])) {
   if (isset($_POST['priceLimit'])) {
     $price_limit = $_POST['priceLimit'];
     // Set minimum price limit to 0 and maximum to 1000
-    $price_limit = min(1000, max(0, $price_limit));
+    $price_limit = min(99999, max(0, $price_limit));
     $query = "UPDATE ESPtable2 SET PRICE_LIMIT = '$price_limit' WHERE id = '$unit_id'";
     mysqli_query($con, $query);
   }

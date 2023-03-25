@@ -1,19 +1,19 @@
 <?php
 // Make sure the user is logged in
 session_start();
-if (!isset($_SESSION['index'])) {
-    header('LOCATION:index.php');
+if (!isset($_SESSION["index"])) {
+    header("LOCATION:index.php");
     die();
 }
 
-$device_id = $_SESSION['device_id'];
+$device_id = $_SESSION["device_id"];
 
-include_once('includes/header.php'); ?>
+include_once "includes/header.php";
+?>
 
 <div id='page-wrapper'>
     <?php
-
-    include("database_connect.php"); // Include data for the connection to the database
+    include "database_connect.php"; // Include data for the connection to the database
     
     // Check the connection
     if (mysqli_connect_errno()) {
@@ -24,10 +24,10 @@ include_once('includes/header.php'); ?>
     $result = mysqli_query($con, "SELECT * FROM ESPtable2 WHERE id = '$device_id'");
 
     while ($row = mysqli_fetch_array($result)) {
-        $unit_id = $row['id'];
-        $energyType = $row['ENERGY_TYPE'];
-        $vat = $row['VAT'];
-        $region = $row['REGION'];
+        $unit_id = $row["id"];
+        $energyType = $row["ENERGY_TYPE"];
+        $vat = $row["VAT"];
+        $region = $row["REGION"];
 
         echo "<div>
             <div class='row'>
@@ -37,44 +37,41 @@ include_once('includes/header.php'); ?>
             </div>
             <div class='row'>
                 <div class='col-lg-12'>
-                    <div class='panel panel-default'>
-                        <div class='panel-heading'>
-                            Üldine
-                        </div>
+
                         <div class='panel-body'>
                         <form action='settings.php' method='post'>
                         <div class='table-responsive'>
                             <table class='table table-striped table-bordered table-hover' id='dataTables-example'>
-                                <thead>
+                                <thead style='font-size: 22px;'>
                                     <tr>
                                         <th>Nimi</th>
-                                        <th>Valik</th>
+                                        <th>Väärtus</th>
                                     </tr>
                                 </thead>
-                                <tbody>";
+                                <tbody style='font-size: 30px;'>";
         // Riik
         echo "
                                     <tr>
                                         <td>Riik</td>
                                         <td>
-                                            <select name='region'>
+                                            <select name='region' class='controlType'>
                                                 <option ";
-        if ($region == '1') {
+        if ($region == "1") {
             echo "selected";
         }
         echo " value='1'>Eesti</option>
                                                 <option ";
-        if ($region == '2') {
+        if ($region == "2") {
             echo "selected";
         }
         echo " value='2'>Soome</option>
                                                 <option ";
-        if ($region == '3') {
+        if ($region == "3") {
             echo "selected";
         }
         echo " value='3'>Läti</option>
                                                 <option ";
-        if ($region == '4') {
+        if ($region == "4") {
             echo "selected";
         }
         echo " value='4'>Leedu</option>
@@ -86,7 +83,7 @@ include_once('includes/header.php'); ?>
                                     <tr>
                                         <td>Sisalda käibemaks (%)</td>
                                         <td>
-                                            <input type='text' name='vat' value='$vat'>
+                                            <input type='number' name='vat' value='$vat' class='custom-input'>
                                         </td>
                                     </tr>";
         // Elektrihinna ühik
@@ -94,14 +91,14 @@ include_once('includes/header.php'); ?>
                                     <tr>
                                         <td>Elektrihinna ühik</td>
                                         <td>
-                                            <select name='energyType'>
+                                            <select name='energyType' class='controlType'>
                                                 <option ";
-        if ($energyType == 'kWh') {
+        if ($energyType == "kWh") {
             echo "selected";
         }
         echo " value='kWh'>€/kWh</option>
                                                 <option ";
-        if ($energyType == 'MWh') {
+        if ($energyType == "MWh") {
             echo "selected";
         }
         echo " value='MWh'>€/MWh</option>
@@ -110,23 +107,23 @@ include_once('includes/header.php'); ?>
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                       
                         <input type='submit' name='change_but' value='Salvesta'>";
-        if (isset($_POST['change_but'])) {
-            if (isset($_POST['region'])) {
-                $region = $_POST['region'];
+        if (isset($_POST["change_but"])) {
+            if (isset($_POST["region"])) {
+                $region = $_POST["region"];
                 $query3 = "UPDATE ESPtable2 SET REGION = '$region' WHERE id = '$unit_id'";
                 $result = mysqli_query($con, $query3);
             }
 
-            if (isset($_POST['vat'])) {
-                $vat = $_POST['vat'];
+            if (isset($_POST["vat"])) {
+                $vat = $_POST["vat"];
                 $query2 = "UPDATE ESPtable2 SET VAT = '$vat' WHERE id = '$unit_id'";
                 $result = mysqli_query($con, $query2);
             }
 
-            if (isset($_POST['energyType'])) {
-                $energyType = $_POST['energyType'];
+            if (isset($_POST["energyType"])) {
+                $energyType = $_POST["energyType"];
                 $query = "UPDATE ESPtable2 SET ENERGY_TYPE = '$energyType' WHERE id = '$unit_id'";
                 $result = mysqli_query($con, $query);
             }
@@ -145,4 +142,4 @@ include_once('includes/header.php'); ?>
 
 </div>
 
-<?php include_once('includes/footer.php'); ?>
+<?php include_once "includes/footer.php"; ?>
