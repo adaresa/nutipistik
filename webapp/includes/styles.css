@@ -93,13 +93,13 @@ input[type='submit']:active {
 
 .unit {
     position: absolute;
-    right: 35px;
+    right: 40px;
     top: 50%;
-    transform: translateY(-50%) translateY(4px); /* Adjust the transform to better center the text */
+    transform: translateY(-50%) translateY(3px); /* Adjust the transform to better center the text */
     pointer-events: none;
     color: #999;
-    font-weight: 300;
-    font-size: 12px;
+    font-weight: 400;
+    font-size: 14px;
 }
 
 /* -------------- Styles for other text elements ---------------- */

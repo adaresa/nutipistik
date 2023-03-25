@@ -43,6 +43,10 @@ function get_cheapest_hours()
         $end_time = str_pad($hour['hour'], 2, "0", STR_PAD_LEFT) . ":59";
         $active_hours .= "'<strong>$start_time-$end_time</strong>', ";
     }
+    // Else if there are no cheapest hours
+    if (empty($cheapest_hours_arr)) {
+        $active_hours .= "<strong>-</strong>";
+    }
     $active_hours = rtrim($active_hours, ", ");
 
     return $active_hours;
