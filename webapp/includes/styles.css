@@ -126,32 +126,98 @@ input[type='submit']:active {
     text-align: center;
     cursor: pointer;
     margin-left: 5px;
-    /* add a small margin to separate the description and the button */
     position: relative;
     display: inline-block;
     vertical-align: middle;
 }
 
-/* Add the following style to remove spaces between the inline elements */
-#description,
-.infoButton {
-    display: inline-block;
-    vertical-align: middle;
-}
-
 .desc {
+    margin-left: 15px;
     position: absolute;
-    visibility: hidden;
-    display: inline-block;
-    padding: 5px 10px;
     background-color: rgba(0, 0, 0, 0.8);
-    color: white;
+    border: 1px solid #ccc;
     border-radius: 4px;
+    padding: 5px 10px;
+    color: #fff;
     font-size: 14px;
+    visibility: hidden;
+    white-space: normal;
+    width: auto;
+    max-width: 375px;
     z-index: 1000;
-    max-width: 90%; /* limit the tooltip width */
 }
 
+/* -------------- Styles for the selected hours buttons ---------------- */
+
+.selected-hours label {
+    display: inline-block;
+    width: 100px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    margin: 5px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    -webkit-user-select: none;
+    /* For Safari 3+ and Safari on iOS 3+ */
+    user-select: none;
+}
+
+.selected-hours label:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.selected-hours input[type="checkbox"] {
+    display: none;
+}
+
+.selected-hours input[type="checkbox"]:checked+span.hour-checkbox {
+    background-color: #4CAF50;
+    color: #fff;
+    border-radius: 5px;
+    box-sizing: border-box;
+    border: 1px solid #4CAF50;
+    /* Add this line */
+}
+
+.selected-hours label span.hour-checkbox {
+    display: block;
+    border: 1px solid #ccc;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+
+/* -------------- Styles for the connection status ---------------- */
+
+.smart-plug-indicator {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 10px;
+}
+
+.smart-plug-indicator span {
+    color: #f00;
+}
+
+/* Connection status font */
+
+.brand-text {
+    font-size: 18px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    color: #777;
+    text-decoration: none;
+}
 
 /* Add a media query to target smaller screens */
 @media screen and (max-width: 600px) {

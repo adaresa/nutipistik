@@ -1,4 +1,7 @@
 <?php
+
+header('X-Content-Type-Options: nosniff');
+
 include("../database_connect.php");
 
 if (isset($_POST['unit_id']) && isset($_POST['control_type'])) {

@@ -52,7 +52,12 @@ include_once "includes/header.php";
         // Riik
         echo "
                                     <tr>
-                                        <td>Riik</td>
+                                        <td>
+                                            <span style='display: inline-block; vertical-align: middle;'>Riik</span>
+                                            <button class='infoButton' type='button' style='display: inline-block; vertical-align: middle;' data-toggle='tooltip' data-placement='right'
+                                            title='Vali riik, kus asub seade. See määrab ka elektrihinna päritolu.'>?</button>
+                                        </td>
+                                        
                                         <td>
                                             <select name='region' class='controlType' title='region'>
                                                 <option ";

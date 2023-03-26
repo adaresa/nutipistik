@@ -48,8 +48,8 @@ if (mysqli_connect_errno()) {
                 <td>Režiim</td>
                 <td>
                     <span style='display: inline-block; vertical-align: middle;'>Pistikupesa olek</span>
-                    <button id='SocketInfo' class='infoButton' style='display: inline-block; vertical-align: middle;'>?</button>
-                    <span class='desc' style='display: none;'></span>
+                    <button class='infoButton' style='display: inline-block; vertical-align: middle;' data-toggle='tooltip' data-placement='right'
+                    title='Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga 10 sekundi tagant.'>?</button>
                 </td>
             </tr>";
 
@@ -135,13 +135,13 @@ if (mysqli_connect_errno()) {
             <tr class='active'>
                     <td>
                         <span id='description'></span>
-                        <button id='infoButton' class='infoButton'>?</button>
-                        <span id='extendedDescription' class='desc'></span>";
+                        <button id='infoButton' class='infoButton' style= data-toggle='tooltip' data-placement='right'
+                        title=''>?</button>";
                 // PRICE LIMIT
-                echo "<p class='small-text' data-control-type='1'>Praegune elektrihind: <strong>" . convert_unit($current_electricity_price, $unit, $vat) . '</strong> €/'. $unit . "</p>";
-                echo "<p class='small-text' data-control-type='1'>Päeva keskmine elektrihind: <strong>" . convert_unit($average_electricity_price, $unit, $vat) . '</strong> €/'. $unit . "</p>";
+                echo "<p class='small-text' data-control-type='1'>Praegune elektrihind: <strong>" . convert_unit($current_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";
+                echo "<p class='small-text' data-control-type='1'>Päeva keskmine elektrihind: <strong>" . convert_unit($average_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";
                 // CHEAPEST HOURS
-                echo "<p class='small-text' data-control-type='3'>". get_cheapest_hours() ."</p>";
+                echo "<p class='small-text' data-control-type='3'>" . get_cheapest_hours() . "</p>";
 
                 echo "
                     </td>
@@ -209,75 +209,6 @@ if (mysqli_connect_errno()) {
             }
             echo "</tbody></table><br>"; ?>
 
-
-            <script>
-
-                // Update selected hours
-                document.getElementById('selectedHoursForm').addEventListener('submit', function (e) {
-                    const selectedHoursCheckboxes = e.target.querySelectorAll('input[type="checkbox"]');
-                    let checkedCount = 0;
-
-                    selectedHoursCheckboxes.forEach(checkbox => {
-                        if (checkbox.checked) {
-                            checkedCount++;
-                        }
-                    });
-                });
-
-                // Update switch state
-                document.querySelectorAll('.selected-hours label').forEach(function (label) {
-                    label.addEventListener('click', function (e) {
-                        if (e.target !== label) return;
-                        const checkbox = label.querySelector('input[type="checkbox"]');
-                        checkbox.checked = !checkbox.checked;
-                    });
-                });
-
-                // Update switch state
-                function updateSwitchState(switchStateInput) {
-                    const form = switchStateInput.form;
-                    const unitId = form.elements['unitID'].value;
-                    const switchState = switchStateInput.checked ? '1' : '0';
-
-                    // Update the switch text
-                    const switchStateText = document.getElementById('switchStateText');
-                    switchStateText.textContent = switchStateInput.checked ? 'SEES' : 'VÄLJAS';
-
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', 'update_values.php', true);
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState == 4) {
-                            // console.log('Response:', xhr.responseText); // debug
-                        } else {
-                            // console.log('Error:', xhr.status, xhr.statusText); // debug
-                        }
-                    }
-                    xhr.send('unitID=' + unitId + '&switchState=' + switchState + '&submit=Update');
-                }
-
-                // Update selected hours
-                function updateSelectedHours(checkbox, unitId) {
-                    const isChecked = checkbox.checked;
-                    const hourValue = checkbox.value;
-                    const action = isChecked ? 'add' : 'remove';
-
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', 'includes/update_selected_hours.php', true);
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState == 4) {
-                            console.log('Response:', xhr.responseText);
-                        } else {
-                            console.log('Error:', xhr.status, xhr.statusText);
-                        }
-                    }
-                    xhr.send('unit_id=' + unitId + '&hour_value=' + hourValue + '&action=' + action);
-                }
-
-
-            </script>
-
         </div>
 
     </div>
@@ -287,21 +218,71 @@ if (mysqli_connect_errno()) {
 <?php include_once('includes/footer.php'); ?>
 
 <script>
+    // Update selected hours
+    document.getElementById('selectedHoursForm').addEventListener('submit', function (e) {
+        const selectedHoursCheckboxes = e.target.querySelectorAll('input[type="checkbox"]');
+        let checkedCount = 0;
 
-    // remove the current tooltip
-    function removeTooltip() {
-        const tooltips = document.querySelectorAll('.desc');
-        tooltips.forEach(tooltip => {
-            if (!tooltip.dataset.protected) {
-                tooltip.remove();
+        selectedHoursCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                checkedCount++;
             }
         });
+    });
+
+    // Update switch state
+    document.querySelectorAll('.selected-hours label').forEach(function (label) {
+        label.addEventListener('click', function (e) {
+            if (e.target !== label) return;
+            const checkbox = label.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+        });
+    });
+
+    // Update switch state
+    function updateSwitchState(switchStateInput) {
+        const form = switchStateInput.form;
+        const unitId = form.elements['unitID'].value;
+        const switchState = switchStateInput.checked ? '1' : '0';
+
+        // Update the switch text
+        const switchStateText = document.getElementById('switchStateText');
+        switchStateText.textContent = switchStateInput.checked ? 'SEES' : 'VÄLJAS';
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'update_values.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                // console.log('Response:', xhr.responseText); // debug
+            } else {
+                // console.log('Error:', xhr.status, xhr.statusText); // debug
+            }
+        }
+        xhr.send('unitID=' + unitId + '&switchState=' + switchState + '&submit=Update');
     }
 
+    // Update selected hours
+    function updateSelectedHours(checkbox, unitId) {
+        const isChecked = checkbox.checked;
+        const hourValue = checkbox.value;
+        const action = isChecked ? 'add' : 'remove';
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'includes/update_selected_hours.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                console.log('Response:', xhr.responseText);
+            } else {
+                console.log('Error:', xhr.status, xhr.statusText);
+            }
+        }
+        xhr.send('unit_id=' + unitId + '&hour_value=' + hourValue + '&action=' + action);
+    }
 
     // update the description, tooltip based on the control type
     function updateDescription(controlType) {
-        removeTooltip();
         var description = '';
         var extendedDescription = '';
         switch (controlType) {
@@ -323,38 +304,10 @@ if (mysqli_connect_errno()) {
                 break;
         }
         document.getElementById('description').textContent = description;
-        createTooltip(document.getElementById('infoButton'), extendedDescription);
-    }
+        // Change title of infoButton using bootstrap API
+        var infoButton = document.getElementById('infoButton');
+        $(infoButton).attr('data-original-title', extendedDescription).tooltip();
 
-    // create the tooltip
-    function createTooltip(element, descText, protectTooltip = false) {
-        var desc = document.createElement('span');
-        desc.className = 'desc';
-        desc.textContent = descText;
-        if (protectTooltip) {
-            desc.dataset.protected = 'true';
-        }
-        element.parentNode.insertBefore(desc, element.nextSibling); // Insert the tooltip as a sibling element
-
-        element.addEventListener('mouseenter', function (e) {
-            desc.style.visibility = 'visible';
-        });
-
-        element.addEventListener('mousemove', function (e) {
-            var mouseX = e.pageX;
-            var mouseY = e.pageY;
-            var descWidth = desc.offsetWidth;
-            var descHeight = desc.offsetHeight;
-            var offsetX = 15; // horizontal spacing
-            var offsetY = 15; // vertical spacing
-
-            desc.style.left = (mouseX + offsetX) + 'px';
-            desc.style.top = (mouseY + offsetY) + 'px';
-        });
-
-        element.addEventListener('mouseleave', function () {
-            desc.style.visibility = 'hidden';
-        });
     }
 
     // update the control type
@@ -432,14 +385,9 @@ if (mysqli_connect_errno()) {
         var unitId = controlTypeSelect.getAttribute('data-unit-id');
         var controlType = controlTypeSelect.value;
 
-        var socketInfoText = 'Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga 10 sekundi tagant.'
-        createTooltip(document.getElementById('SocketInfo'), socketInfoText, true);
         updateControlParametersVisibility(controlType);
         updateDescription(controlType);
-        startAutoUpdateOutputState(unitId, 5000); // Update every 5000ms (5 seconds)
-
-        // Call createTooltip with initial values on page load
-        var infoButton = document.getElementById('infoButton');
+        startAutoUpdateOutputState(unitId, 2500); // Update every 5000ms (5 seconds)
     }
 
     initializePage(); // Call the initializePage function
