@@ -134,8 +134,8 @@ if (mysqli_connect_errno()) {
             <tbody>
             <tr class='active'>
                     <td>
-                        <span id='description'></span>
-                        <button id='infoButton' class='infoButton' style= data-toggle='tooltip' data-placement='right'
+                        <span id='description' style='display: inline-block; vertical-align: middle;'></span>
+                        <button id='infoButton' class='infoButton' style='display: inline-block; vertical-align: middle;' data-toggle='tooltip' data-placement='right'
                         title=''>?</button>";
                 // PRICE LIMIT
                 echo "<p class='small-text' data-control-type='1'>Praegune elektrihind: <strong>" . convert_unit($current_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";

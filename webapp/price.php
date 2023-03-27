@@ -35,11 +35,11 @@ include_once('includes/energyConverter.php'); ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 
-    function drawChart(hours, todayPrices, tomorrowPrices) {
+    function drawChart(hours, todayPrices, tomorrowPrices, todayDate, tomorrowDate) {
         const ctx = document.getElementById('todayChart').getContext('2d');
 
         const todayData = {
-            label: "Täna",
+            label: `Täna (${todayDate})`,
             data: todayPrices.prices,
             borderColor: 'rgba(75, 192, 192, 1)',
             borderWidth: 2,
@@ -47,7 +47,7 @@ include_once('includes/energyConverter.php'); ?>
         };
 
         const tomorrowData = {
-            label: "Homme",
+            label: `Homme (${tomorrowDate})`,
             data: tomorrowPrices ? tomorrowPrices.prices : [],
             borderColor: 'rgba(255, 99, 132, 1)',
             borderWidth: 2,
@@ -110,11 +110,8 @@ include_once('includes/energyConverter.php'); ?>
         new Chart(ctx, config);
     }
 
-    function initChart(hours, todayPrices, tomorrowPrices) {
-        console.log('Hours:', hours);
-        console.log('Today Prices:', todayPrices);
-        console.log('Tomorrow Prices:', tomorrowPrices);
-        drawChart(hours, todayPrices, tomorrowPrices);
+    function initChart(hours, todayPrices, tomorrowPrices, todayDate, tomorrowDate) {
+        drawChart(hours, todayPrices, tomorrowPrices, todayDate, tomorrowDate);
     }
 
 
@@ -128,7 +125,7 @@ include_once('includes/energyConverter.php'); ?>
         fetch('includes/chart_data.php')
             .then(response => response.json())
             .then(data => {
-                initChart(data.hours, data.today_prices, data.tomorrow_prices);
+                initChart(data.hours, data.today_prices, data.tomorrow_prices, data.today_date, data.tomorrow_date);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
