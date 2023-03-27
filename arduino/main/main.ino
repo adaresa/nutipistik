@@ -5,7 +5,7 @@
 #include "electricity_price.h"
 #include <utility/wifi_drv.h>
 
-const unsigned long PERIOD_30S = 60UL*60UL*1000UL; // 30 seconds
+const unsigned long PERIOD_30S = 10UL*1000UL; // 30 seconds
 unsigned long timer_state = 0;
 bool start_timer = 0;
 

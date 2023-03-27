@@ -70,5 +70,7 @@ echo json_encode([
     'hours' => $js_hours,
     'today_prices' => $js_today_prices,
     'tomorrow_prices' => $js_tomorrow_prices,
+    'today_date' => date('d.m', strtotime('today')),
+    'tomorrow_date' => date('d.m', strtotime('tomorrow')),
 ]);
 ?>

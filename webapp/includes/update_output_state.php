@@ -1,4 +1,6 @@
 <?php
+header('X-Content-Type-Options: nosniff');
+header('Cache-Control: no-cache');
 include_once("../database_connect.php");
 
 if (isset($_POST['unit_id'])) {

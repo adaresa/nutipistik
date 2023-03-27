@@ -1,5 +1,7 @@
 <?php
 
+header('X-Content-Type-Options: nosniff');
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $unit_id = isset($_POST['unit_id']) ? intval($_POST['unit_id']) : 0;
     $hour_value = isset($_POST['hour_value']) ? intval($_POST['hour_value']) : -1;
