@@ -7,29 +7,67 @@ if (!isset($_SESSION['index'])) {
 }
 
 include_once('includes/header.php');
-include_once('includes/energyConverter.php'); ?>
+include_once('includes/energyConverter.php');
+include_once('database_connect.php');
 
-<div id="page-wrapper">
+// Fetch unit, vat from ESPtable2 table
+$device_id = $_SESSION['device_id'];
+$result_unit_vat = mysqli_query($con, "SELECT ENERGY_TYPE, VAT FROM ESPtable2 WHERE id = $device_id");
+$row_unit_vat = mysqli_fetch_array($result_unit_vat);
+$unit = $row_unit_vat['ENERGY_TYPE'];
+$vat = $row_unit_vat['VAT'];
+
+// Fetch current_price, daily average from ElectricityPrices table
+$result_prices = mysqli_query($con, "SELECT CURRENT_PRICE, AVERAGE_PRICE FROM ElectricityPrices");
+$row = mysqli_fetch_array($result_prices);
+$current_price = convert_unit($row['CURRENT_PRICE'], $unit, $vat);
+$average_price = convert_unit($row['AVERAGE_PRICE'], $unit, $vat);
+?>
+
+<div class='container content-spacing'>
 
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">Elektrihind</h1>
         </div>
 
-        <!-- Button to switch between table and line chart -->
-        <button id="toggleView" class="btn btn-primary">Näita graafikut</button>
+        <div>
 
-        <!-- Table with today's and tomorrow's electricity prices -->
-        <div id="priceTable" style="display: block;">
-            <?php include('includes/price_table.php'); ?>
-        </div>
+            <table class="table" style="font-size: 30px;">
+                <tbody>
+                    <tr>
+                        <td>Praegune elektrihind: <strong>
+                                <?php echo $current_price; ?>
+                            </strong> €/
+                            <?php echo $unit; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Päeva keskmine elektrihind: <strong>
+                                <?php echo $average_price; ?>
+                            </strong> €/
+                            <?php echo $unit; ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <!-- Line chart with today's and tomorrow's electricity prices -->
-        <div id="priceChart" class="chart-container" style="display: none;">
-            <canvas id="todayChart"></canvas>
+            <!-- Button to switch between table and line chart -->
+            <button id="toggleView" class="btn btn-primary">Näita graafikut</button>
+
+            <!-- Table with today's and tomorrow's electricity prices -->
+            <div id="priceTable" style="display: block;">
+                <?php include('includes/price_table.php'); ?>
+            </div>
+
+            <!-- Line chart with today's and tomorrow's electricity prices -->
+            <div id="priceChart" class="chart-container" style="display: none;">
+                <canvas id="todayChart"></canvas>
+            </div>
         </div>
 
     </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -93,7 +131,7 @@ include_once('includes/energyConverter.php'); ?>
                         display: true,
                         title: {
                             display: true,
-                            text: 'Kellaaeg',
+                            text: 'Kellaaeg (CET)',
                         },
                     },
                     y: {

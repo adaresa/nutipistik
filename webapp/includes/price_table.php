@@ -35,15 +35,23 @@ while ($row = mysqli_fetch_array($result_prices)) {
 	.equal-width-columns th, .equal-width-columns td {
 		width: 33.333%;
 	}
+	.no-top-side-borders {
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+	.no-top-border {
+		border-top: none !important;
+	}
     </style>
 	
     <table class='table table-striped table-bordered table-hover nopadding equal-width-columns' style='font-size: 22px;'>
         <thead>
-		<tr>
-                <th colspan='3' style='text-align: center;'>Elektrihind (€/" . $unit . ")</th>
+		<tr class='no-top-border'>
+                <th colspan='3' class='no-top-side-borders' style='text-align: center;'>Elektrihind (€/" . $unit . ")</th>
             </tr>
             <tr class='active sticky-header'>
-                <th>EET</td>
+                <th>CET</td>
                 <th>Täna ($today)</td>";
 	if ($tomorrow_exists) {
 		echo "<th>Homme ($tomorrow)</td>";
@@ -62,7 +70,12 @@ while ($row = mysqli_fetch_array($result_prices)) {
 		if ($i < 9) {
 			echo "0" . ($i + 1) . "</td>";
 		} else {
-			echo ($i + 1) . "</td>";
+			// if ($i == 23), then use 00 instead of 24
+			if ($i == 23) {
+				echo "00</td>";
+			} else {
+				echo ($i + 1) . "</td>";
+			}
 		}
 
 		echo "<td>" . convert_unit($row['td' . $i], $unit, $vat) . "</td>";

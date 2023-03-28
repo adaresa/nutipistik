@@ -11,7 +11,7 @@ $device_id = $_SESSION["device_id"];
 include_once "includes/header.php";
 ?>
 
-<div id='page-wrapper'>
+<div class='container content-spacing'>
     <?php
     include "database_connect.php"; // Include data for the connection to the database
     
@@ -54,7 +54,7 @@ include_once "includes/header.php";
                                     <tr>
                                         <td>
                                             <span style='display: inline-block; vertical-align: middle;'>Riik</span>
-                                            <button class='infoButton' type='button' style='display: inline-block; vertical-align: middle;' data-toggle='tooltip' data-placement='right'
+                                            <button class='infoButton' type='button' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right'
                                             title='Vali riik, kus asub seade. See määrab ka elektrihinna päritolu.'>?</button>
                                         </td>
                                         
@@ -144,7 +144,6 @@ include_once "includes/header.php";
         </div>";
     }
     ?>
-
 </div>
 
 <?php include_once "includes/footer.php"; ?>

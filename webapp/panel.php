@@ -12,15 +12,16 @@ include_once('includes/header.php');
 include_once("database_connect.php");
 include_once('includes/energyConverter.php');
 include_once('includes/cheapestHours.php');
+include_once('includes/smartHours.php');
 
 if (mysqli_connect_errno()) {
     echo "Failed to connect to MySQL: " . mysqli_connect_error();
 }
 ?>
 
-<div id="page-wrapper">
+<div class='main-content'>
 
-    <div>
+    <div class='container content-spacing'>
         <div class='row'>
             <div class='col-lg-12'>
                 <h1 class='page-header'>Juhtpaneel</h1>
@@ -48,7 +49,7 @@ if (mysqli_connect_errno()) {
                 <td>Režiim</td>
                 <td>
                     <span style='display: inline-block; vertical-align: middle;'>Pistikupesa olek</span>
-                    <button class='infoButton' style='display: inline-block; vertical-align: middle;' data-toggle='tooltip' data-placement='right'
+                    <button class='infoButton' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right'
                     title='Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga 10 sekundi tagant.'>?</button>
                 </td>
             </tr>";
@@ -83,6 +84,15 @@ if (mysqli_connect_errno()) {
                     echo "selected";
                 }
                 echo " value='4'>Valitud tunnid</option>
+                    <option ";
+                if ($control_type == 5) {
+                    echo "selected";
+                }
+                echo " value='5'>Targad tunnid</option>
+
+                
+                
+                
                 </select></td>";
 
                 // Output state
@@ -112,6 +122,11 @@ if (mysqli_connect_errno()) {
                 $selected_hours = $row['SELECTED_HOURS'];
                 $control_type = $row['CONTROL_TYPE'];
 
+                $cheap_day_threshold = $row['CHP_DAY_THOLD'];
+                $expensive_day_threshold = $row['EXP_DAY_THOLD'];
+                $cheap_day_hours = $row['CHP_DAY_HOURS'];
+                $expensive_day_hours = $row['EXP_DAY_HOURS'];
+
                 $unit = $row['ENERGY_TYPE'];
                 $vat = $row['VAT'];
                 $current_electricity_price = 0;
@@ -135,13 +150,16 @@ if (mysqli_connect_errno()) {
             <tr class='active'>
                     <td>
                         <span id='description' style='display: inline-block; vertical-align: middle;'></span>
-                        <button id='infoButton' class='infoButton' style='display: inline-block; vertical-align: middle;' data-toggle='tooltip' data-placement='right'
+                        <button id='infoButton' class='infoButton' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right' data-bs-html='true'
                         title=''>?</button>";
                 // PRICE LIMIT
                 echo "<p class='small-text' data-control-type='1'>Praegune elektrihind: <strong>" . convert_unit($current_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";
                 echo "<p class='small-text' data-control-type='1'>Päeva keskmine elektrihind: <strong>" . convert_unit($average_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";
                 // CHEAPEST HOURS
                 echo "<p class='small-text' data-control-type='3'>" . get_cheapest_hours() . "</p>";
+                // SMART HOURS
+                echo "<p class='small-text' data-control-type='5'>Päeva keskmine elektrihind: <strong>" . convert_unit($average_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";
+                echo "<p class='small-text' data-control-type='5'>" . get_smart_hours(convert_unit($average_electricity_price, $unit, $vat)) . "</p>";
 
                 echo "
                     </td>
@@ -153,7 +171,7 @@ if (mysqli_connect_errno()) {
                 <tr class='success' data-control-type='1'><td>
                 <form action='update_values.php' method='post'>
                     <div class='price-input-wrapper'>
-                        <input type='number' step='0.001' name='priceLimit' value='$price_limit' class='custom-input' title='priceLimit' />
+                        <input type='number' step='0.0001' name='priceLimit' value='$price_limit' class='custom-input' title='priceLimit' />
                         <span class='unit'>€/$unit</span>
                     </div>
                     <input type='hidden' name='unitID' value='$unit_id' />
@@ -205,6 +223,34 @@ if (mysqli_connect_errno()) {
                 echo "</div>
                 <input type='hidden' name='unitID' value='$unit_id' />
                 </form>";
+                echo "</td></tr>";
+
+                // Smart Hours
+                echo "<tr class='success' data-control-type='5'><td>
+                <form action='update_values.php' method='post' id = 'smartHoursForm'>
+                <span>Odava päeva lävend:</span>
+                <div class='price-input-wrapper'>
+                    <input type='number' step='0.0001' name='cheapDayThreshold' value='$cheap_day_threshold' class='custom-input' title='cheapDayThreshold' min = '0' id = 'cheapDayThreshold' />
+                    <span class='unit'>€/$unit</span>
+                </div>
+                <br>
+                <span>Odava päeva aktiivsete tundide arv:</span>
+                <input type='number' name='cheapDayHours' value='$cheap_day_hours' class='custom-input' title='cheapDayHours' min='0' max='24' />
+                <br>
+                <span>Kalli päeva lävend:</span>
+                <div class='price-input-wrapper'>
+                    <input type='number' step='0.0001' name='expensiveDayThreshold' value='$expensive_day_threshold' class='custom-input' title='expensiveDayThreshold' min = '0' id = 'expensiveDayThreshold' />
+                    <span class='unit'>€/$unit</span>
+                </div>
+                <br>
+                <span>Kalli päeva aktiivsete tundide arv:</span>
+                <input type='number' name='expensiveDayHours' value='$expensive_day_hours' class='custom-input' title='expensiveDayHours' min='0' max='24' />
+                <div style='margin-top: 10px;'>
+                <input type='hidden' name='unitID' value='$unit_id' />
+                <input type='submit' name='submit' value='Salvesta' />
+                </div>
+                </form>
+                </td></tr>";
 
             }
             echo "</tbody></table><br>"; ?>
@@ -302,12 +348,21 @@ if (mysqli_connect_errno()) {
                 description = 'Valitud tunnid';
                 extendedDescription = 'Pistikupesa lülitatakse sisse ainult valitud tundide ajal.';
                 break;
+            case '5':
+                description = 'Targad tunnid';
+                extendedDescription = 'Kui päeva keskmine elektrihind on alla odava päeva lävendi, töötab pistikupesa odava päeva tundide arvu.<br>Kui päeva keskmine elektrihind on üle kalli päeva lävendi, töötab pistikupesa kalli päeva tundide arvu.<br>Lävendite vahelisel päeva keskmisel elektrihinnal leitakse tundide arv lineaarselt.<br>Pistikupesa lülitatakse sisse saadud tundide arvu ööpäeva odavamate tundide jooksul.';
+                break;
         }
         document.getElementById('description').textContent = description;
         // Change title of infoButton using bootstrap API
-        var infoButton = document.getElementById('infoButton');
-        $(infoButton).attr('data-original-title', extendedDescription).tooltip();
-
+        var infoButton = document.getElementById("infoButton");
+        infoButton.setAttribute("data-bs-original-title", extendedDescription);
+        var tooltip = bootstrap.Tooltip.getInstance(infoButton);
+        var tooltip = bootstrap.Tooltip.getInstance(infoButton);
+        if (!tooltip) {
+            tooltip = new bootstrap.Tooltip(infoButton);
+        }
+        tooltip._fixTitle();
     }
 
     // update the control type
@@ -363,10 +418,20 @@ if (mysqli_connect_errno()) {
     // auto update the switch state
     function startAutoUpdateOutputState(unitId, interval) {
         updateOutputStateDisplay(unitId); // Initial update
-        setInterval(function () {
-            updateOutputStateDisplay(unitId);
-        }, interval);
+        setInterval(function () { updateOutputStateDisplay(unitId); }, interval);
     }
+
+    // validate Smart Hours form
+    document.getElementById('smartHoursForm').addEventListener('submit', function (event) {
+        var cheapDayThreshold = document.getElementById('cheapDayThreshold');
+        var expensiveDayThreshold = document.getElementById('expensiveDayThreshold');
+
+        if (parseFloat(cheapDayThreshold.value) >= parseFloat(expensiveDayThreshold.value)) {
+            event.preventDefault();
+            alert('Odava päeva lävend peab olema madalam kui kalli päeva lävend.');
+        }
+    });
+
 
     // when the control type changes, update the control type and control type specific parameters
     document.querySelectorAll('.controlType').forEach(function (element) {
@@ -387,7 +452,7 @@ if (mysqli_connect_errno()) {
 
         updateControlParametersVisibility(controlType);
         updateDescription(controlType);
-        startAutoUpdateOutputState(unitId, 2500); // Update every 5000ms (5 seconds)
+        startAutoUpdateOutputState(unitId, 2500); // Update every 2.5 seconds
     }
 
     initializePage(); // Call the initializePage function

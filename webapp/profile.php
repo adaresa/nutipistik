@@ -11,7 +11,7 @@ $device_id = $_SESSION["device_id"];
 include_once "includes/header.php";
 ?>
 
-<div id='page-wrapper'>
+<div class='container content-spacing'>
     <?php
     include "database_connect.php"; // Include data for the connection to the database
     
@@ -62,17 +62,19 @@ include_once "includes/header.php";
                                 </tr>
                                 <tr>
                                     <td>Praegune parool</td>
-                                    <td><input type='password' name='current_password' class='custom-input' required title='Praegune parool' placeholder='***********'>
+                                    <td><input type='password' name='current_password' class='custom-input' required
+                                            title='Praegune parool' placeholder='************'>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Uus parool</td>
-                                    <td><input type='password' name='new_password' class='custom-input' required title='Uus parool' placeholder='***********'></td>
+                                    <td><input type='password' name='new_password' class='custom-input' required
+                                            title='Uus parool' placeholder='************'></td>
                                 </tr>
                                 <tr>
                                     <td>Uuesti uus parool</td>
-                                    <td><input type='password' name='confirm_new_password' class='custom-input title='Uuesti uus parool' placeholder='************'
-                                            required></td>
+                                    <td><input type='password' name='confirm_new_password' class='custom-input title='
+                                            Uuesti uus parool' placeholder='************' required></td>
                                 </tr>
                             </tbody>
                         </table>

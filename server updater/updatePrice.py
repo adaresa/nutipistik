@@ -50,7 +50,6 @@ def lambda_handler(x, y):
     response = urllib3.PoolManager().request('GET', url)
     data = json.loads(response.data.decode('utf-8'))
     current_price = data["data"][0]["price"]
-
     # make POST request to https://nutipistik.fun/
     url = getUpdateCurrentPriceURL(current_price)
     response = urllib3.PoolManager().request('GET', url)

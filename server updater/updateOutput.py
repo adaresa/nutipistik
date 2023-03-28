@@ -16,7 +16,7 @@ def lambda_handler(x, y):
 
         if values["control_type"] == "1":  # Price limit
             print("Control type: Price Limit")
-            if PriceLimitOutput(values["current_price"], values["price_limit"]):
+            if PriceLimitOutput(float(values["current_price"]), float(values["price_limit"])):
                 switchOutput(id, password, 1)
             else:
                 switchOutput(id, password, 0)
@@ -30,7 +30,7 @@ def lambda_handler(x, y):
 
         elif values["control_type"] == "3":  # Cheapest hours
             print("Control type: Cheapest hours")
-            if CheapestHoursOutput(int(values["cheapest_hours"])):
+            if CheapestHoursOutput(int(values["cheapest_hours"]), float(values["current_price"])):
                 switchOutput(id, password, 1)
             else:
                 switchOutput(id, password, 0)
@@ -38,6 +38,13 @@ def lambda_handler(x, y):
         elif values["control_type"] == "4":  # Selected hours
             print("Control type: Selected hours")
             if SwitchOutput(values["selected_hour"]):
+                switchOutput(id, password, 1)
+            else:
+                switchOutput(id, password, 0)
+
+        elif values["control_type"] == "5": # Smart Hours
+            print("Control type: Smart Hours")
+            if SmartHoursOutput(int(values["chp_day_hours"]), int(values["exp_day_hours"]), float(values["chp_day_thold"]), float(values["exp_day_thold"]), float(values["current_price"])):
                 switchOutput(id, password, 1)
             else:
                 switchOutput(id, password, 0)
