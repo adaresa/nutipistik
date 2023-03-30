@@ -20,8 +20,8 @@ df = pd.DataFrame(data)
 df["timestamp"] = pd.to_datetime(df["timestamp"], unit="s")
 df["date"] = df["timestamp"].dt.date
 
-# Convert fixed price from 17.28 eurocents/kWh to EUR/MWh (METHOD 1)
-fixed_price = 17.28 * 10
+# Convert fixed price from 15 eurocents/kWh to EUR/MWh (METHOD 1)
+fixed_price = 15 * 10
 
 # Calculate the average stock market electricity price for each separate day (METHOD 2)
 daily_average_market_prices = df.groupby("date")["price"].mean()
@@ -49,7 +49,7 @@ cheapest_hours_cumulative_cost = np.cumsum(cheapest_hours_daily_cost)
 
 # Set up the line graph
 dates = daily_average_market_prices.index
-plt.plot(dates, fixed_cumulative_cost, label="Fikseeritud hind (17.28 eurosenti/kWh)", linewidth=2)
+plt.plot(dates, fixed_cumulative_cost, label="Fikseeritud hind (15 eurosenti/kWh)", linewidth=2)
 plt.plot(dates, average_market_cumulative_cost, label="Päeva keskmine turuhind", linewidth=2)
 plt.plot(dates, cheapest_hours_cumulative_cost, label="Päeva 4 odavamat tundi", linewidth=2)
 

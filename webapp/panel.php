@@ -89,6 +89,11 @@ if (mysqli_connect_errno()) {
                     echo "selected";
                 }
                 echo " value='5'>Targad tunnid</option>
+                    <option ";
+                if ($control_type == 6) {
+                    echo "selected";
+                }
+                echo " value='6'>Ajaplaan</option>
 
                 
                 
@@ -135,6 +140,27 @@ if (mysqli_connect_errno()) {
                 if ($price_row = mysqli_fetch_array($price_result)) {
                     $current_electricity_price = $price_row["CURRENT_PRICE"];
                     $average_electricity_price = $price_row["AVERAGE_PRICE"];
+                }
+
+                // Get time ranges
+                $time_ranges = json_decode($row['TIME_RANGES']);
+
+                // Filter expired time ranges
+                $currentTime = new DateTime();
+                $filtered_time_ranges = array_filter($time_ranges, function ($time_range) use ($currentTime) {
+                    $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $time_range->end);
+                    return $end_time > $currentTime;
+                });
+
+                if (count($filtered_time_ranges) !== count($time_ranges)) {
+                    // Convert filtered time_ranges to objects
+                    $filtered_time_ranges_obj = array_map(function ($time_range) {
+                        return (object) $time_range;
+                    }, $filtered_time_ranges);
+
+                    $filtered_time_ranges_json = json_encode($filtered_time_ranges_obj);
+                    $query = "UPDATE ESPtable2 SET TIME_RANGES = '$filtered_time_ranges_json' WHERE id = '$unit_id'";
+                    mysqli_query($con, $query);
                 }
 
 
@@ -252,6 +278,33 @@ if (mysqli_connect_errno()) {
                 </form>
                 </td></tr>";
 
+                // Schedule
+                echo "<tr class='success' data-control-type='6'><td>
+                <form action='update_values.php' method='post' id='scheduleControlForm' class='row g-3'>
+                    <div id='schedule-container' class='col-12'>";
+                foreach ($filtered_time_ranges as $index => $time_range) {
+                    $start_time = DateTime::createFromFormat('Y-m-d H:i:s', $time_range->start)->format('d.m.Y H:i');
+                    $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $time_range->end)->format('d.m.Y H:i');
+                    $unique_id = time() . '-' . $index;
+                    echo "<div class='time-range d-flex align-items-center mb-2' id='time-range-$unique_id'>";
+                    echo "<input type='text' class='flatpickr-input form-control me-2' name='from[]' value='$start_time' placeholder='pp.kk.aaaa tt:mm' autocomplete='off'>";
+                    echo "<span class='me-2'> - </span>";
+                    echo "<input type='text' class='flatpickr-input form-control me-2' name='to[]' value='$end_time' placeholder='pp.kk.aaaa tt:mm' autocomplete='off'>";
+                    echo "<button type='button' class='btn btn-danger btn-sm remove-time-range' data-target='time-range-$unique_id'>Eemalda</button>";
+                    echo "</div>";
+                }
+                echo "</div>
+                <div class='col-12'>
+                    <button type='button' id='addTimeRange' class='btn btn-primary'>Lisa uus vahemik</button>
+                </div>
+                <input type='hidden' name='unitID' value='$unit_id' />
+                <div class='col-12'>
+                    <input type='submit' name='submit_schedule' value='Salvesta' class='btn btn-success' />
+                </div>
+            </form>";
+
+                echo "</td></tr>";
+
             }
             echo "</tbody></table><br>"; ?>
 
@@ -352,6 +405,9 @@ if (mysqli_connect_errno()) {
                 description = 'Targad tunnid';
                 extendedDescription = 'Kui päeva keskmine elektrihind on alla odava päeva lävendi, töötab pistikupesa odava päeva tundide arvu.<br>Kui päeva keskmine elektrihind on üle kalli päeva lävendi, töötab pistikupesa kalli päeva tundide arvu.<br>Lävendite vahelisel päeva keskmisel elektrihinnal leitakse tundide arv lineaarselt.<br>Pistikupesa lülitatakse sisse saadud tundide arvu ööpäeva odavamate tundide jooksul.';
                 break;
+            case '6':
+                description = 'Ajaplaan';
+                extendedDescription = 'Pistikupesa lülitatakse sisse vastavalt ajaplaanile.<br>Aegunud vahemikud eemaldatakse automaatselt.';
         }
         document.getElementById('description').textContent = description;
         // Change title of infoButton using bootstrap API
@@ -443,6 +499,155 @@ if (mysqli_connect_errno()) {
             updateDescription(controlType); // Update the description when the control type changes
         });
     });
+
+
+    // Schedule
+    let timeRangeIndex = 0;
+    document.addEventListener("DOMContentLoaded", function () {
+        const existingTimeRanges = document.querySelectorAll(".time-range");
+        let maxIndex = -1;
+        existingTimeRanges.forEach((timeRange) => {
+            const index = parseInt(timeRange.getAttribute("data-index"), 10);
+            if (index > maxIndex) {
+                maxIndex = index;
+            }
+
+            const removeButton = timeRange.querySelector(".remove-time-range");
+            if (removeButton) {
+                attachRemoveButtonListener(removeButton);
+            }
+        });
+        timeRangeIndex = maxIndex + 1;
+
+        const addTimeRangeButton = document.getElementById("addTimeRange");
+        if (addTimeRangeButton) {
+            addTimeRangeButton.addEventListener("click", addTimeRange);
+        }
+    });
+
+    document.getElementById("scheduleControlForm").addEventListener("submit", function (event) {
+        const timeRanges = document.querySelectorAll(".time-range");
+        const rangeTimes = [];
+        let hasInvalidRange = false;
+        let hasOverlap = false;
+
+        timeRanges.forEach(timeRange => {
+            const fromInput = timeRange.querySelector("input[name='from[]']");
+            const toInput = timeRange.querySelector("input[name='to[]']");
+            const fromTime = parseDate(fromInput.value);
+            const toTime = parseDate(toInput.value);
+
+            timeRange.classList.remove('bg-danger');
+
+            if (fromInput.value && toInput.value && fromTime >= toTime) {
+                hasInvalidRange = true;
+                timeRange.classList.add('bg-danger');
+            } else {
+                rangeTimes.push({ from: fromTime, to: toTime, element: timeRange });
+            }
+        });
+
+        if (hasInvalidRange) {
+            event.preventDefault();
+            alert("Algusaeg ei tohiks tulla enne lõppaega.");
+            return;
+        }
+
+        rangeTimes.sort((a, b) => a.from - b.from);
+
+        for (let i = 0; i < rangeTimes.length - 1; i++) {
+            const range1 = rangeTimes[i];
+            for (let j = i + 1; j < rangeTimes.length; j++) {
+                const range2 = rangeTimes[j];
+                if (range1.to > range2.from && range1.from < range2.to) {
+                    range1.element.classList.add('bg-danger');
+                    range2.element.classList.add('bg-danger');
+                    hasOverlap = true;
+                }
+            }
+        }
+
+        if (hasOverlap) {
+            event.preventDefault();
+            alert("Ajavahemikud ei tohiks kattuda.");
+        }
+    });
+
+    function parseDate(str) {
+        const [day, month, year, hours, minutes] = str.match(/^(\d{2})\.(\d{2})\.(\d{4})\s(\d{2}):(\d{2})$/).slice(1);
+        return new Date(year, month - 1, day, hours, minutes);
+    }
+
+
+    function attachRemoveButtonListener(removeButton) {
+        removeButton.addEventListener("click", function (event) {
+            const target = event.target.getAttribute("data-target");
+            const elementToRemove = document.getElementById(target);
+            if (elementToRemove) {
+                elementToRemove.remove();
+            }
+        });
+    }
+
+
+    function addTimeRange() {
+        const timeRangeId = Date.now();
+
+        const scheduleContainer = document.getElementById("schedule-container");
+        const timeRangeContainer = document.createElement("div");
+        timeRangeContainer.classList.add("time-range", "d-flex", "align-items-center", "mb-2");
+        timeRangeContainer.id = `time-range-${timeRangeId}`;
+
+        const inputFrom = document.createElement("input");
+        inputFrom.type = "text";
+        inputFrom.classList.add("flatpickr-input", "form-control", "me-2");
+        inputFrom.name = "from[]";
+        inputFrom.setAttribute("placeholder", "pp.kk.aaaa tt:mm");
+        inputFrom.setAttribute("autocomplete", "off");
+        timeRangeContainer.appendChild(inputFrom);
+
+        const span = document.createElement("span");
+        span.classList.add("me-2");
+        span.innerHTML = " - ";
+        timeRangeContainer.appendChild(span);
+
+        const inputTo = document.createElement("input");
+        inputTo.type = "text";
+        inputTo.classList.add("flatpickr-input", "form-control", "me-2");
+        inputTo.name = "to[]";
+        inputTo.setAttribute("placeholder", "pp.kk.aaaa tt:mm");
+        inputTo.setAttribute("autocomplete", "off");
+        timeRangeContainer.appendChild(inputTo);
+
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.textContent = "Eemalda";
+        removeButton.classList.add("btn", "btn-danger", "btn-sm", "remove-time-range");
+        removeButton.setAttribute("data-target", `time-range-${timeRangeId}`);
+        timeRangeContainer.appendChild(removeButton);
+
+        scheduleContainer.appendChild(timeRangeContainer);
+
+        attachRemoveButtonListener(removeButton);
+
+        flatpickr(inputFrom, {
+            enableTime: true,
+            dateFormat: "d.m.Y H:i",
+            time_24hr: true,
+            minDate: "today",
+            locale: "et"
+        });
+
+        flatpickr(inputTo, {
+            enableTime: true,
+            dateFormat: "d.m.Y H:i",
+            time_24hr: true,
+            minDate: "today",
+            locale: "et"
+        });
+
+        timeRangeIndex++;
+    }
 
     // initialize the page
     function initializePage() {

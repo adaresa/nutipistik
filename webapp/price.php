@@ -99,7 +99,7 @@ $average_price = convert_unit($row['AVERAGE_PRICE'], $unit, $vat);
         }
 
         const config = {
-            type: 'bar',
+            type: 'line',
             data: {
                 labels: hours,
                 datasets: datasets,
