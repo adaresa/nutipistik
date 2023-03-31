@@ -94,6 +94,8 @@ while ($row = mysqli_fetch_array($result)) {
         $chp_day_thold = $row['CHP_DAY_THOLD'];
         $exp_day_thold = $row['EXP_DAY_THOLD'];
 
+        $time_ranges = $row['TIME_RANGES'];
+
         if ($control_type == 1) {
             $result = 'region:' . $region . ',control_type:1,price_limit:' . $price_limit . ',current_price:' . $current_price;
         } elseif ($control_type == 2) {
@@ -104,6 +106,8 @@ while ($row = mysqli_fetch_array($result)) {
         $result = 'region:' . $region . ',control_type:4,selected_hour:' . $selected_hour;
         } elseif ($control_type == 5) {
         $result = 'region:' . $region . ',control_type:5,chp_day_hours:' . $chp_day_hours . ',exp_day_hours:' . $exp_day_hours . ',chp_day_thold:' . $chp_day_thold . ',exp_day_thold:' . $exp_day_thold . ',current_price:' . $current_price;
+        } elseif ($control_type == 6) {
+        $result = 'region:' . $region . ',control_type:6,schedule:' . $time_ranges;
         }
         echo $result;
     }

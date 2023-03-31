@@ -50,7 +50,7 @@ if (mysqli_connect_errno()) {
                 <td>
                     <span style='display: inline-block; vertical-align: middle;'>Pistikupesa olek</span>
                     <button class='infoButton' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right'
-                    title='Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga 10 sekundi tagant.'>?</button>
+                    title='Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga ~2 sekundi tagant.'>?</button>
                 </td>
             </tr>";
 
@@ -657,7 +657,7 @@ if (mysqli_connect_errno()) {
 
         updateControlParametersVisibility(controlType);
         updateDescription(controlType);
-        startAutoUpdateOutputState(unitId, 2500); // Update every 2.5 seconds
+        startAutoUpdateOutputState(unitId, 1000); // Update every 1 seconds
     }
 
     initializePage(); // Call the initializePage function
