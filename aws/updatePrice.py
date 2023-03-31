@@ -3,33 +3,54 @@ import json
 import datetime
 from serverSecret import *
 import dateutil.tz
+import pytz
 
-def lambda_handler(x, y):
-    # Get start time in UTC
-    start = datetime.datetime.utcnow()
-    # shift 2 hours
-    start = start.replace(hour=0, minute=0, second=0, microsecond=0)
-    start = start + datetime.timedelta(hours=-2)
-    start = start.strftime("%Y-%m-%dT%H%%3A%M%%3A%S.000Z")
-    # Get end time in UTC
-    end = datetime.datetime.utcnow()
-    end = end + datetime.timedelta(days=1)
-    end = end.replace(hour=23, minute=59, second=59, microsecond=999)
-    end = end.strftime("%Y-%m-%dT%H%%3A%M%%3A%S.999Z")
+def lambda_handler(event, context):
+    # Get the current date in Estonia and set the time to 00:00
+    est_tz = pytz.timezone('Europe/Tallinn')
+    est_today = datetime.datetime.now(est_tz).date()
+    est_midnight = est_tz.localize(datetime.datetime.combine(est_today, datetime.time.min))
 
-    # make request to https://dashboard.elering.ee/api/nps/price?
-    url = f"https://dashboard.elering.ee/api/nps/price?start={start}&end={end}"
+    # Determine the UTC offset for Estonia
+    summer_time = bool(pytz.country_timezones['ee'][-1])
+    if summer_time:
+        utc_offset = datetime.timedelta(hours=3)
+    else:
+        utc_offset = datetime.timedelta(hours=2)
+
+    # Calculate the start and end times in UTC
+    start = est_midnight - utc_offset
+    end = est_midnight + datetime.timedelta(days=1) - datetime.timedelta(milliseconds=1) - utc_offset
+
+    start_str = start.strftime("%Y-%m-%dT%H:%M:%S.") + start.strftime("%f")[:3] + "Z"
+    end_str = end.strftime("%Y-%m-%dT%H:%M:%S.") + end.strftime("%f")[:3] + "Z"
+
+    # Make request to https://dashboard.elering.ee/api/nps/price?
+    url = f"https://dashboard.elering.ee/api/nps/price?start={start_str}&end={end_str}"
     response = urllib3.PoolManager().request('GET', url)
     data = json.loads(response.data.decode('utf-8'))
 
-    # print(url)
-    price_dict = {}
-    
+    # Check if data for the next day exists
+    next_day_start = (end + datetime.timedelta(milliseconds=1)).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    next_day_end_temp = (end + datetime.timedelta(days=1)).replace(hour=20, minute=59, second=59, microsecond=999)
+    next_day_end = next_day_end_temp.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-6] + "999Z"
+    next_day_url = f"https://dashboard.elering.ee/api/nps/price?start={next_day_start}&end={next_day_end}"
+    next_day_response = urllib3.PoolManager().request('GET', next_day_url)
+    next_day_data = json.loads(next_day_response.data.decode('utf-8'))
+
     # Get the selected region
     url = getServerValueURL()
 
     # Get the values from the server
     values = getServerValues(url)
+
+    if next_day_data:
+        # If data for the next day exists, append it to the existing data
+        data['data'][values['region']] += next_day_data['data'][values['region']]
+        
+
+    # print(url)
+    price_dict = {}
 
     # get all from "data", values[region] in the json
     for i in data["data"][values["region"]]:
@@ -39,12 +60,7 @@ def lambda_handler(x, y):
     # sort price_dict by key
     price_dict = dict(sorted(price_dict.items()))
 
-    # print price_dict
-    # i = 0
-    # for key, value in price_dict.items():
-    #     print(f"{i+1}. {key}, {value}")
-    #     i+=1
-        
+
     # to find current_price, make request to https://dashboard.elering.ee/api/nps/price/'values[region]'/current
     url = "https://dashboard.elering.ee/api/nps/price/" + values["region"] + "/current"
     response = urllib3.PoolManager().request('GET', url)
@@ -98,7 +114,7 @@ def lambda_handler(x, y):
     # Calculate the average price for the current day
     today_prices = list(price_dict.values())[:24]
     average_price = sum(today_prices) / len(today_prices)
-    
+
     # Update the average price
     url = getUpdateAveragePriceURL(average_price)
     response = urllib3.PoolManager().request('GET', url)

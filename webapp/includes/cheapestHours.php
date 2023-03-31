@@ -20,8 +20,7 @@ function get_cheapest_hours()
     $row = mysqli_fetch_array($result_prices);
     $todays_prices = array();
     for ($i = 0; $i < 24; $i++) {
-        $adjusted_hour = ($i + 1) % 24;
-        $todays_prices[$i] = array('hour' => $i, 'price' => $row['td' . $adjusted_hour]);
+        $todays_prices[$i] = array('hour' => $i, 'price' => $row['td' . $i]);
     }
 
     // Sort todays prices
@@ -40,14 +39,11 @@ function get_cheapest_hours()
     // Format the cheapest hours
     $active_hours = "Aktiivseid tunde: $cheapest_hours<br>Aktiivsed tunnid: ";
     foreach ($cheapest_hours_arr as $hour) {
-        $start_hour = ($hour['hour'] - 1 + 24) % 24;
-        $end_hour = ($hour['hour'] - 1 + 24) % 24;
-
+        $start_hour = $hour['hour'];
+        $end_hour = $hour['hour'];
         $start_time = str_pad($start_hour, 2, "0", STR_PAD_LEFT) . ":00";
         $end_time = str_pad($end_hour, 2, "0", STR_PAD_LEFT) . ":59";
-        $day_modifier = $start_hour == 23 ? " (eilne päev)" : "";
-
-        $active_hours .= "<strong>{$start_time}-{$end_time}{$day_modifier}</strong>, ";
+        $active_hours .= "<strong>{$start_time}-{$end_time}</strong>, ";
     }
     // Else if there are no cheapest hours
     if (empty($cheapest_hours_arr)) {

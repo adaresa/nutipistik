@@ -16,17 +16,27 @@ def SwitchOutput(switch): # If switch is on
         return False
     
 def fetch_prices():
-    # Get start time in UTC
-    start = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
-    start = start - datetime.timedelta(hours=2)
-    start = start.strftime("%Y-%m-%dT%H%%3A%M%%3A%S.000Z")
-    # Get end time in UTC
-    end = datetime.datetime.utcnow().replace(hour=23, minute=59, second=59, microsecond=999)
-    end = end - datetime.timedelta(hours=2)
-    end = end.strftime("%Y-%m-%dT%H%%3A%M%%3A%S.999Z")
-    
+    # Get the current date in Estonia and set the time to 00:00
+    est_tz = pytz.timezone('Europe/Tallinn')
+    est_today = datetime.datetime.now(est_tz).date()
+    est_midnight = est_tz.localize(datetime.datetime.combine(est_today, datetime.time.min))
+
+    # Determine the UTC offset for Estonia
+    summer_time = bool(pytz.country_timezones['ee'][-1])
+    if summer_time:
+        utc_offset = datetime.timedelta(hours=3)
+    else:
+        utc_offset = datetime.timedelta(hours=2)
+
+    # Calculate the start and end times in UTC
+    start = est_midnight - utc_offset
+    end = est_midnight + datetime.timedelta(days=1) - datetime.timedelta(milliseconds=1) - utc_offset
+
+    start_str = start.strftime("%Y-%m-%dT%H:%M:%S.") + start.strftime("%f")[:3] + "Z"
+    end_str = end.strftime("%Y-%m-%dT%H:%M:%S.") + end.strftime("%f")[:3] + "Z"
+
     # Make request to https://dashboard.elering.ee/api/nps/price?
-    url = "https://dashboard.elering.ee/api/nps/price?start=" + start + "&end=" + end
+    url = f"https://dashboard.elering.ee/api/nps/price?start={start_str}&end={end_str}"
     response = urllib3.PoolManager().request('GET', url)
     data = json.loads(response.data.decode('utf-8'))
 
@@ -49,11 +59,11 @@ def CheapestHoursOutput(cheapest_hours, current_price): # If current time is in 
     else:
         return False
     
-def SmartHoursOutput(chp_day_hours, exp_day_hours, chp_day_thold, exp_day_thold, current_price):
+def SmartHoursOutput(chp_day_hours, exp_day_hours, chp_day_thold, exp_day_thold, current_price, average_price):
     price_dict = fetch_prices()
 
-    current_day_average_price = sum(price_dict.values()) / 24
-
+    current_day_average_price = average_price
+    
     # Calculate the number of hours the plug run based on a linear interpolation
     if current_day_average_price <= chp_day_thold:
         threshold_hours = chp_day_hours
@@ -62,13 +72,22 @@ def SmartHoursOutput(chp_day_hours, exp_day_hours, chp_day_thold, exp_day_thold,
     else:
         price_ratio = (current_day_average_price - chp_day_thold) / (exp_day_thold - chp_day_thold)
         threshold_hours = int(round(chp_day_hours + price_ratio * (exp_day_hours - chp_day_hours)))
-
     
     # Sort the price_dict based on price values
     sorted_prices = sorted(price_dict.items(), key=lambda item: item[1])
 
     # Get the threshold price from the sorted prices
     threshold_price = sorted_prices[threshold_hours-1][1]
+    
+    print(threshold_hours)
+    print(threshold_price)
+    
+    # print threshold_hours number of prices in sorted_prices, and also timestamp. Convert timestamp to local time
+    for i in range(threshold_hours-1):
+        a = sorted_prices[i][1]
+        b= datetime.datetime.fromtimestamp(sorted_prices[i][0], tz=pytz.timezone('Europe/Tallinn')).strftime("%H:%M")
+        print(f'{b}: {a}')
+        
     
     # Check if the current price is less than or equal to the threshold price
     if current_price <= threshold_price:

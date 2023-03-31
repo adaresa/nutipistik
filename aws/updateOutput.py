@@ -41,7 +41,7 @@ for id, password in SERVER_ID_AND_PASS.items():
 
     elif values["control_type"] == "5": # Smart Hours
         print("Control type: Smart Hours")
-        if SmartHoursOutput(int(values["chp_day_hours"]), int(values["exp_day_hours"]), float(values["chp_day_thold"]), float(values["exp_day_thold"]), float(values["current_price"])):
+        if SmartHoursOutput(int(values["chp_day_hours"]), int(values["exp_day_hours"]), float(values["chp_day_thold"]), float(values["exp_day_thold"]), float(values["current_price"]), float(values["average_price"])):
             switchOutput(id, password, 1)
         else:
             switchOutput(id, password, 0)

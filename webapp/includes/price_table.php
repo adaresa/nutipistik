@@ -51,7 +51,7 @@ while ($row = mysqli_fetch_array($result_prices)) {
                 <th colspan='3' class='no-top-side-borders' style='text-align: center;'>Elektrihind (€/" . $unit . ")</th>
             </tr>
             <tr class='active sticky-header'>
-                <th>CET</td>
+                <th>UTC+3</td>
                 <th>Täna ($today)</td>";
 	if ($tomorrow_exists) {
 		echo "<th>Homme ($tomorrow)</td>";

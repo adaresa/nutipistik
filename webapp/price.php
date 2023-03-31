@@ -131,7 +131,7 @@ $average_price = convert_unit($row['AVERAGE_PRICE'], $unit, $vat);
                         display: true,
                         title: {
                             display: true,
-                            text: 'Kellaaeg (CET)',
+                            text: 'Kellaaeg (UTC+3)',
                         },
                     },
                     y: {
