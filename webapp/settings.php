@@ -61,25 +61,25 @@ include_once "includes/header.php";
                                         <td>
                                             <select name='region' class='controlType' title='region'>
                                                 <option ";
-        if ($region == "1") {
+        if ($region == "ee") {
             echo "selected";
         }
-        echo " value='1'>Eesti</option>
+        echo " value='ee'>Eesti</option>
                                                 <option ";
-        if ($region == "2") {
+        if ($region == "fi") {
             echo "selected";
         }
-        echo " value='2'>Soome</option>
+        echo " value='fi'>Soome</option>
                                                 <option ";
-        if ($region == "3") {
+        if ($region == "lt") {
             echo "selected";
         }
-        echo " value='3'>Läti</option>
+        echo " value='lt'>Läti</option>
                                                 <option ";
-        if ($region == "4") {
+        if ($region == "lv") {
             echo "selected";
         }
-        echo " value='4'>Leedu</option>
+        echo " value='lv'>Leedu</option>
                                             </select>
                                         </td>
                                     </tr>";

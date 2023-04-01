@@ -12,13 +12,14 @@ function get_smart_hours($today_average_price)
     }
 
     $device_id = $_SESSION['device_id'];
-    $result_smart_hours = mysqli_query($con, "SELECT CHP_DAY_HOURS, EXP_DAY_HOURS, CHP_DAY_THOLD, EXP_DAY_THOLD FROM ESPtable2 WHERE id = $device_id");
+    $result_smart_hours = mysqli_query($con, "SELECT CHP_DAY_HOURS, EXP_DAY_HOURS, CHP_DAY_THOLD, EXP_DAY_THOLD, REGION FROM ESPtable2 WHERE id = $device_id");
     $row_smart_hours = mysqli_fetch_array($result_smart_hours);
 
     $chp_day_hours = $row_smart_hours['CHP_DAY_HOURS'];
     $exp_day_hours = $row_smart_hours['EXP_DAY_HOURS'];
     $chp_day_thold = $row_smart_hours['CHP_DAY_THOLD'];
     $exp_day_thold = $row_smart_hours['EXP_DAY_THOLD'];
+    $region = $row_smart_hours['REGION'];
 
     $smart_hours = 0;
     if ($today_average_price <= $chp_day_thold) {
@@ -31,7 +32,7 @@ function get_smart_hours($today_average_price)
     }
 
     // Get todays prices
-    $result_prices = mysqli_query($con, "SELECT * FROM ElectricityPrices WHERE id = 99999");
+    $result_prices = mysqli_query($con, "SELECT * FROM ElectricityPrices WHERE region = $region");
     $row = mysqli_fetch_array($result_prices);
     $todays_prices = array();
     for ($i = 0; $i < 24; $i++) {

@@ -9,9 +9,14 @@ if (session_status() == PHP_SESSION_NONE) {
 
 $device_id = $_SESSION['device_id'];
 
+// Fetch region from ESPtable2 table
+$result_region = mysqli_query($con, "SELECT REGION FROM ESPtable2 WHERE id = $device_id");
+$row_region = mysqli_fetch_array($result_region);
+$region = $row_region['REGION'];
+
 $sql = "SELECT ElectricityPrices.*, ESPtable2.ENERGY_TYPE, ESPtable2.VAT
         FROM ElectricityPrices
-        JOIN ESPtable2 ON ElectricityPrices.id = 99999
+        JOIN ESPtable2 ON ElectricityPrices.region = $region
         WHERE ESPtable2.id = $device_id";
 
 $result = mysqli_query($con, $sql);

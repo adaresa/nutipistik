@@ -11,12 +11,13 @@ if (mysqli_connect_errno()) {
 }
 
 $device_id = $_SESSION['device_id'];
-$result_unit_vat = mysqli_query($con, "SELECT ENERGY_TYPE, VAT FROM ESPtable2 WHERE id = $device_id");
+$result_unit_vat = mysqli_query($con, "SELECT ENERGY_TYPE, VAT, REGION FROM ESPtable2 WHERE id = $device_id");
 $row_unit_vat = mysqli_fetch_array($result_unit_vat);
 $unit = $row_unit_vat['ENERGY_TYPE'];
 $vat = $row_unit_vat['VAT'];
+$region = $row_unit_vat['REGION'];
 
-$result_prices = mysqli_query($con, "SELECT * FROM ElectricityPrices");
+$result_prices = mysqli_query($con, "SELECT * FROM ElectricityPrices WHERE region = $region");
 
 while ($row = mysqli_fetch_array($result_prices)) {
 	date_default_timezone_set('Europe/Tallinn');

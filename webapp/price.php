@@ -12,13 +12,14 @@ include_once('database_connect.php');
 
 // Fetch unit, vat from ESPtable2 table
 $device_id = $_SESSION['device_id'];
-$result_unit_vat = mysqli_query($con, "SELECT ENERGY_TYPE, VAT FROM ESPtable2 WHERE id = $device_id");
+$result_unit_vat = mysqli_query($con, "SELECT ENERGY_TYPE, VAT, REGION FROM ESPtable2 WHERE id = $device_id");
 $row_unit_vat = mysqli_fetch_array($result_unit_vat);
 $unit = $row_unit_vat['ENERGY_TYPE'];
 $vat = $row_unit_vat['VAT'];
+$region = $row_unit_vat['REGION'];
 
 // Fetch current_price, daily average from ElectricityPrices table
-$result_prices = mysqli_query($con, "SELECT CURRENT_PRICE, AVERAGE_PRICE FROM ElectricityPrices");
+$result_prices = mysqli_query($con, "SELECT CURRENT_PRICE, AVERAGE_PRICE FROM ElectricityPrices WHERE region = '$region'");
 $row = mysqli_fetch_array($result_prices);
 $current_price = convert_unit($row['CURRENT_PRICE'], $unit, $vat);
 $average_price = convert_unit($row['AVERAGE_PRICE'], $unit, $vat);
@@ -28,7 +29,21 @@ $average_price = convert_unit($row['AVERAGE_PRICE'], $unit, $vat);
 
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Elektrihind</h1>
+            <h1 class="page-header">Elektrihind
+                <?php
+                if ($region == 'ee') {
+                    echo '(Eesti)';
+                } elseif ($region == 'fi') {
+                    echo '(Soome)';
+                } elseif ($region == 'lv') {
+                    echo '(Leedu)';
+                } elseif ($region == 'lt') {
+                    echo '(Läti)';
+                } else {
+                    echo '(Tundmatu)';
+                }
+                ?>
+            </h1>
         </div>
 
         <div>
