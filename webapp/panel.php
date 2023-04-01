@@ -126,6 +126,7 @@ if (mysqli_connect_errno()) {
                 $cheap_hours = $row['CHEAPEST_HOURS'];
                 $selected_hours = $row['SELECTED_HOURS'];
                 $control_type = $row['CONTROL_TYPE'];
+                $region = $row['REGION'];
 
                 $cheap_day_threshold = $row['CHP_DAY_THOLD'];
                 $expensive_day_threshold = $row['EXP_DAY_THOLD'];
@@ -136,7 +137,7 @@ if (mysqli_connect_errno()) {
                 $vat = $row['VAT'];
                 $current_electricity_price = 0;
                 $average_electricity_price = 0;
-                $price_result = mysqli_query($con, "SELECT CURRENT_PRICE, AVERAGE_PRICE FROM ElectricityPrices WHERE id = 99999");
+                $price_result = mysqli_query($con, "SELECT CURRENT_PRICE, AVERAGE_PRICE FROM ElectricityPrices WHERE region = '$region'");
                 if ($price_row = mysqli_fetch_array($price_result)) {
                     $current_electricity_price = $price_row["CURRENT_PRICE"];
                     $average_electricity_price = $price_row["AVERAGE_PRICE"];

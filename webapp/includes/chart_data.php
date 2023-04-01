@@ -16,7 +16,7 @@ $region = $row_region['REGION'];
 
 $sql = "SELECT ElectricityPrices.*, ESPtable2.ENERGY_TYPE, ESPtable2.VAT
         FROM ElectricityPrices
-        JOIN ESPtable2 ON ElectricityPrices.region = $region
+        JOIN ESPtable2 ON ElectricityPrices.region = '$region'
         WHERE ESPtable2.id = $device_id";
 
 $result = mysqli_query($con, $sql);

@@ -18,7 +18,7 @@ function get_cheapest_hours()
 
 
     // Get todays prices
-    $result_prices = mysqli_query($con, "SELECT * FROM ElectricityPrices WHERE region = $region");
+    $result_prices = mysqli_query($con, "SELECT * FROM ElectricityPrices WHERE region = '$region'");
     $row = mysqli_fetch_array($result_prices);
     $todays_prices = array();
     for ($i = 0; $i < 24; $i++) {

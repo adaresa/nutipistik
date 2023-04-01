@@ -2,3 +2,5 @@ arduino/main/.vscode/
 arduino/main/arduino_secrets.h
 webapp/database_connect.php
 aws/serverSecret.py
+aws/__pycache__/OutputFuncs.cpython-310.pyc
+aws/__pycache__/serverSecret.cpython-310.pyc

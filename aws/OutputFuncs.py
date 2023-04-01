@@ -79,15 +79,11 @@ def SmartHoursOutput(chp_day_hours, exp_day_hours, chp_day_thold, exp_day_thold,
     # Get the threshold price from the sorted prices
     threshold_price = sorted_prices[threshold_hours-1][1]
     
-    print(threshold_hours)
-    print(threshold_price)
-    
     # print threshold_hours number of prices in sorted_prices, and also timestamp. Convert timestamp to local time
-    for i in range(threshold_hours-1):
-        a = sorted_prices[i][1]
-        b= datetime.datetime.fromtimestamp(sorted_prices[i][0], tz=pytz.timezone('Europe/Tallinn')).strftime("%H:%M")
-        print(f'{b}: {a}')
-        
+    #for i in range(threshold_hours-1):
+    #    a = sorted_prices[i][1]
+    #    b= datetime.datetime.fromtimestamp(sorted_prices[i][0], tz=pytz.timezone('Europe/Tallinn')).strftime("%H:%M")
+    #    print(f'{b}: {a}')
     
     # Check if the current price is less than or equal to the threshold price
     if current_price <= threshold_price:

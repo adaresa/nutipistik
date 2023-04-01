@@ -1,54 +1,67 @@
-import urllib3
 from serverSecret import *
 from OutputFuncs import *
 
-def switchOutput(id, password, state):
-    print(state)
-    url = f"https://nutipistik.fun/TX.php?id={id}&pw={password}&out={state}"
-    urllib3.PoolManager().request('GET', url)
+SERVER_ID_AND_PASS = get_accounts()
 
-for id, password in SERVER_ID_AND_PASS.items():
-    url = getServerValueURL(id, password)
-    values = getServerValues(url)
+for id, password in SERVER_ID_AND_PASS:
+    values = get_account_values(id, password)
+    
+    current_price, average_price = get_current_average_price(values["region"])
+    
+        
 
-    if values["control_type"] == "1":  # Price limit
+    if values["control_type"] == 1:  # Price limit
         print("Control type: Price Limit")
-        if PriceLimitOutput(float(values["current_price"]), float(values["price_limit"])):
-            switchOutput(id, password, 1)
+        current_price = current_price * (1 + float(values["vat"])/100)
+        if values["energy_type"] == 'kWh':
+            current_price = current_price / 1000
+            current_price = round(current_price, 3)
+        if PriceLimitOutput(current_price, float(values["price_limit"])):
+            update_output_state(id, password, 1)
         else:
-            switchOutput(id, password, 0)
+            update_output_state(id, password, 0)
 
-    elif values["control_type"] == "2":  # Manual control
+    elif values["control_type"] == 2:  # Switch
         print("Control type: Manual")
-        if SwitchOutput(values["switch_state"]):
-            switchOutput(id, password, 1)
+        if SwitchOutput(values["button_state"]):
+            update_output_state(id, password, 1)
         else:
-            switchOutput(id, password, 0)
+            update_output_state(id, password, 0)
 
-    elif values["control_type"] == "3":  # Cheapest hours
+    elif values["control_type"] == 3:  # Cheapest hours
         print("Control type: Cheapest hours")
-        if CheapestHoursOutput(int(values["cheapest_hours"]), float(values["current_price"])):
-            switchOutput(id, password, 1)
+        if CheapestHoursOutput(int(values["cheapest_hours"]), current_price):
+            update_output_state(id, password, 1)
         else:
-            switchOutput(id, password, 0)
+            update_output_state(id, password, 0)
 
-    elif values["control_type"] == "4":  # Selected hours
-        print("Control type: Selected hours")
-        if SwitchOutput(values["selected_hour"]):
-            switchOutput(id, password, 1)
+    elif values["control_type"] == 4:  # Selected hours
+        # get current time in Tallinn timezone
+        tz = pytz.timezone('Europe/Tallinn')
+        hour = datetime.datetime.now(tz).hour
+        current_state = values["selected_hours"][hour]
+
+        if SwitchOutput(current_state):
+            update_output_state(id, password, 1)
         else:
-            switchOutput(id, password, 0)
+            update_output_state(id, password, 0)
 
-    elif values["control_type"] == "5": # Smart Hours
+    elif values["control_type"] == 5: # Smart Hours
         print("Control type: Smart Hours")
-        if SmartHoursOutput(int(values["chp_day_hours"]), int(values["exp_day_hours"]), float(values["chp_day_thold"]), float(values["exp_day_thold"]), float(values["current_price"]), float(values["average_price"])):
-            switchOutput(id, password, 1)
+        average_price = average_price * (1 + float(values["vat"])/100)
+        if values["energy_type"] == 'kWh':
+            average_price = average_price / 1000
+            average_price = round(average_price, 3)
+        if SmartHoursOutput(int(values["chp_day_hours"]), int(values["exp_day_hours"]), float(values["chp_day_thold"]), float(values["exp_day_thold"]), current_price, average_price):
+            update_output_state(id, password, 1)
         else:
-            switchOutput(id, password, 0)
+            update_output_state(id, password, 0)
             
-    elif values["control_type"] == "6": # Schedule
+    elif values["control_type"] == 6: # Schedule
         print("Control type: Schedule")
-        if ScheduleOutput(values["schedule"]):
-            switchOutput(id, password, 1)
+        if ScheduleOutput(values["time_ranges"]):
+            update_output_state(id, password, 1)
         else:
-            switchOutput(id, password, 0)
+            update_output_state(id, password, 0)
+            
+close_connection()

@@ -17,7 +17,7 @@ $unit = $row_unit_vat['ENERGY_TYPE'];
 $vat = $row_unit_vat['VAT'];
 $region = $row_unit_vat['REGION'];
 
-$result_prices = mysqli_query($con, "SELECT * FROM ElectricityPrices WHERE region = $region");
+$result_prices = mysqli_query($con, "SELECT * FROM ElectricityPrices WHERE region = '$region'");
 
 while ($row = mysqli_fetch_array($result_prices)) {
 	date_default_timezone_set('Europe/Tallinn');
