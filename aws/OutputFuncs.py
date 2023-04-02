@@ -48,7 +48,10 @@ def fetch_prices():
 
     return price_dict
 
-def CheapestHoursOutput(cheapest_hours, current_price): # If current time is in cheapest hours  
+def CheapestHoursOutput(cheapest_hours, current_price): # If current time is in cheapest hours 
+    if cheapest_hours == 0:
+        return False
+    
     price_dict = fetch_prices()
 
     # from price_dict, set the NUM_OF_CHEAPEST_HOURS'th cheapest hour as the price_limit
@@ -72,10 +75,13 @@ def SmartHoursOutput(chp_day_hours, exp_day_hours, chp_day_thold, exp_day_thold,
     else:
         price_ratio = (current_day_average_price - chp_day_thold) / (exp_day_thold - chp_day_thold)
         threshold_hours = int(round(chp_day_hours + price_ratio * (exp_day_hours - chp_day_hours)))
+        
+    if threshold_hours == 0:
+        return False
     
     # Sort the price_dict based on price values
     sorted_prices = sorted(price_dict.items(), key=lambda item: item[1])
-
+    
     # Get the threshold price from the sorted prices
     threshold_price = sorted_prices[threshold_hours-1][1]
     
@@ -99,7 +105,7 @@ def ScheduleOutput(schedule):
     for time_range in schedule_list:
         start_time = pytz.timezone('Europe/Tallinn').localize(datetime.datetime.strptime(time_range["start"], "%Y-%m-%d %H:%M:%S"))
         end_time = pytz.timezone('Europe/Tallinn').localize(datetime.datetime.strptime(time_range["end"], "%Y-%m-%d %H:%M:%S"))
-        if start_time <= current_time <= end_time:
+        if start_time <= current_time <= end_time + datetime.timedelta(minutes=1):
             return True
 
     return False

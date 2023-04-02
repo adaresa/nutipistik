@@ -6,7 +6,7 @@ if (!isset($_SESSION["index"])) {
     die();
 }
 
-$device_id = $_SESSION["device_id"];
+$user_id = $_SESSION['user_id'];
 
 include_once "includes/header.php";
 ?>
@@ -23,7 +23,7 @@ include_once "includes/header.php";
     // Fetch the username from the users table
     $user_result = mysqli_query(
         $con,
-        "SELECT username FROM users WHERE device_id = '$device_id'"
+        "SELECT username FROM users WHERE id = '$user_id'"
     );
 
     $username = "";
@@ -55,12 +55,6 @@ include_once "includes/header.php";
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Seadme ID</td>
-                                    <td>
-                                        <?php echo $device_id; ?>
-                                    </td>
-                                </tr>
-                                <tr>
                                     <td>Praegune parool</td>
                                     <td><input type='password' name='current_password' class='custom-input' required
                                             title='Praegune parool' placeholder='************'>
@@ -87,7 +81,7 @@ include_once "includes/header.php";
                             $confirm_new_password = $_POST["confirm_new_password"];
 
                             // Verify current password
-                            $query = "SELECT password FROM users WHERE device_id = '$device_id'";
+                            $query = "SELECT password FROM users WHERE id = '$user_id'";
                             $result = mysqli_query($con, $query);
                             $row = mysqli_fetch_assoc($result);
 

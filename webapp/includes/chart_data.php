@@ -17,11 +17,6 @@ $sql = "SELECT ElectricityPrices.* FROM ElectricityPrices WHERE region = '$regio
 
 $result = mysqli_query($con, $sql);
 
-error_reporting(E_ALL);
-ini_set('log_errors', 1);
-ini_set('error_log', 'custom_error_log.log');
-
-
 if (!$result) {
     error_log("Query error: " . mysqli_error($con));
     header('Content-Type: application/json');

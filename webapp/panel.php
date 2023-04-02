@@ -46,12 +46,12 @@ if (mysqli_connect_errno()) {
             echo "<table class='table' style='font-size: 30px;'>
             <thead>
                 <tr>";
-                    echo "<th>Seadme ID: <select class='deviceSelection' id='deviceSelect'>";
-                    while ($row = mysqli_fetch_array($user_devices)) {
-                        $selected = $row['id'] == $device_id ? "selected" : "";
-                        echo "<option value='{$row['id']}' $selected>{$row['id']}</option>";
-                    }
-                    echo "</select></th>
+            echo "<th>Seadme ID: <select class='deviceSelection' id='deviceSelect'>";
+            while ($row = mysqli_fetch_array($user_devices)) {
+                $selected = $row['id'] == $device_id ? "selected" : "";
+                echo "<option value='{$row['id']}' $selected>{$row['id']}</option>";
+            }
+            echo "</select></th>
                     <th></th>
                 </tr>
             </thead>
@@ -153,25 +153,10 @@ if (mysqli_connect_errno()) {
                 }
 
                 // Get time ranges
-                $time_ranges = json_decode($row['TIME_RANGES']);
+                $time_ranges = json_decode($row['TIME_RANGES'], false) ?: [];
 
-                // Filter expired time ranges
-                $currentTime = new DateTime();
-                $filtered_time_ranges = array_filter($time_ranges, function ($time_range) use ($currentTime) {
-                    $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $time_range->end);
-                    return $end_time > $currentTime;
-                });
-
-                if (count($filtered_time_ranges) !== count($time_ranges)) {
-                    // Convert filtered time_ranges to objects
-                    $filtered_time_ranges_obj = array_map(function ($time_range) {
-                        return (object) $time_range;
-                    }, $filtered_time_ranges);
-
-                    $filtered_time_ranges_json = json_encode($filtered_time_ranges_obj);
-                    $query = "UPDATE ESPtable2 SET TIME_RANGES = '$filtered_time_ranges_json' WHERE id = '$unit_id'";
-                    mysqli_query($con, $query);
-                }
+                // Filter expired time ranges and update the database if needed
+                $filtered_time_ranges = filter_and_update_time_ranges($con, $unit_id, $time_ranges);
 
 
 
@@ -325,6 +310,33 @@ if (mysqli_connect_errno()) {
 </div>
 
 <?php include_once('includes/footer.php'); ?>
+
+<?php
+
+function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
+{
+    $currentTime = new DateTime('now', new DateTimeZone('Europe/Tallinn'));
+    $filtered_time_ranges = array();
+
+    foreach ($time_ranges as $time_range) {
+        $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $time_range->end);
+        $end_time_plus_one_minute = clone $end_time;
+        $end_time_plus_one_minute->add(new DateInterval('PT1M'));
+        if ($end_time_plus_one_minute > $currentTime) {
+            $filtered_time_ranges[] = $time_range;
+        }
+    }
+
+    if (count($filtered_time_ranges) !== count($time_ranges)) {
+        $filtered_time_ranges_json = json_encode($filtered_time_ranges);
+        $query = "UPDATE ESPtable2 SET TIME_RANGES = '$filtered_time_ranges_json' WHERE id = '$unit_id'";
+        mysqli_query($con, $query);
+    }
+
+    return $filtered_time_ranges;
+}
+
+?>
 
 <script>
     // Change selected device
