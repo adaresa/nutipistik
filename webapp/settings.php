@@ -6,7 +6,7 @@ if (!isset($_SESSION["index"])) {
     die();
 }
 
-$device_id = $_SESSION["device_id"];
+$user_id = $_SESSION['user_id']; // Currently logged in user ID
 
 include_once "includes/header.php";
 ?>
@@ -21,10 +21,9 @@ include_once "includes/header.php";
     }
 
     // Grab the table out of the database
-    $result = mysqli_query($con, "SELECT * FROM ESPtable2 WHERE id = '$device_id'");
+    $result = mysqli_query($con, "SELECT * FROM users WHERE id = '$user_id'");
 
     while ($row = mysqli_fetch_array($result)) {
-        $unit_id = $row["id"];
         $energyType = $row["ENERGY_TYPE"];
         $vat = $row["VAT"];
         $region = $row["REGION"];
@@ -117,20 +116,23 @@ include_once "includes/header.php";
         if (isset($_POST["change_but"])) {
             if (isset($_POST["region"])) {
                 $region = $_POST["region"];
-                $query3 = "UPDATE ESPtable2 SET REGION = '$region' WHERE id = '$unit_id'";
+                $query3 = "UPDATE users SET REGION = '$region' WHERE id = '$user_id'";
                 $result = mysqli_query($con, $query3);
+                $_SESSION['REGION'] = $region;
             }
 
             if (isset($_POST["vat"])) {
                 $vat = $_POST["vat"];
-                $query2 = "UPDATE ESPtable2 SET VAT = '$vat' WHERE id = '$unit_id'";
+                $query2 = "UPDATE users SET VAT = '$vat' WHERE id = '$user_id'";
                 $result = mysqli_query($con, $query2);
+                $_SESSION['VAT'] = $vat;
             }
 
             if (isset($_POST["energyType"])) {
                 $energyType = $_POST["energyType"];
-                $query = "UPDATE ESPtable2 SET ENERGY_TYPE = '$energyType' WHERE id = '$unit_id'";
+                $query = "UPDATE users SET ENERGY_TYPE = '$energyType' WHERE id = '$user_id'";
                 $result = mysqli_query($con, $query);
+                $_SESSION['ENERGY_TYPE'] = $energyType;
             }
 
             echo "<meta http-equiv='refresh' content='0'>";

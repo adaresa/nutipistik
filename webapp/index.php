@@ -17,7 +17,11 @@ if (isset($_COOKIE['remember'])) {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         $_SESSION['index'] = true;
-        $_SESSION['device_id'] = $user['device_id'];
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['device_id'] = $user['selected_device_id'];
+        $_SESSION['REGION'] = $user['REGION'];
+        $_SESSION['ENERGY_TYPE'] = $user['ENERGY_TYPE'];
+        $_SESSION['VAT'] = $user['VAT'];
         header('LOCATION:panel.php');
         die();
     }
@@ -58,7 +62,11 @@ include 'includes/header.php'; ?>
                                 }
 
                                 $_SESSION['index'] = true;
-                                $_SESSION['device_id'] = $user['device_id'];
+                                $_SESSION['user_id'] = $user['id'];
+                                $_SESSION['device_id'] = $user['selected_device_id'];
+                                $_SESSION['REGION'] = $user['REGION'];
+                                $_SESSION['ENERGY_TYPE'] = $user['ENERGY_TYPE'];
+                                $_SESSION['VAT'] = $user['VAT'];
                                 header('LOCATION:panel.php');
                                 die();
                             } else {

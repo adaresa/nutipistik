@@ -39,17 +39,16 @@ while ($row = mysqli_fetch_array($result)) {
         $selected_hours = $row['SELECTED_HOURS'];
         $t2 = date("G");
         $selected_hour = substr($selected_hours, $t2, 1);
-        $region = $row['REGION'];
+
         $button_state = $row['BUTTON_STATE'];
         $price_limit = $row['PRICE_LIMIT'];
         $control_type = $row['CONTROL_TYPE'];
-        $region = $row['REGION'];
+
         // Get 'CURRENT_PRICE' from the ElectricityPrices table
-        $result2 = mysqli_query($con, "SELECT CURRENT_PRICE, AVERAGE_PRICE FROM ElectricityPrices WHERE region = '$region'");
+
         $row2 = mysqli_fetch_array($result2);
         $current_price = $row2['CURRENT_PRICE'];
-        $average_price = convert_unit($row2['AVERAGE_PRICE'], $row['ENERGY_TYPE'], $row['VAT']);
-        $unit = $row['ENERGY_TYPE'];
+
         $cheapest_hours = $row['CHEAPEST_HOURS'];
 
         $chp_day_hours = $row['CHP_DAY_HOURS'];
@@ -60,19 +59,18 @@ while ($row = mysqli_fetch_array($result)) {
         $time_ranges = $row['TIME_RANGES'];
 
         if ($control_type == 1) {
-            $current_price = convert_unit($current_price, $row['ENERGY_TYPE'], $row['VAT']);
-            $result = 'region:' . $region . ',control_type:1,price_limit:' . $price_limit . ',current_price:' . $current_price;
+            $result = ',control_type:1,price_limit:' . $price_limit . ',current_price:' . $current_price;
         } elseif ($control_type == 2) {
-            $result = 'region:' . $region . ',control_type:2,switch_state:' . $button_state;
+            $result = ',control_type:2,switch_state:' . $button_state;
         } elseif ($control_type == 3) {
-            $result = 'region:' . $region . ',control_type:3,cheapest_hours:' . $cheapest_hours . ',current_price:' . $current_price;
+            $result = ',control_type:3,cheapest_hours:' . $cheapest_hours . ',current_price:' . $current_price;
         } elseif ($control_type == 4) {
-            $result = 'region:' . $region . ',control_type:4,selected_hour:' . $selected_hour;
+            $result = ',control_type:4,selected_hour:' . $selected_hour;
         } elseif ($control_type == 5) {
-            $result = 'region:' . $region . ',control_type:5,chp_day_hours:' . $chp_day_hours . ',exp_day_hours:' . $exp_day_hours . 
+            $result = ',control_type:5,chp_day_hours:' . $chp_day_hours . ',exp_day_hours:' . $exp_day_hours . 
             ',chp_day_thold:' . $chp_day_thold . ',exp_day_thold:' . $exp_day_thold . ',current_price:' . $current_price . ',average_price:' . $average_price;
         } elseif ($control_type == 6) {
-            $result = 'region:' . $region . ',control_type:6,schedule:' . $time_ranges;
+            $result = ',control_type:6,schedule:' . $time_ranges;
         }
         echo $result;
     }

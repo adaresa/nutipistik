@@ -10,11 +10,13 @@ function get_cheapest_hours()
         return false;
     }
 
+    $region = $_SESSION['REGION'];
+
     $device_id = $_SESSION['device_id'];
-    $result_cheapest_hours = mysqli_query($con, "SELECT CHEAPEST_HOURS, REGION FROM ESPtable2 WHERE id = $device_id");
+    $result_cheapest_hours = mysqli_query($con, "SELECT CHEAPEST_HOURS FROM ESPtable2 WHERE id = $device_id");
     $row_cheapest_hours = mysqli_fetch_array($result_cheapest_hours);
     $cheapest_hours = $row_cheapest_hours['CHEAPEST_HOURS'];
-    $region = $row_cheapest_hours['REGION'];
+
 
 
     // Get todays prices

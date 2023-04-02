@@ -6,17 +6,13 @@ if (!isset($_SESSION['index'])) {
     die();
 }
 
+$region = $_SESSION['REGION'];
+$unit = $_SESSION['ENERGY_TYPE'];
+$vat = $_SESSION['VAT'];
+
 include_once('includes/header.php');
 include_once('includes/energyConverter.php');
 include_once('database_connect.php');
-
-// Fetch unit, vat from ESPtable2 table
-$device_id = $_SESSION['device_id'];
-$result_unit_vat = mysqli_query($con, "SELECT ENERGY_TYPE, VAT, REGION FROM ESPtable2 WHERE id = $device_id");
-$row_unit_vat = mysqli_fetch_array($result_unit_vat);
-$unit = $row_unit_vat['ENERGY_TYPE'];
-$vat = $row_unit_vat['VAT'];
-$region = $row_unit_vat['REGION'];
 
 // Fetch current_price, daily average from ElectricityPrices table
 $result_prices = mysqli_query($con, "SELECT CURRENT_PRICE, AVERAGE_PRICE FROM ElectricityPrices WHERE region = '$region'");
@@ -178,6 +174,7 @@ $average_price = convert_unit($row['AVERAGE_PRICE'], $unit, $vat);
         fetch('includes/chart_data.php')
             .then(response => response.json())
             .then(data => {
+                console.log(data); // Add this line
                 initChart(data.hours, data.today_prices, data.tomorrow_prices, data.today_date, data.tomorrow_date);
             })
             .catch(error => {

@@ -10,12 +10,7 @@ if (mysqli_connect_errno()) {
 	echo "Failed to connect to MySQL: " . mysqli_connect_error();
 }
 
-$device_id = $_SESSION['device_id'];
-$result_unit_vat = mysqli_query($con, "SELECT ENERGY_TYPE, VAT, REGION FROM ESPtable2 WHERE id = $device_id");
-$row_unit_vat = mysqli_fetch_array($result_unit_vat);
-$unit = $row_unit_vat['ENERGY_TYPE'];
-$vat = $row_unit_vat['VAT'];
-$region = $row_unit_vat['REGION'];
+$region = $_SESSION['REGION'];
 
 $result_prices = mysqli_query($con, "SELECT * FROM ElectricityPrices WHERE region = '$region'");
 

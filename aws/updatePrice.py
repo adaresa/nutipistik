@@ -40,10 +40,10 @@ def lambda_handler(event, context):
         elif len(price_dict) >= 48:
             for key, value in price_dict.items():
                 if i < 24:
-                    prices["tm" + str(i)] = value
+                    prices["td" + str(i)] = value
                     i+=1
                 else:
-                    prices["td" + str(i-24)] = value
+                    prices["tm" + str(i-24)] = value
                     i+=1
                     
         update_electricity_prices(prices, region)

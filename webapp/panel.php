@@ -6,7 +6,12 @@ if (!isset($_SESSION['index'])) {
     die();
 }
 
-$device_id = $_SESSION['device_id'];
+$user_id = $_SESSION['user_id']; // Currently logged in user ID
+$device_id = $_SESSION['device_id']; // Currently selected device ID
+$region = $_SESSION['REGION'];
+$unit = $_SESSION['ENERGY_TYPE'];
+$vat = $_SESSION['VAT'];
+
 
 include_once('includes/header.php');
 include_once("database_connect.php");
@@ -32,14 +37,21 @@ if (mysqli_connect_errno()) {
         <div>
             <?php
 
+
+            $user_devices = mysqli_query($con, "SELECT id FROM ESPtable2 WHERE id IN (SELECT device_id FROM user_devices WHERE user_id = '$user_id')");
             // Grab the table out of the database
             $result = mysqli_query($con, "SELECT * FROM ESPtable2 WHERE id = '$device_id'");
 
             //Now we create the table with all the values from the database      
             echo "<table class='table' style='font-size: 30px;'>
             <thead>
-                <tr>
-                    <th>Seadme ID: " . $device_id . "</th>  
+                <tr>";
+                    echo "<th>Seadme ID: <select class='deviceSelection' id='deviceSelect'>";
+                    while ($row = mysqli_fetch_array($user_devices)) {
+                        $selected = $row['id'] == $device_id ? "selected" : "";
+                        echo "<option value='{$row['id']}' $selected>{$row['id']}</option>";
+                    }
+                    echo "</select></th>
                     <th></th>
                 </tr>
             </thead>
@@ -50,7 +62,7 @@ if (mysqli_connect_errno()) {
                 <td>
                     <span style='display: inline-block; vertical-align: middle;'>Pistikupesa olek</span>
                     <button class='infoButton' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right'
-                    title='Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga ~2 sekundi tagant.'>?</button>
+                    title='Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga ~5 sekundi tagant.'>?</button>
                 </td>
             </tr>";
 
@@ -126,15 +138,12 @@ if (mysqli_connect_errno()) {
                 $cheap_hours = $row['CHEAPEST_HOURS'];
                 $selected_hours = $row['SELECTED_HOURS'];
                 $control_type = $row['CONTROL_TYPE'];
-                $region = $row['REGION'];
 
                 $cheap_day_threshold = $row['CHP_DAY_THOLD'];
                 $expensive_day_threshold = $row['EXP_DAY_THOLD'];
                 $cheap_day_hours = $row['CHP_DAY_HOURS'];
                 $expensive_day_hours = $row['EXP_DAY_HOURS'];
 
-                $unit = $row['ENERGY_TYPE'];
-                $vat = $row['VAT'];
                 $current_electricity_price = 0;
                 $average_electricity_price = 0;
                 $price_result = mysqli_query($con, "SELECT CURRENT_PRICE, AVERAGE_PRICE FROM ElectricityPrices WHERE region = '$region'");
@@ -318,6 +327,25 @@ if (mysqli_connect_errno()) {
 <?php include_once('includes/footer.php'); ?>
 
 <script>
+    // Change selected device
+    document.getElementById('deviceSelect').addEventListener('change', function () {
+        const deviceId = this.value;
+        fetch('includes/update_selected_device.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'device_id=' + deviceId
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                console.error('Error updating selected device:', response.statusText);
+            }
+        });
+    });
+
+
     // Update selected hours
     document.getElementById('selectedHoursForm').addEventListener('submit', function (e) {
         const selectedHoursCheckboxes = e.target.querySelectorAll('input[type="checkbox"]');
