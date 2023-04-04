@@ -36,9 +36,7 @@ if (mysqli_connect_errno()) {
         <!-- Select the type of control -->
         <div>
             <?php
-
-
-            $user_devices = mysqli_query($con, "SELECT id FROM ESPtable2 WHERE id IN (SELECT device_id FROM user_devices WHERE user_id = '$user_id')");
+            $user_devices = mysqli_query($con, "SELECT device_id, device_name FROM user_devices WHERE user_id = '$user_id' ORDER BY device_order");
             // Grab the table out of the database
             $result = mysqli_query($con, "SELECT * FROM ESPtable2 WHERE id = '$device_id'");
 
@@ -46,10 +44,10 @@ if (mysqli_connect_errno()) {
             echo "<table class='table' style='font-size: 30px;'>
             <thead>
                 <tr>";
-            echo "<th>Seadme ID: <select class='deviceSelection' id='deviceSelect'>";
+            echo "<th>Pistiku nimi: <select class='deviceSelection' id='deviceSelect'>";
             while ($row = mysqli_fetch_array($user_devices)) {
-                $selected = $row['id'] == $device_id ? "selected" : "";
-                echo "<option value='{$row['id']}' $selected>{$row['id']}</option>";
+                $selected = $row['device_id'] == $device_id ? "selected" : "";
+                echo "<option value='{$row['device_id']}' $selected>{$row['device_name']}</option>";
             }
             echo "</select></th>
                     <th></th>

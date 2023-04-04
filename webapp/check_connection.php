@@ -13,13 +13,13 @@ if (mysqli_connect_errno()) {
 
 $device_id = $_SESSION['device_id'];
 
-$result = mysqli_query($con, "SELECT * FROM ESPtable2 WHERE id = '$device_id'");
+$result = mysqli_query($con, "SELECT LAST_UPDATE FROM ESPtable2 WHERE id = '$device_id'");
 
 if ($row = mysqli_fetch_array($result)) {
     $last_update = strtotime($row['LAST_UPDATE']);
     $time_difference = time() - $last_update;
 
-    if ($time_difference <= 30) { // Assuming the device sends updates at least every minute
+    if ($time_difference <= 15) {
         echo json_encode(["status" => "connected"]);
     } else {
         echo json_encode(["status" => "disconnected"]);

@@ -1,7 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<?php date_default_timezone_set('Europe/Tallinn'); ?>
+<?php date_default_timezone_set('Europe/Tallinn'); 
+
+if (isset($_SESSION["device_id"])) {
+    $device_id = $_SESSION['device_id'];
+    include("database_connect.php");
+    if (!mysqli_connect_errno()) {
+        $device_name_result = mysqli_query($con, "SELECT device_name FROM user_devices WHERE device_id = '$device_id'");
+        if ($row = mysqli_fetch_array($device_name_result)) {
+            $device_name = $row['device_name'];
+        } else {
+            $device_name = "^(!?_)@";
+        }
+    } else {
+        $device_name = "^(!?_)@";
+    }
+}
+
+?>
 
 <head>
 
@@ -16,6 +33,8 @@
     <!-- jQuery -->
     <script src="assets/js/jquery.min.js?v=<?php echo filemtime('assets/js/jquery.min.js'); ?>"
         type="text/javascript"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <!-- Custom styles -->
     <link rel="stylesheet" href="/includes/styles.css?v=<?php echo filemtime('includes/styles.css'); ?>" />
@@ -67,14 +86,16 @@
                         alt="Nutipistik logo">
                     Nutipistik
                 </a>
+                <?php if ($device_name != "^(!?_)@"): ?>
                 <div id="connection-status" class="navbar-brand ms-3" data-bs-toggle="tooltip" data-bs-placement="bottom"
                     data-bs-html="true"
                     title="Roheline - nutipistik on ühendatud juhtpaneeliga.<br>Punane - nutipistik ei ole ühendatud juhtpaneeliga.">
-                    Ühendus:
+                    <?php echo "$device_name:"; ?>
                     <span class="status-circle"
                         style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 5px;">
                     </span>
                 </div>
+                <?php endif; ?>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -97,6 +118,8 @@
                                         Profiil</a></li>
                                 <li><a class="dropdown-item" href="settings.php"><i class="fa fa-gear fa-fw"></i>
                                         Seaded</a></li>
+                                <li><a class="dropdown-item" href="devices.php"><i class="fa fa-plug fa-fw"></i>
+                                        Pistikute haldamine</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
