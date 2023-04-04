@@ -45,7 +45,8 @@
     }
 
     .tooltip-inner {
-        max-width: 350px;
+        max-width: 450px;
+        text-align: left;
     }
 
     .content-spacing {

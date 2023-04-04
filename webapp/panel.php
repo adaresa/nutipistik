@@ -61,8 +61,8 @@ if (mysqli_connect_errno()) {
                 <td>Režiim</td>
                 <td>
                     <span style='display: inline-block; vertical-align: middle;'>Pistikupesa olek</span>
-                    <button class='infoButton' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right'
-                    title='Pistikupesa olek praeguse juhtimisrežiimiga. Uuendatakse iga ~5 sekundi tagant.'>?</button>
+                    <button class='infoButton' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right' data-bs-html='true'
+                    title='Pistikupesa olek praeguse juhtimisrežiimiga.<br>Uuendatakse iga ~5 sekundi tagant.'>?</button>
                 </td>
             </tr>";
 
@@ -191,9 +191,9 @@ if (mysqli_connect_errno()) {
                 echo "
                 <tr class='success' data-control-type='1'><td>
                 <form action='update_values.php' method='post'>
-                    <div class='price-input-wrapper'>
+                    <div class='input-group mb-2'>
                         <input type='number' step='0.0001' name='priceLimit' value='$price_limit' class='custom-input' title='priceLimit' />
-                        <span class='unit'>€/$unit</span>
+                        <span class='input-group-text'>€/$unit</span>
                     </div>
                     <input type='hidden' name='unitID' value='$unit_id' />
                     <input type='submit' name='submit' value='Salvesta' />
@@ -226,7 +226,10 @@ if (mysqli_connect_errno()) {
                 // Cheap Hours
                 echo "<tr class='success' data-control-type='3'><td>
                 <form action='update_values.php' method='post'>
-                    <input type='number' name='cheapHours' value='$cheap_hours' class='custom-input' title='cheapHours' />
+                    <div class='input-group mb-2'>
+                        <input type='number' name='cheapHours' value='$cheap_hours' class='custom-input' title='cheapHours' />
+                        <span class='input-group-text'>tundi</span>
+                    </div>
                     <input type='hidden' name='unitID' value='$unit_id' />
                     <input type='submit' name='submit' value='Salvesta' />
                 </form>";
@@ -247,31 +250,65 @@ if (mysqli_connect_errno()) {
                 echo "</td></tr>";
 
                 // Smart Hours
-                echo "<tr class='success' data-control-type='5'><td>
-                <form action='update_values.php' method='post' id = 'smartHoursForm'>
-                <span>Odava päeva lävend:</span>
-                <div class='price-input-wrapper'>
-                    <input type='number' step='0.0001' name='cheapDayThreshold' value='$cheap_day_threshold' class='custom-input' title='cheapDayThreshold' min = '0' id = 'cheapDayThreshold' />
-                    <span class='unit'>€/$unit</span>
-                </div>
-                <br>
-                <span>Odava päeva aktiivsete tundide arv:</span>
-                <input type='number' name='cheapDayHours' value='$cheap_day_hours' class='custom-input' title='cheapDayHours' min='0' max='24' />
-                <br>
-                <span>Kalli päeva lävend:</span>
-                <div class='price-input-wrapper'>
-                    <input type='number' step='0.0001' name='expensiveDayThreshold' value='$expensive_day_threshold' class='custom-input' title='expensiveDayThreshold' min = '0' id = 'expensiveDayThreshold' />
-                    <span class='unit'>€/$unit</span>
-                </div>
-                <br>
-                <span>Kalli päeva aktiivsete tundide arv:</span>
-                <input type='number' name='expensiveDayHours' value='$expensive_day_hours' class='custom-input' title='expensiveDayHours' min='0' max='24' />
-                <div style='margin-top: 10px;'>
-                <input type='hidden' name='unitID' value='$unit_id' />
-                <input type='submit' name='submit' value='Salvesta' />
-                </div>
-                </form>
-                </td></tr>";
+                echo "
+                <tr class='success' data-control-type='5'>
+                    <td>
+                        <form action='update_values.php' method='post' id='smartHoursForm'>
+                            <div class='row gy-3'>
+                                <div class='col-6'>
+                                    <div>
+                                        <label for='cheapDayThreshold' style='display: inline-block; vertical-align: middle;'>Odava päeva lävend:</label>
+                                        <button class='infoButton' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right' data-bs-html='true'
+                                        title='Kui päeva keskmine elektrihind on allapool <b>Odava päeva lävendit</b>, on tegemist <b>Odava päevaga</b>.'>?</button>
+                                    </div>
+                                    
+                                    <div class='input-group'>
+                                        <input type='number' step='0.0001' name='cheapDayThreshold' value='$cheap_day_threshold' class='custom-input' title='cheapDayThreshold' min='0' id='cheapDayThreshold' />
+                                        <span class='input-group-text'>€/$unit</span>
+                                    </div>
+                                </div>
+                                <div class='col-6'>
+                                    <div>
+                                        <label for='cheapDayHours' style='display: inline-block; vertical-align: middle;'>Odava päeva tundide arv:</label>
+                                        <button class='infoButton' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right' data-bs-html='true'
+                                        title='Pistikupesa töötamise aeg <b>Odava päeva</b> korral.'>?</button>
+                                    </div>
+                                    <div class='input-group'>
+                                        <input type='number' name='cheapDayHours' value='$cheap_day_hours' class='custom-input' title='cheapDayHours' min='0' max='24' />
+                                        <span class='input-group-text'>tundi</span>
+                                    </div>
+                                </div>
+                                <div class='col-6'>
+                                    <div>
+                                        <label for='expensiveDayThreshold' style='display: inline-block; vertical-align: middle;'>Kalli päeva lävend:</label>
+                                        <button class='infoButton' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right' data-bs-html='true'
+                                        title='Kui päeva keskmine elektrihind on üle <b>Kalli päeva lävendi</b>, on tegemist <b>Kalli päevaga</b>.'>?</button>
+                                    </div>
+                                    <div class='input-group'>
+                                        <input type='number' step='0.0001' name='expensiveDayThreshold' value='$expensive_day_threshold' class='custom-input' title='expensiveDayThreshold' min='0' id='expensiveDayThreshold' />
+                                        <span class='input-group-text'>€/$unit</span>
+                                    </div>
+                                </div>
+                                <div class='col-6'>
+                                    <div>
+                                        <label for='expensiveDayHours' style='display: inline-block; vertical-align: middle;'>Kalli päeva tundide arv:</label>
+                                        <button class='infoButton' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right' data-bs-html='true'
+                                        title='Pistikupesa töötamise aeg <b>Kalli päeva</b> korral.'>?</button>
+                                    </div>
+                                    <div class='input-group'>
+                                        <input type='number' name='expensiveDayHours' value='$expensive_day_hours' class='custom-input' title='expensiveDayHours' min='0' max='24' />
+                                        <span class='input-group-text'>tundi</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='mt-3'>
+                                <input type='hidden' name='unitID' value='$unit_id' />
+                                <input type='submit' name='submit' value='Salvesta' class='btn btn-primary' />
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                ";
 
                 // Schedule
                 echo "<tr class='success' data-control-type='6'><td>
@@ -281,11 +318,11 @@ if (mysqli_connect_errno()) {
                     $start_time = DateTime::createFromFormat('Y-m-d H:i:s', $time_range->start)->format('d.m.Y H:i');
                     $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $time_range->end)->format('d.m.Y H:i');
                     $unique_id = time() . '-' . $index;
-                    echo "<div class='time-range d-flex align-items-center mb-2' id='time-range-$unique_id'>";
-                    echo "<input type='text' class='flatpickr-input form-control me-2' name='from[]' value='$start_time' placeholder='pp.kk.aaaa tt:mm' autocomplete='off'>";
-                    echo "<span class='me-2'> - </span>";
-                    echo "<input type='text' class='flatpickr-input form-control me-2' name='to[]' value='$end_time' placeholder='pp.kk.aaaa tt:mm' autocomplete='off'>";
-                    echo "<button type='button' class='btn btn-danger btn-sm remove-time-range' data-target='time-range-$unique_id'>Eemalda</button>";
+                    echo "<div class='time-range d-flex align-items-center mb-3' id='time-range-$unique_id'>";
+                        echo "<input type='text' class='flatpickr-input custom-input me-2' name='from[]' value='$start_time' placeholder='pp.kk.aaaa tt:mm' autocomplete='off'>";
+                        echo "<span class='me-2'> - </span>";
+                        echo "<input type='text' class='flatpickr-input custom-input me-2' name='to[]' value='$end_time' placeholder='pp.kk.aaaa tt:mm' autocomplete='off'>";
+                        echo "<button type='button' class='btn btn-danger remove-time-range' data-target='time-range-$unique_id'>Eemalda</button>";
                     echo "</div>";
                 }
                 echo "</div>
@@ -444,7 +481,7 @@ function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
                 break;
             case '5':
                 description = 'Targad tunnid';
-                extendedDescription = 'Kui päeva keskmine elektrihind on alla odava päeva lävendi, töötab pistikupesa odava päeva tundide arvu.<br>Kui päeva keskmine elektrihind on üle kalli päeva lävendi, töötab pistikupesa kalli päeva tundide arvu.<br>Lävendite vahelisel päeva keskmisel elektrihinnal leitakse tundide arv lineaarselt.<br>Pistikupesa lülitatakse sisse saadud tundide arvu ööpäeva odavamate tundide jooksul.';
+                extendedDescription = 'Pistikupesa töötamise aeg sõltub päeva keskmisest elektrihinnast:<br>1. Alla odava päeva lävendi: odava päeva tundide arv.<br>2. Üle kalli päeva lävendi: kalli päeva tundide arv.<br>3. Lävendite vahel: tundide arv arvutatakse lineaarselt.<br>Pistikupesa lülitub sisse ööpäeva odavamate tundide jooksul.';
                 break;
             case '6':
                 description = 'Ajaplaan';
@@ -568,9 +605,7 @@ function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
 
     document.getElementById("scheduleControlForm").addEventListener("submit", function (event) {
         const timeRanges = document.querySelectorAll(".time-range");
-        const rangeTimes = [];
         let hasInvalidRange = false;
-        let hasOverlap = false;
 
         timeRanges.forEach(timeRange => {
             const fromInput = timeRange.querySelector("input[name='from[]']");
@@ -579,12 +614,13 @@ function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
             const toTime = parseDate(toInput.value);
 
             timeRange.classList.remove('bg-danger');
+            fromInput.classList.remove('bg-danger');
+            toInput.classList.remove('bg-danger');
 
             if (fromInput.value && toInput.value && fromTime >= toTime) {
                 hasInvalidRange = true;
-                timeRange.classList.add('bg-danger');
-            } else {
-                rangeTimes.push({ from: fromTime, to: toTime, element: timeRange });
+                fromInput.classList.add('bg-danger');
+                toInput.classList.add('bg-danger');
             }
         });
 
@@ -592,25 +628,6 @@ function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
             event.preventDefault();
             alert("Algusaeg ei tohiks tulla enne lõppaega.");
             return;
-        }
-
-        rangeTimes.sort((a, b) => a.from - b.from);
-
-        for (let i = 0; i < rangeTimes.length - 1; i++) {
-            const range1 = rangeTimes[i];
-            for (let j = i + 1; j < rangeTimes.length; j++) {
-                const range2 = rangeTimes[j];
-                if (range1.to > range2.from && range1.from < range2.to) {
-                    range1.element.classList.add('bg-danger');
-                    range2.element.classList.add('bg-danger');
-                    hasOverlap = true;
-                }
-            }
-        }
-
-        if (hasOverlap) {
-            event.preventDefault();
-            alert("Ajavahemikud ei tohiks kattuda.");
         }
     });
 
@@ -636,12 +653,12 @@ function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
 
         const scheduleContainer = document.getElementById("schedule-container");
         const timeRangeContainer = document.createElement("div");
-        timeRangeContainer.classList.add("time-range", "d-flex", "align-items-center", "mb-2");
+        timeRangeContainer.classList.add("time-range", "d-flex", "align-items-center", "mb-3");
         timeRangeContainer.id = `time-range-${timeRangeId}`;
 
         const inputFrom = document.createElement("input");
         inputFrom.type = "text";
-        inputFrom.classList.add("flatpickr-input", "form-control", "me-2");
+        inputFrom.classList.add("flatpickr-input", "custom-input", "me-2");
         inputFrom.name = "from[]";
         inputFrom.setAttribute("placeholder", "pp.kk.aaaa tt:mm");
         inputFrom.setAttribute("autocomplete", "off");
@@ -654,7 +671,7 @@ function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
 
         const inputTo = document.createElement("input");
         inputTo.type = "text";
-        inputTo.classList.add("flatpickr-input", "form-control", "me-2");
+        inputTo.classList.add("flatpickr-input", "custom-input", "me-2");
         inputTo.name = "to[]";
         inputTo.setAttribute("placeholder", "pp.kk.aaaa tt:mm");
         inputTo.setAttribute("autocomplete", "off");
@@ -663,7 +680,7 @@ function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
         const removeButton = document.createElement("button");
         removeButton.type = "button";
         removeButton.textContent = "Eemalda";
-        removeButton.classList.add("btn", "btn-danger", "btn-sm", "remove-time-range");
+        removeButton.classList.add("btn", "btn-danger", "remove-time-range");
         removeButton.setAttribute("data-target", `time-range-${timeRangeId}`);
         timeRangeContainer.appendChild(removeButton);
 

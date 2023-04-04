@@ -4,6 +4,7 @@ from serverSecret import *
 
 def lambda_handler(event, context):
     # update today and tomorrow prices for all regions
+    logging.info("Lambda handler started.")
     data = get_today_tomorrow_prices()
 
     regions = ("ee", "fi", "lv", "lt")
@@ -54,3 +55,6 @@ def lambda_handler(event, context):
 
         # Update the average price
         update_average_price(average_price, region)
+        
+    close_connection()
+        

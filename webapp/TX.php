@@ -27,7 +27,7 @@ if (mysqli_connect_errno()) {
 
 
 if (isset($output)) {
-	mysqli_query($con, "UPDATE ESPtable2 SET OUTPUT_STATE = $output WHERE id=$unit AND PASSWORD=$pass");
+	mysqli_query($con, "UPDATE ESPtable2 SET OUTPUT_STATE = $output WHERE id=$unit");
 }
 
 
