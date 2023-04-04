@@ -18,8 +18,8 @@ if (mysqli_connect_errno()) {
 }
 
 // If $pass is set, update the LAST_UPDATE
-if (isset($pass)) {
-    mysqli_query($con, "UPDATE ESPtable2 SET LAST_UPDATE = NOW() WHERE id=$unit AND PASSWORD=$pass");
+if (isset($unit)) {
+    mysqli_query($con, "UPDATE ESPtable2 SET LAST_UPDATE = NOW() WHERE id=$unit");
 }
 
 // Get all the values from the table in the database

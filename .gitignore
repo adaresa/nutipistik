@@ -1,7 +1,6 @@
 arduino/main/.vscode/
-
 arduino/main/arduino_secrets.h
 webapp/database_connect.php
-server updater/serverSecret.py
-server updater/__pycache__/serverSecret.cpython-310.pyc
-server updater/__pycache__/OutputFuncs.cpython-310.pyc
+aws/serverSecret.py
+aws/__pycache__/OutputFuncs.cpython-310.pyc
+aws/__pycache__/serverSecret.cpython-310.pyc

@@ -9,17 +9,13 @@ if (session_status() == PHP_SESSION_NONE) {
 
 $device_id = $_SESSION['device_id'];
 
-$sql = "SELECT ElectricityPrices.*, ESPtable2.ENERGY_TYPE, ESPtable2.VAT
-        FROM ElectricityPrices
-        JOIN ESPtable2 ON ElectricityPrices.id = 99999
-        WHERE ESPtable2.id = $device_id";
+$region = $_SESSION['REGION'];
+$unit = $_SESSION['ENERGY_TYPE'];
+$vat = $_SESSION['VAT'];
+
+$sql = "SELECT ElectricityPrices.* FROM ElectricityPrices WHERE region = '$region'";
 
 $result = mysqli_query($con, $sql);
-
-error_reporting(E_ALL);
-ini_set('log_errors', 1);
-ini_set('error_log', 'custom_error_log.log');
-
 
 if (!$result) {
     error_log("Query error: " . mysqli_error($con));
@@ -40,17 +36,12 @@ $hours = [];
 $todayPrices = [];
 $tomorrowPrices = [];
 
-// Initialize variables with default values.
-$unit = '';
-$vat = 0;
 $tomorrow_exists = false;
 
 while ($row = mysqli_fetch_array($result)) {
     date_default_timezone_set('Europe/Tallinn');
     error_log("Row: " . print_r($row, true));
     $tomorrow_exists = $row['tm0'] != 0;
-    $unit = $row['ENERGY_TYPE'];
-    $vat = $row['VAT'];
 
     for ($i = 0; $i <= 23; $i++) {
         $hours[] = ($i < 10 ? '0' . $i : $i) . ':00';

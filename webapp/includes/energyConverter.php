@@ -12,6 +12,7 @@ function convert_unit($str, $energy_type, $vat) {
         # round price to 3 decimals after comma
         $price = round($price, 3);
     }
+
     # else price is already in €/MWh
     else {
         $price = $str;

@@ -6,12 +6,12 @@ if (!isset($_SESSION["index"])) {
     die();
 }
 
-$device_id = $_SESSION["device_id"];
+$user_id = $_SESSION['user_id']; // Currently logged in user ID
 
 include_once "includes/header.php";
 ?>
 
-<div id='page-wrapper'>
+<div class='container content-spacing'>
     <?php
     include "database_connect.php"; // Include data for the connection to the database
     
@@ -21,10 +21,9 @@ include_once "includes/header.php";
     }
 
     // Grab the table out of the database
-    $result = mysqli_query($con, "SELECT * FROM ESPtable2 WHERE id = '$device_id'");
+    $result = mysqli_query($con, "SELECT * FROM users WHERE id = '$user_id'");
 
     while ($row = mysqli_fetch_array($result)) {
-        $unit_id = $row["id"];
         $energyType = $row["ENERGY_TYPE"];
         $vat = $row["VAT"];
         $region = $row["REGION"];
@@ -54,32 +53,32 @@ include_once "includes/header.php";
                                     <tr>
                                         <td>
                                             <span style='display: inline-block; vertical-align: middle;'>Riik</span>
-                                            <button class='infoButton' type='button' style='display: inline-block; vertical-align: middle;' data-toggle='tooltip' data-placement='right'
+                                            <button class='infoButton' type='button' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right'
                                             title='Vali riik, kus asub seade. See määrab ka elektrihinna päritolu.'>?</button>
                                         </td>
                                         
                                         <td>
                                             <select name='region' class='controlType' title='region'>
                                                 <option ";
-        if ($region == "1") {
+        if ($region == "ee") {
             echo "selected";
         }
-        echo " value='1'>Eesti</option>
+        echo " value='ee'>Eesti</option>
                                                 <option ";
-        if ($region == "2") {
+        if ($region == "fi") {
             echo "selected";
         }
-        echo " value='2'>Soome</option>
+        echo " value='fi'>Soome</option>
                                                 <option ";
-        if ($region == "3") {
+        if ($region == "lt") {
             echo "selected";
         }
-        echo " value='3'>Läti</option>
+        echo " value='lt'>Läti</option>
                                                 <option ";
-        if ($region == "4") {
+        if ($region == "lv") {
             echo "selected";
         }
-        echo " value='4'>Leedu</option>
+        echo " value='lv'>Leedu</option>
                                             </select>
                                         </td>
                                     </tr>";
@@ -117,20 +116,23 @@ include_once "includes/header.php";
         if (isset($_POST["change_but"])) {
             if (isset($_POST["region"])) {
                 $region = $_POST["region"];
-                $query3 = "UPDATE ESPtable2 SET REGION = '$region' WHERE id = '$unit_id'";
+                $query3 = "UPDATE users SET REGION = '$region' WHERE id = '$user_id'";
                 $result = mysqli_query($con, $query3);
+                $_SESSION['REGION'] = $region;
             }
 
             if (isset($_POST["vat"])) {
                 $vat = $_POST["vat"];
-                $query2 = "UPDATE ESPtable2 SET VAT = '$vat' WHERE id = '$unit_id'";
+                $query2 = "UPDATE users SET VAT = '$vat' WHERE id = '$user_id'";
                 $result = mysqli_query($con, $query2);
+                $_SESSION['VAT'] = $vat;
             }
 
             if (isset($_POST["energyType"])) {
                 $energyType = $_POST["energyType"];
-                $query = "UPDATE ESPtable2 SET ENERGY_TYPE = '$energyType' WHERE id = '$unit_id'";
+                $query = "UPDATE users SET ENERGY_TYPE = '$energyType' WHERE id = '$user_id'";
                 $result = mysqli_query($con, $query);
+                $_SESSION['ENERGY_TYPE'] = $energyType;
             }
 
             echo "<meta http-equiv='refresh' content='0'>";
@@ -144,7 +146,6 @@ include_once "includes/header.php";
         </div>";
     }
     ?>
-
 </div>
 
 <?php include_once "includes/footer.php"; ?>
