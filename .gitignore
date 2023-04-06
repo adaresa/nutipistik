@@ -4,3 +4,4 @@ webapp/database_connect.php
 aws/serverSecret.py
 aws/__pycache__/OutputFuncs.cpython-310.pyc
 aws/__pycache__/serverSecret.cpython-310.pyc
+arduino/nutipistik/src/secrets.h

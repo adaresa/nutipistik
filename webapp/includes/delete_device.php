@@ -17,11 +17,9 @@ if (isset($_GET["device_id"]) && isset($_GET["user_id"])) {
     $device_id = $_GET['device_id'];
     $user_id = $_GET['user_id'];
 
-    $sql1 = "DELETE FROM user_devices WHERE user_id = '$user_id' AND device_id = '$device_id'";
-    $sql2 = "DELETE FROM ESPtable2 WHERE id = '$device_id'";
+    $sql = "DELETE FROM user_devices WHERE user_id = '$user_id' AND device_id = '$device_id'";
 
-    if (mysqli_query($con, $sql1) && mysqli_query($con, $sql2)) {
-        var_dump($device_id == $selected_device_id);
+    if (mysqli_query($con, $sql)) {
         // Check if the deleted device is the currently selected device
         if ($device_id == $selected_device_id) {
             // Select the first device in the user_devices table ordered by device_order
@@ -34,8 +32,6 @@ if (isset($_GET["device_id"]) && isset($_GET["user_id"])) {
             } else {
                 $new_selected_device_id = 0;
             }
-
-
 
             // Update selected_device_id in the users table
             $update_selected_device = "UPDATE users SET selected_device_id = '$new_selected_device_id' WHERE id = '$user_id'";

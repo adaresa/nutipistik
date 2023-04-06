@@ -61,21 +61,28 @@ if (mysqli_connect_errno()) {
                 <input type='hidden' name='user_id' value='<?php echo $user_id; ?>'>
                 <input type='hidden' name='action' id='action' value='add'>
                 <div class='row g-3'>
-                    <div class='col'>
+                    <div class='col-3'>
                         <div class='form-group'>
                             <label for='device_id'>Pistiku ID</label>
                             <input type='number' class='form-control' name='device_id' id='device_id'
-                                placeholder='Sisesta pistiku ID' required required min='1' step='1' , maxlength='11'>
+                                placeholder='Sisesta pistiku ID' required min='1' step='1' oninput='limitInput(this, 99999999999);'>
                         </div>
                     </div>
-                    <div class='col'>
+                    <div class='col-3' id='device_pass_col'>
+                        <div class='form-group' id='device_pass_form_group'>
+                            <label for='device_id'>Pistiku Parool</label>
+                            <input type='text' class='form-control' name='device_pass' id='device_pass'
+                                placeholder='Sisesta pistiku parool' required min='1' maxlength='10'>
+                        </div>
+                    </div>
+                    <div class='col-4'>
                         <div class='form-group'>
                             <label for='device_name'>Pistiku nimi</label>
                             <input type='text' class='form-control' name='device_name' id='device_name'
                                 placeholder='Sisesta pistiku nimi' required maxlength='20'>
                         </div>
                     </div>
-                    <div class='col-auto'>
+                    <div class='col-2'>
                         <button type='submit' class='btn btn-primary mt-4'>Lisa pistik</button>
                     </div>
                 </div>
@@ -89,6 +96,13 @@ include_once "includes/footer.php";
 ?>
 
 <script>
+    // Set ID input limit to 11 characters
+    function limitInput(input, maxValue) {
+        if (parseInt(input.value) > maxValue) {
+            input.value = maxValue;
+        }
+    }
+
     function submitAddDeviceForm(e) {
         e.preventDefault();
         const formData = new FormData(document.getElementById("add-device-form"));
@@ -110,12 +124,20 @@ include_once "includes/footer.php";
     }
 
     let prevEditBtn = null;
+    let devicePassCol;
 
     function toggleEditMode(device_id, device_name) {
         const editBtn = document.getElementById(`editBtn${device_id}`);
+        const parentDevicePassCol = document.getElementById("device_pass_col");
+
         if (editBtn.textContent === "Muuda Nime") {
             editDevice(device_id, device_name);
             editBtn.textContent = "Lõpeta muutmine";
+
+            // Remove the 'col-3' div containing the password form group from the DOM and store it in the devicePassCol variable
+            devicePassCol = parentDevicePassCol;
+            parentDevicePassCol.parentElement.removeChild(devicePassCol);
+
             if (prevEditBtn && prevEditBtn !== editBtn) {
                 prevEditBtn.textContent = "Muuda Nime";
             }
@@ -134,8 +156,8 @@ include_once "includes/footer.php";
         document.getElementById("action").value = "update";
 
         // Change the text for the form header and submit button
-        const formHeader = document.querySelector(".row:last-child .col-lg-12 > h3");
-        const submitButton = document.querySelector(".col-auto > button");
+        const formHeader = document.querySelector(".container .row:nth-child(3) .col-lg-12 > h3");
+        const submitButton = document.querySelector(".container .row:nth-child(3) .col-2 > button");
 
         formHeader.textContent = "Muuda nime";
         submitButton.textContent = "Muuda nimi";
@@ -147,11 +169,15 @@ include_once "includes/footer.php";
         document.getElementById("action").value = "add";
 
         // Reset the text for the form header and submit button
-        const formHeader = document.querySelector(".row:last-child .col-lg-12 > h3");
-        const submitButton = document.querySelector(".col-auto > button");
+        const formHeader = document.querySelector(".container .row:nth-child(3) .col-lg-12 > h3");
+        const submitButton = document.querySelector(".container .row:nth-child(3) .col-2 > button");
 
         formHeader.textContent = "Lisa uus pistik";
         submitButton.textContent = "Lisa pistik";
+
+        // Add the 'col-3' div containing the password form group back to the DOM
+        const formRow = document.querySelector(".container .row:nth-child(3) .g-3");
+        formRow.insertBefore(devicePassCol, formRow.children[1]);
     }
 
     $(function () {
