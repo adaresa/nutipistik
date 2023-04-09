@@ -85,6 +85,18 @@ input[type='submit']:active {
     transform: translateY(2px);
 }
 
+input[type='submit'].btn-danger {
+    background-color: #dc3545;
+}
+
+input[type='submit'].btn-danger:hover {
+    background-color: #c82333;
+}
+
+input[type='submit'].btn-danger:active {
+    background-color: #bd2130;
+}
+
 /* -------------- Styles for input field ---------------- */
 
 .custom-input {

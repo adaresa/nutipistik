@@ -5,9 +5,20 @@
 #include <WiFiClientSecureBearSSL.h>
 #include "secrets.h"
 
+// Uncomment the following line to enable debug prints
+// #define DEBUG
+
+#ifdef DEBUG
+#define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
+#define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
+#else
+#define DEBUG_PRINT(...)
+#define DEBUG_PRINTLN(...)
+#endif
+
 // Constants
 constexpr uint32_t RECONNECT_TIMEOUT = 5000; // Time in milliseconds to wait before attempting to reconnect
-const char CONFIG_SSID[] = "Nutipistik";  // SSID for configuration portal
+const char CONFIG_SSID[] = "Nutipistik";     // SSID for configuration portal
 
 // Pin definitions
 constexpr uint8_t RELAY_PIN = 4;
@@ -32,90 +43,129 @@ WiFiManagerParameter deviceIdParam(deviceIdText.c_str());
 String devicePasswordText = "<p>Pistiku Salasõna: <b>" + String(DEVICE_PASSWORD) + "</b></p>";
 WiFiManagerParameter devicePasswordParam(devicePasswordText.c_str());
 
-
 // Function prototypes
 void connectToWiFi();
 void controlLed(const bool red, const bool green, const bool blue);
 void IRAM_ATTR handleButtonChange();
 void checkRelayState();
 
-//flag for saving data
+// flag for saving data
 bool shouldSaveConfig = false;
 
-//callback notifying us of the need to save config
-void saveConfigCallback () {
+// callback notifying us of the need to save config
+void saveConfigCallback()
+{
   shouldSaveConfig = true;
 }
 
 // Connect to WiFi or keep trying to reconnect if not connected.
-void connectToWiFi() {
+void connectToWiFi()
+{
   WiFiManager wifiManager;
   wifiManager.addParameter(&deviceIdParam);
   wifiManager.addParameter(&devicePasswordParam);
 
   wifiManager.setSaveConfigCallback(saveConfigCallback);
 
+  DEBUG_PRINTLN("Connecting to WiFi");
+
   // Check for existing credentials
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("WiFi connected");
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    DEBUG_PRINTLN("WiFi connected");
     return;
   }
-  
+
   // Check if no credentials are saved
   String savedSSID = WiFi.SSID();
-  if (savedSSID.length() == 0) {
+  if (savedSSID.length() == 0)
+  {
+    DEBUG_PRINTLN("No saved WiFi credentials");
     controlLed(false, false, true);
-    if (wifiManager.startConfigPortal(CONFIG_SSID)) {
-      Serial.println("Config portal closed");
+    if (wifiManager.startConfigPortal(CONFIG_SSID))
+    {
+      DEBUG_PRINTLN("Config portal closed");
     }
     return;
   }
 
-  controlLed(false, true, true); // cyan - connecting to WiFi
   // Try to connect to saved credentials
+  DEBUG_PRINTLN("Trying to connect to saved WiFi credentials");
   WiFi.begin(savedSSID.c_str(), WiFi.psk().c_str());
-  delay(2500);
+
+  // Wait for the connection to be established with a series of short delays
+  unsigned long startTime = millis();
+  unsigned long maxWaitTime = 10000;
+  unsigned long delayInterval = 100;
+  while (WiFi.status() != WL_CONNECTED && (millis() - startTime) < maxWaitTime)
+  {
+    delay(delayInterval);
+  }
+  // If connection is successful, blink LED 3 times to indicate successful connection
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    DEBUG_PRINTLN("WiFi connected");
+    for (uint8_t i = 0; i < 3; i++)
+    {
+      controlLed(false, true, true);
+      delay(200);
+      controlLed(false, false, false);
+      delay(200);
+    }
+  }
+
   lastConnectAttempt = millis();
 }
 
-void controlLed(const bool red, const bool green, const bool blue) {
+void controlLed(const bool red, const bool green, const bool blue)
+{
   digitalWrite(RGBLED_R_PIN, red ? LOW : HIGH);
   digitalWrite(RGBLED_G_PIN, green ? LOW : HIGH);
   digitalWrite(RGBLED_B_PIN, blue ? LOW : HIGH);
 }
 
-void IRAM_ATTR handleButtonChange() {
+void IRAM_ATTR handleButtonChange()
+{
   uint32_t currentTime = millis();
 
-  if (currentTime - lastButtonChangeTime > DEBOUNCE_DELAY) {
+  if (currentTime - lastButtonChangeTime > DEBOUNCE_DELAY)
+  {
     lastButtonChangeTime = currentTime;
 
     bool buttonState = digitalRead(BUTTON_PIN);
-    if (buttonState == LOW) {
+    if (buttonState == LOW)
+    {
       // Button press
       buttonPressTime = currentTime;
       buttonPressed = true;
-    } else {
+    }
+    else
+    {
       // Button release
-      if (buttonPressed) {
+      if (buttonPressed)
+      {
         uint32_t pressDuration = currentTime - buttonPressTime;
         buttonPressed = false;
 
-        if (pressDuration > 2000) {
+        if (pressDuration > 2000)
+        {
           // Button held for more than 2 seconds
-          Serial.println("Button held");
+          DEBUG_PRINTLN("Button held");
           buttonHeld = true;
-        } else {
+        }
+        else
+        {
           systemActive = !systemActive;
-          Serial.println("Button pressed");
-          Serial.println(systemActive ? "System active" : "System inactive");
+          DEBUG_PRINTLN("Button pressed");
+          DEBUG_PRINTLN(systemActive ? "System active" : "System inactive");
         }
       }
     }
   }
 }
 
-void checkRelayState() {
+void checkRelayState()
+{
   // Make HTTP GET request to server
   HTTPClient http;
   BearSSL::WiFiClientSecure client;
@@ -126,36 +176,45 @@ void checkRelayState() {
   http.begin(client, requestUrl);
 
   int httpCode = http.GET();
-  
-  if (httpCode == HTTP_CODE_OK) {
+
+  if (httpCode == HTTP_CODE_OK)
+  {
     String response = http.getString();
-    if (response == "#1") {
+    if (response == "#1")
+    {
       // Turn relay ON
       digitalWrite(RELAY_PIN, HIGH);
       controlLed(false, true, false); // Set LED to green
-    } else if (response == "#0") {
+    }
+    else if (response == "#0")
+    {
       // Turn relay OFF
       digitalWrite(RELAY_PIN, LOW);
       controlLed(true, false, false); // Set LED to red
-    } else {
+    }
+    else
+    {
       // Invalid data, set LED to purple
       controlLed(true, false, true);
     }
 
-    Serial.println(response);
+    DEBUG_PRINTLN(response);
     delay(2500);
-  } else {
+  }
+  else
+  {
     // Log error message and wait before retrying
     controlLed(true, false, true);
-    Serial.printf("HTTP GET request failed with error code: %d\n", httpCode);
+    DEBUG_PRINT("HTTP GET request failed with error code: ");
+    DEBUG_PRINTLN(httpCode);
     delay(5000);
   }
 
   http.end();
 }
 
-
-void setup() {
+void setup()
+{
   Serial.begin(115200);
 
   attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), handleButtonChange, CHANGE);
@@ -170,45 +229,37 @@ void setup() {
   connectToWiFi();
 }
 
-void loop() {
-  if (!systemActive) {
+void loop()
+{
+  if (!systemActive)
+  {
     digitalWrite(RELAY_PIN, LOW);
     controlLed(false, false, false); // Turn off LED
+    delay(1000);
     return;
   }
 
-  if (buttonHeld) {
+  if (buttonHeld)
+  {
     buttonHeld = false;
-    controlLed(false, false, true); // Set LED to blue
+    DEBUG_PRINTLN("Resetting WiFi credentials");
+    WiFi.disconnect(true);
     WiFiManager wifiManager;
-    // Set saved SSID to ''
     wifiManager.resetSettings();
-    // Connect to WiFi
+    controlLed(false, true, false); // Set LED to blue
     connectToWiFi();
   }
 
-  // Check if WiFi is connected
-  if (WiFi.status() != WL_CONNECTED) {
-    uint32_t now = millis();
-
-    if (now - lastConnectAttempt > RECONNECT_TIMEOUT) {
-      Serial.println("Reconnecting to WiFi");
-      controlLed(false, true, true); // Set LED to blue (trying to reconnect)
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    if (millis() - lastConnectAttempt > RECONNECT_TIMEOUT)
+    {
+      controlLed(false, true, true); // Set LED to cyan
       connectToWiFi();
-      // If connection is successful, blink LED 3 times to indicate successful connection
-      if (WiFi.status() == WL_CONNECTED) {
-        for (uint8_t i = 0; i < 3; i++) {
-          controlLed(false, true, false);
-          delay(200);
-          controlLed(false, false, false);
-          delay(200);
-        }
-      }
     }
-    return;
   }
-
-  if (systemActive) {
+  else
+  {
     checkRelayState();
   }
 }

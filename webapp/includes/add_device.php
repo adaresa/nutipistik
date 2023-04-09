@@ -36,8 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (mysqli_num_rows($check_result) > 0) {
             echo "Pistik ID-ga $device_id on juba registreeritud.";
-        } elseif (strlen($device_name) > 20) {
-            echo "Pistiku nimi ei tohi olla pikem kui 20 tähemärki.";
+        } elseif (strlen($device_name) > 40) {
+            echo "Pistiku nimi ei tohi olla pikem kui 40 tähemärki.";
         } else {
             // Check if device_pass is correct
             $check_device_pass = "SELECT * FROM ESPtable2 WHERE id = '$device_id' AND PASSWORD = '$device_pass'";
@@ -47,8 +47,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 die();
             }
 
-            $sql = "INSERT INTO user_devices (user_id, device_id, device_name) VALUES ('$user_id', '$device_id', '$device_name')";
-            $result = mysqli_query($con, $sql);
+            $stmt = $con->prepare("INSERT INTO user_devices (user_id, device_id, device_name) VALUES (?, ?, ?)");
+            $stmt->bind_param("iis", $user_id, $device_id, $device_name);
+            $result = $stmt->execute();
 
             if ($result) {
                 // Set device_id to session if it is not set

@@ -40,16 +40,37 @@ if (mysqli_connect_errno()) {
             // Grab the table out of the database
             $result = mysqli_query($con, "SELECT * FROM ESPtable2 WHERE id = '$device_id'");
 
-            //Now we create the table with all the values from the database      
-            echo "<table class='table' style='font-size: 30px;'>
+            $has_devices = mysqli_num_rows($user_devices) > 0; // Check if the user has any devices
+            
+            if (!$has_devices) {
+                ?>
+                <div class='row'>
+                    <div class='col-lg-12'>
+                        <div class='alert alert-info'>
+                            <h4 class='alert-heading'>Pole ühtegi seadet</h4>
+                            <p>Sul pole ühtegi pistikut lisatud. Uue seadme lisamiseks järgige juhiseid Pistikute haldamise
+                                lehel.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-lg-12'>
+                        <a href='devices.php' class='btn btn-primary'>Pistikute haldamine</a>
+                    </div>
+                </div>
+                <?php
+            } else {
+
+                //Now we create the table with all the values from the database      
+                echo "<table class='table' style='font-size: 30px;'>
             <thead>
                 <tr>";
-            echo "<th>Pistiku nimi: <select class='deviceSelection' id='deviceSelect'>";
-            while ($row = mysqli_fetch_array($user_devices)) {
-                $selected = $row['device_id'] == $device_id ? "selected" : "";
-                echo "<option value='{$row['device_id']}' $selected>{$row['device_name']}</option>";
-            }
-            echo "</select></th>
+                echo "<th>Pistiku nimi: <select class='deviceSelection' id='deviceSelect'>";
+                while ($row = mysqli_fetch_array($user_devices)) {
+                    $selected = $row['device_id'] == $device_id ? "selected" : "";
+                    echo "<option value='{$row['device_id']}' $selected>{$row['device_name']}</option>";
+                }
+                echo "</select></th>
                     <th></th>
                 </tr>
             </thead>
@@ -64,101 +85,101 @@ if (mysqli_connect_errno()) {
                 </td>
             </tr>";
 
-            //loop through the table and print the data into the table
-            while ($row = mysqli_fetch_array($result)) {
-                echo "<tr class='success'><td>";
-                $unit_id = $row['id'];
-                $column = "CONTROL_TYPE";
-                $control_type = $row['CONTROL_TYPE'];
-                $output_state = $row['OUTPUT_STATE'];
+                //loop through the table and print the data into the table
+                while ($row = mysqli_fetch_array($result)) {
+                    echo "<tr class='success'><td>";
+                    $unit_id = $row['id'];
+                    $column = "CONTROL_TYPE";
+                    $control_type = $row['CONTROL_TYPE'];
+                    $output_state = $row['OUTPUT_STATE'];
 
-                echo "
+                    echo "
                 <select name='controlType' class='controlType' data-unit-id='$unit_id' title='controlType'>
                     <option ";
-                if ($control_type == 1) {
-                    echo "selected";
-                }
-                echo " value='1'>Piirhind</option>
+                    if ($control_type == 1) {
+                        echo "selected";
+                    }
+                    echo " value='1'>Piirhind</option>
                     <option ";
-                if ($control_type == 2) {
-                    echo "selected";
-                }
-                echo " value='2'>Lüliti</option>
+                    if ($control_type == 2) {
+                        echo "selected";
+                    }
+                    echo " value='2'>Lüliti</option>
                     <option ";
-                if ($control_type == 3) {
-                    echo "selected";
-                }
-                echo " value='3'>Odavad tunnid</option>
+                    if ($control_type == 3) {
+                        echo "selected";
+                    }
+                    echo " value='3'>Odavad tunnid</option>
                     <option ";
-                if ($control_type == 4) {
-                    echo "selected";
-                }
-                echo " value='4'>Valitud tunnid</option>
+                    if ($control_type == 4) {
+                        echo "selected";
+                    }
+                    echo " value='4'>Valitud tunnid</option>
                     <option ";
-                if ($control_type == 5) {
-                    echo "selected";
-                }
-                echo " value='5'>Targad tunnid</option>
+                    if ($control_type == 5) {
+                        echo "selected";
+                    }
+                    echo " value='5'>Targad tunnid</option>
                     <option ";
-                if ($control_type == 6) {
-                    echo "selected";
-                }
-                echo " value='6'>Ajaplaan</option>
+                    if ($control_type == 6) {
+                        echo "selected";
+                    }
+                    echo " value='6'>Ajaplaan</option>
 
                 
                 
                 
                 </select></td>";
 
-                // Output state
-                echo "<td>";
-                echo "<button type='button' class='btn btn-lg outputStateButton' data-unit-id='{$unit_id}' ";
-                echo $output_state ? "style='background-color: green; color: white;'" : "style='background-color: red; color: white;'";
-                echo " disabled>";
-                echo $output_state ? 'SEES' : 'VÄLJAS';
-                echo "</button>";
+                    // Output state
+                    echo "<td>";
+                    echo "<button type='button' class='btn btn-lg outputStateButton' data-unit-id='{$unit_id}' ";
+                    echo $output_state ? "style='background-color: green; color: white;'" : "style='background-color: red; color: white;'";
+                    echo " disabled>";
+                    echo $output_state ? 'SEES' : 'VÄLJAS';
+                    echo "</button>";
 
 
-                echo "</td></tr></tbody>";
-            }
-
-            echo "</table><br>"; ?>
-        </div>
-
-        <!-- Control parameters -->
-        <div>
-            <?php
-            $result = mysqli_query($con, "SELECT * FROM ESPtable2 WHERE id = '$device_id'");
-            while ($row = mysqli_fetch_array($result)) {
-                $unit_id = $row['id'];
-                $price_limit = $row['PRICE_LIMIT'];
-                $switch_state = $row['BUTTON_STATE'];
-                $cheap_hours = $row['CHEAPEST_HOURS'];
-                $selected_hours = $row['SELECTED_HOURS'];
-                $control_type = $row['CONTROL_TYPE'];
-
-                $cheap_day_threshold = $row['CHP_DAY_THOLD'];
-                $expensive_day_threshold = $row['EXP_DAY_THOLD'];
-                $cheap_day_hours = $row['CHP_DAY_HOURS'];
-                $expensive_day_hours = $row['EXP_DAY_HOURS'];
-
-                $current_electricity_price = 0;
-                $average_electricity_price = 0;
-                $price_result = mysqli_query($con, "SELECT CURRENT_PRICE, AVERAGE_PRICE FROM ElectricityPrices WHERE region = '$region'");
-                if ($price_row = mysqli_fetch_array($price_result)) {
-                    $current_electricity_price = $price_row["CURRENT_PRICE"];
-                    $average_electricity_price = $price_row["AVERAGE_PRICE"];
+                    echo "</td></tr></tbody>";
                 }
 
-                // Get time ranges
-                $time_ranges = json_decode($row['TIME_RANGES'], false) ?: [];
+                echo "</table><br>"; ?>
+            </div>
 
-                // Filter expired time ranges and update the database if needed
-                $filtered_time_ranges = filter_and_update_time_ranges($con, $unit_id, $time_ranges);
+            <!-- Control parameters -->
+            <div>
+                <?php
+                $result = mysqli_query($con, "SELECT * FROM ESPtable2 WHERE id = '$device_id'");
+                while ($row = mysqli_fetch_array($result)) {
+                    $unit_id = $row['id'];
+                    $price_limit = $row['PRICE_LIMIT'];
+                    $switch_state = $row['BUTTON_STATE'];
+                    $cheap_hours = $row['CHEAPEST_HOURS'];
+                    $selected_hours = $row['SELECTED_HOURS'];
+                    $control_type = $row['CONTROL_TYPE'];
+
+                    $cheap_day_threshold = $row['CHP_DAY_THOLD'];
+                    $expensive_day_threshold = $row['EXP_DAY_THOLD'];
+                    $cheap_day_hours = $row['CHP_DAY_HOURS'];
+                    $expensive_day_hours = $row['EXP_DAY_HOURS'];
+
+                    $current_electricity_price = 0;
+                    $average_electricity_price = 0;
+                    $price_result = mysqli_query($con, "SELECT CURRENT_PRICE, AVERAGE_PRICE FROM ElectricityPrices WHERE region = '$region'");
+                    if ($price_row = mysqli_fetch_array($price_result)) {
+                        $current_electricity_price = $price_row["CURRENT_PRICE"];
+                        $average_electricity_price = $price_row["AVERAGE_PRICE"];
+                    }
+
+                    // Get time ranges
+                    $time_ranges = json_decode($row['TIME_RANGES'], false) ?: [];
+
+                    // Filter expired time ranges and update the database if needed
+                    $filtered_time_ranges = filter_and_update_time_ranges($con, $unit_id, $time_ranges);
 
 
 
-                echo "<table class='table' style='font-size: 30px;'>
+                    echo "<table class='table' style='font-size: 30px;'>
             <thead>
                 <tr>
                 <th>Juhtimine</th>
@@ -171,22 +192,22 @@ if (mysqli_connect_errno()) {
                         <span id='description' style='display: inline-block; vertical-align: middle;'></span>
                         <button id='infoButton' class='infoButton' style='display: inline-block; vertical-align: middle;' data-bs-toggle='tooltip' data-bs-placement='right' data-bs-html='true'
                         title=''>?</button>";
-                // PRICE LIMIT
-                echo "<p class='small-text' data-control-type='1'>Praegune elektrihind: <strong>" . convert_unit($current_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";
-                echo "<p class='small-text' data-control-type='1'>Päeva keskmine elektrihind: <strong>" . convert_unit($average_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";
-                // CHEAPEST HOURS
-                echo "<p class='small-text' data-control-type='3'>" . get_cheapest_hours() . "</p>";
-                // SMART HOURS
-                echo "<p class='small-text' data-control-type='5'>Päeva keskmine elektrihind: <strong>" . convert_unit($average_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";
-                echo "<p class='small-text' data-control-type='5'>" . get_smart_hours(convert_unit($average_electricity_price, $unit, $vat)) . "</p>";
+                    // PRICE LIMIT
+                    echo "<p class='small-text' data-control-type='1'>Praegune elektrihind: <strong>" . convert_unit($current_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";
+                    echo "<p class='small-text' data-control-type='1'>Päeva keskmine elektrihind: <strong>" . convert_unit($average_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";
+                    // CHEAPEST HOURS
+                    echo "<p class='small-text' data-control-type='3'>" . get_cheapest_hours() . "</p>";
+                    // SMART HOURS
+                    echo "<p class='small-text' data-control-type='5'>Päeva keskmine elektrihind: <strong>" . convert_unit($average_electricity_price, $unit, $vat) . '</strong> €/' . $unit . "</p>";
+                    echo "<p class='small-text' data-control-type='5'>" . get_smart_hours(convert_unit($average_electricity_price, $unit, $vat)) . "</p>";
 
-                echo "
+                    echo "
                     </td>
                 </tr>";
 
 
-                // Price Limit
-                echo "
+                    // Price Limit
+                    echo "
                 <tr class='success' data-control-type='1'><td>
                 <form action='update_values.php' method='post'>
                     <div class='input-group mb-2'>
@@ -198,31 +219,31 @@ if (mysqli_connect_errno()) {
                 </form>
                 </td></tr>";
 
-                // Switch State
-                echo "
+                    // Switch State
+                    echo "
                 <tr class='success' data-control-type='2'><td>
                 <form action='update_values.php' method='post'>
                 <div class='selected-hours'>
                 <label>
                 <input type='checkbox' name='switchState' id='switchState' value='$switch_state' onchange='updateSwitchState(this)'";
-                if ($switch_state) {
-                    echo "checked";
-                }
-                echo " /> <span class='hour-checkbox'><span id='switchStateText'>";
-                if ($switch_state) {
-                    echo "SEES";
-                } else {
-                    echo "VÄLJAS";
-                }
-                echo "</span></span></label></div><input type='hidden' name='unitID' value='$unit_id' />
+                    if ($switch_state) {
+                        echo "checked";
+                    }
+                    echo " /> <span class='hour-checkbox'><span id='switchStateText'>";
+                    if ($switch_state) {
+                        echo "SEES";
+                    } else {
+                        echo "VÄLJAS";
+                    }
+                    echo "</span></span></label></div><input type='hidden' name='unitID' value='$unit_id' />
                 <input type='hidden' name='submit' value='Update' />
                 </form>
                 </td></tr>";
 
 
 
-                // Cheap Hours
-                echo "<tr class='success' data-control-type='3'><td>
+                    // Cheap Hours
+                    echo "<tr class='success' data-control-type='3'><td>
                 <form action='update_values.php' method='post'>
                     <div class='input-group mb-2'>
                         <input type='number' name='cheapHours' value='$cheap_hours' class='custom-input' title='cheapHours' />
@@ -231,24 +252,24 @@ if (mysqli_connect_errno()) {
                     <input type='hidden' name='unitID' value='$unit_id' />
                     <input type='submit' name='submit' value='Salvesta' />
                 </form>";
-                echo "</td></tr>";
+                    echo "</td></tr>";
 
-                // Selected Hours
-                echo "<tr class='success' data-control-type='4'><td>
+                    // Selected Hours
+                    echo "<tr class='success' data-control-type='4'><td>
                 <form action='update_values.php' method='post' id='selectedHoursForm'>
                 <div class='selected-hours'>";
-                for ($i = 0; $i < 24; $i++) {
-                    $checked = $selected_hours[$i] == '1' ? 'checked' : '';
-                    $time_range = str_pad($i, 2, "0", STR_PAD_LEFT) . ":00 - " . str_pad($i, 2, "0", STR_PAD_LEFT) . ":59";
-                    echo "<label><input type='checkbox' name='selectedHours[]' value='$i' $checked onchange='updateSelectedHours(this, $unit_id)' /><span class='hour-checkbox'>{$time_range}</span></label>";
-                }
-                echo "</div>
+                    for ($i = 0; $i < 24; $i++) {
+                        $checked = $selected_hours[$i] == '1' ? 'checked' : '';
+                        $time_range = str_pad($i, 2, "0", STR_PAD_LEFT) . ":00 - " . str_pad($i, 2, "0", STR_PAD_LEFT) . ":59";
+                        echo "<label><input type='checkbox' name='selectedHours[]' value='$i' $checked onchange='updateSelectedHours(this, $unit_id)' /><span class='hour-checkbox'>{$time_range}</span></label>";
+                    }
+                    echo "</div>
                 <input type='hidden' name='unitID' value='$unit_id' />
                 </form>";
-                echo "</td></tr>";
+                    echo "</td></tr>";
 
-                // Smart Hours
-                echo "
+                    // Smart Hours
+                    echo "
                 <tr class='success' data-control-type='5'>
                     <td>
                         <form action='update_values.php' method='post' id='smartHoursForm'>
@@ -308,35 +329,37 @@ if (mysqli_connect_errno()) {
                 </tr>
                 ";
 
-                // Schedule
-                echo "<tr class='success' data-control-type='6'><td>
+                    // Schedule
+                    echo "<tr class='success' data-control-type='6'><td>
                 <form action='update_values.php' method='post' id='scheduleControlForm' class='row g-3'>
                     <div id='schedule-container' class='col-12'>";
-                foreach ($filtered_time_ranges as $index => $time_range) {
-                    $start_time = DateTime::createFromFormat('Y-m-d H:i:s', $time_range->start)->format('d.m.Y H:i');
-                    $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $time_range->end)->format('d.m.Y H:i');
-                    $unique_id = time() . '-' . $index;
-                    echo "<div class='time-range d-flex align-items-center mb-3' id='time-range-$unique_id'>";
+                    foreach ($filtered_time_ranges as $index => $time_range) {
+                        $start_time = DateTime::createFromFormat('Y-m-d H:i:s', $time_range->start)->format('d.m.Y H:i');
+                        $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $time_range->end)->format('d.m.Y H:i');
+                        $unique_id = time() . '-' . $index;
+                        echo "<div class='time-range d-flex align-items-center mb-3' id='time-range-$unique_id'>";
                         echo "<input type='text' class='flatpickr-input custom-input me-2' name='from[]' value='$start_time' placeholder='pp.kk.aaaa tt:mm' autocomplete='off'>";
                         echo "<span class='me-2'> - </span>";
                         echo "<input type='text' class='flatpickr-input custom-input me-2' name='to[]' value='$end_time' placeholder='pp.kk.aaaa tt:mm' autocomplete='off'>";
                         echo "<button type='button' class='btn btn-danger remove-time-range' data-target='time-range-$unique_id'>Eemalda</button>";
-                    echo "</div>";
-                }
-                echo "</div>
+                        echo "</div>";
+                    }
+                    echo "</div>
                 <div class='col-12'>
                     <button type='button' id='addTimeRange' class='btn btn-primary'>Lisa uus vahemik</button>
                 </div>
                 <input type='hidden' name='unitID' value='$unit_id' />
                 <div class='col-12'>
-                    <input type='submit' name='submit_schedule' value='Salvesta' class='btn btn-success' />
+                    <input type='button' name='submit_schedule' value='Salvesta' class='btn btn-success' />
                 </div>
             </form>";
 
-                echo "</td></tr>";
+                    echo "</td></tr>";
 
+                }
+                echo "</tbody></table><br>";
             }
-            echo "</tbody></table><br>"; ?>
+            ?>
 
         </div>
 
@@ -375,35 +398,47 @@ function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
 
 <script>
     // Change selected device
-    document.getElementById('deviceSelect').addEventListener('change', function () {
-        const deviceId = this.value;
-        fetch('includes/update_selected_device.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: 'device_id=' + deviceId
-        }).then(response => {
-            if (response.ok) {
-                location.reload();
-            } else {
-                console.error('Error updating selected device:', response.statusText);
-            }
+    var deviceSelectElement = document.getElementById('deviceSelect');
+    if (deviceSelectElement) {
+        deviceSelectElement.addEventListener('change', function () {
+            const deviceId = this.value;
+            fetch('includes/update_selected_device.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'device_id=' + deviceId
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    console.error('Error updating selected device:', response.statusText);
+                }
+            });
         });
-    });
+    }
 
 
-    // Update selected hours
-    document.getElementById('selectedHoursForm').addEventListener('submit', function (e) {
-        const selectedHoursCheckboxes = e.target.querySelectorAll('input[type="checkbox"]');
-        let checkedCount = 0;
-
-        selectedHoursCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                checkedCount++;
-            }
+    // Change selected device
+    var deviceSelectElement = document.getElementById('deviceSelect');
+    if (deviceSelectElement) {
+        deviceSelectElement.addEventListener('change', function () {
+            const deviceId = this.value;
+            fetch('includes/update_selected_device.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'device_id=' + deviceId
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    console.error('Error updating selected device:', response.statusText);
+                }
+            });
         });
-    });
+    }
 
     // Update switch state
     document.querySelectorAll('.selected-hours label').forEach(function (label) {
@@ -554,16 +589,18 @@ function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
     }
 
     // validate Smart Hours form
-    document.getElementById('smartHoursForm').addEventListener('submit', function (event) {
-        var cheapDayThreshold = document.getElementById('cheapDayThreshold');
-        var expensiveDayThreshold = document.getElementById('expensiveDayThreshold');
+    var smartHoursForm = document.getElementById('smartHoursForm');
+    if (smartHoursForm) {
+        smartHoursForm.addEventListener('submit', function (event) {
+            var cheapDayThreshold = document.getElementById('cheapDayThreshold');
+            var expensiveDayThreshold = document.getElementById('expensiveDayThreshold');
 
-        if (parseFloat(cheapDayThreshold.value) >= parseFloat(expensiveDayThreshold.value)) {
-            event.preventDefault();
-            alert('Odava päeva lävend peab olema madalam kui kalli päeva lävend.');
-        }
-    });
-
+            if (parseFloat(cheapDayThreshold.value) >= parseFloat(expensiveDayThreshold.value)) {
+                event.preventDefault();
+                alert('Odava päeva lävend peab olema madalam kui kalli päeva lävend.');
+            }
+        });
+    }
 
     // when the control type changes, update the control type and control type specific parameters
     document.querySelectorAll('.controlType').forEach(function (element) {
@@ -601,33 +638,36 @@ function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
         }
     });
 
-    document.getElementById("scheduleControlForm").addEventListener("submit", function (event) {
-        const timeRanges = document.querySelectorAll(".time-range");
-        let hasInvalidRange = false;
+    var scheduleControlForm = document.getElementById('scheduleControlForm');
+    if (scheduleControlForm) {
+        scheduleControlForm.addEventListener('submit', function (event) {
+            var timeRanges = document.querySelectorAll('.time-range');
+            var hasInvalidRange = false;
 
-        timeRanges.forEach(timeRange => {
-            const fromInput = timeRange.querySelector("input[name='from[]']");
-            const toInput = timeRange.querySelector("input[name='to[]']");
-            const fromTime = parseDate(fromInput.value);
-            const toTime = parseDate(toInput.value);
+            timeRanges.forEach(function (timeRange) {
+                var fromInput = timeRange.querySelector('input[name="from[]"]');
+                var toInput = timeRange.querySelector('input[name="to[]"]');
+                var fromTime = parseDate(fromInput.value);
+                var toTime = parseDate(toInput.value);
 
-            timeRange.classList.remove('bg-danger');
-            fromInput.classList.remove('bg-danger');
-            toInput.classList.remove('bg-danger');
+                timeRange.classList.remove('bg-danger');
+                fromInput.classList.remove('bg-danger');
+                toInput.classList.remove('bg-danger');
 
-            if (fromInput.value && toInput.value && fromTime >= toTime) {
-                hasInvalidRange = true;
-                fromInput.classList.add('bg-danger');
-                toInput.classList.add('bg-danger');
+                if (fromInput.value && toInput.value && fromTime >= toTime) {
+                    hasInvalidRange = true;
+                    fromInput.classList.add('bg-danger');
+                    toInput.classList.add('bg-danger');
+                }
+            });
+
+            if (hasInvalidRange) {
+                event.preventDefault();
+                alert('Algusaeg ei tohiks tulla enne lõppaega.');
+                return;
             }
         });
-
-        if (hasInvalidRange) {
-            event.preventDefault();
-            alert("Algusaeg ei tohiks tulla enne lõppaega.");
-            return;
-        }
-    });
+    }
 
     function parseDate(str) {
         const [day, month, year, hours, minutes] = str.match(/^(\d{2})\.(\d{2})\.(\d{4})\s(\d{2}):(\d{2})$/).slice(1);
@@ -708,12 +748,17 @@ function filter_and_update_time_ranges($con, $unit_id, $time_ranges)
     // initialize the page
     function initializePage() {
         var controlTypeSelect = document.querySelector('.controlType');
-        var unitId = controlTypeSelect.getAttribute('data-unit-id');
-        var controlType = controlTypeSelect.value;
-
-        updateControlParametersVisibility(controlType);
-        updateDescription(controlType);
-        startAutoUpdateOutputState(unitId, 1000); // Update every 1 seconds
+        // Check if exists first, if exists, then get the attribute, then start the auto update
+        if (controlTypeSelect) {
+            var unitId = controlTypeSelect.getAttribute('data-unit-id');
+            startAutoUpdateOutputState(unitId, 1000); // Update every 1 seconds
+        }
+        // Do the same for the control type select
+        if (controlTypeSelect) {
+            var controlType = controlTypeSelect.value;
+            updateControlParametersVisibility(controlType);
+            updateDescription(controlType);
+        }
     }
 
     initializePage(); // Call the initializePage function
