@@ -350,7 +350,7 @@ if (mysqli_connect_errno()) {
                 </div>
                 <input type='hidden' name='unitID' value='$unit_id' />
                 <div class='col-12'>
-                    <input type='button' name='submit_schedule' value='Salvesta' class='btn btn-success' />
+                    <input type='submit' name='submit_schedule' value='Salvesta' class='btn btn-success' />
                 </div>
             </form>";
 

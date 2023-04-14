@@ -2,11 +2,12 @@ import pandas as pd
 import requests
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from matplotlib import transforms
 import numpy as np
 
 # Fetch data from the Elering API
-start = "2022-03-01T00%3A00%3A00.000Z"
-end = "2023-02-28T23%3A59%3A59.999Z"
+start = "2022-04-01T00%3A00%3A00.000Z"
+end = "2023-03-31T23%3A59%3A59.999Z"
 url = f"https://dashboard.elering.ee/api/nps/price?start={start}&end={end}"
 response = requests.get(url)
 
@@ -32,7 +33,7 @@ cheapest_hours_daily_avg = cheapest_hours_df.groupby("date")["price"].mean()
 
 # Calculate daily costs in EUR for consuming electricity for 4 hours every day, at 10 kW per hour (SCENARIO)
 daily_consumption = 4  # in hours
-daily_power_consumption_kw = 10  # in kilowatts (kW)
+daily_power_consumption_kw = 2  # in kilowatts (kW)
 daily_energy_consumption_kwh = daily_power_consumption_kw * daily_consumption  # in kilowatt-hours (kWh)
 
 # Calculate daily costs
@@ -56,7 +57,7 @@ plt.plot(dates, cheapest_hours_cumulative_cost, label="Päeva 4 odavamat tundi",
 # Add labels, title and legend
 plt.ylabel("Summaarne kulu (EUR)", fontsize=14)
 plt.xlabel("Kuupäev", fontsize=14)
-plt.title("Eesti elektrikulude võrdlus (2022-03-01 kuni 2023-02-28)", fontsize=16)
+plt.title("Eesti elektrikulude võrdlus (2022-04-01 kuni 2023-03-31)", fontsize=16)
 plt.legend(fontsize=12)
 
 # Configure x-axis ticks
@@ -65,6 +66,12 @@ ax.xaxis.set_major_locator(mdates.MonthLocator(interval=1))
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
 plt.xticks(rotation=45, fontsize=12)
 plt.yticks(fontsize=12)
+
+# Add a textbox with the assumption
+textbox_props = dict(boxstyle='round, pad=0.3', edgecolor='black', facecolor='lightgrey', linewidth=1, alpha=0.8)
+ax = plt.gca()
+transform = ax.transAxes
+ax.text(0.01, 0.84, f"Eeldus: 4 tundi päevas, 2 kWh", fontsize=12, bbox=textbox_props, transform=transform)
 
 # Add gridlines
 plt.grid()
