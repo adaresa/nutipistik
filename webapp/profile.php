@@ -9,6 +9,7 @@ if (!isset($_SESSION["index"])) {
 $user_id = $_SESSION['user_id'];
 
 include_once "includes/header.php";
+include_once "includes/funcs/reset_device_settings.php"
 ?>
 
 <div class='container content-spacing'>
@@ -111,6 +112,18 @@ include_once "includes/header.php";
                             }
 
                             if ($action === "delete_account") {
+                                // Get all device IDs associated with the user
+                                $device_result = mysqli_query($con, "SELECT device_id FROM user_devices WHERE user_id = '$user_id'");
+                                $device_ids = array();
+                                while ($device_row = mysqli_fetch_assoc($device_result)) {
+                                    $device_ids[] = $device_row["device_id"];
+                                }
+
+                                // Reset the settings of all devices associated with the user
+                                foreach ($device_ids as $device_id) {
+                                    reset_device_settings($con, $device_id);
+                                }
+
                                 // Delete all rows from user_devices where user has a device
                                 $query = "DELETE FROM user_devices WHERE user_id = '$user_id'";
                                 mysqli_query($con, $query);
@@ -118,7 +131,6 @@ include_once "includes/header.php";
                                 // Delete the user from the database
                                 $query = "DELETE FROM users WHERE id = '$user_id'";
                                 mysqli_query($con, $query);
-
 
                                 // Destroy the session and redirect to the login page
                                 session_destroy();

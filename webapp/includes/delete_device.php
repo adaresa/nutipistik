@@ -6,6 +6,7 @@ if (!isset($_SESSION["index"])) {
 }
 
 include "../database_connect.php";
+include "funcs/reset_device_settings.php";
 
 if (mysqli_connect_errno()) {
     echo "Failed to connect to MySQL: " . mysqli_connect_error();
@@ -20,6 +21,8 @@ if (isset($_GET["device_id"]) && isset($_GET["user_id"])) {
     $sql = "DELETE FROM user_devices WHERE user_id = '$user_id' AND device_id = '$device_id'";
 
     if (mysqli_query($con, $sql)) {
+        // Reset the device settings in the ESPtable2
+        reset_device_settings($con, $device_id);
         // Check if the deleted device is the currently selected device
         if ($device_id == $selected_device_id) {
             // Select the first device in the user_devices table ordered by device_order
