@@ -71,7 +71,7 @@ plt.yticks(fontsize=12)
 textbox_props = dict(boxstyle='round, pad=0.3', edgecolor='black', facecolor='lightgrey', linewidth=1, alpha=0.8)
 ax = plt.gca()
 transform = ax.transAxes
-ax.text(0.01, 0.84, f"Eeldus: 4 tundi päevas, 2 kWh", fontsize=12, bbox=textbox_props, transform=transform)
+ax.text(0.01, 0.84, f"Eeldus: 4 tundi päevas, 2 kWh juures (kokku 8 kWh).", fontsize=12, bbox=textbox_props, transform=transform)
 
 # Add gridlines
 plt.grid()

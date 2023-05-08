@@ -6,7 +6,7 @@
 #include "secrets.h"
 
 // Uncomment the following line to enable debug prints
-// #define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
@@ -158,6 +158,13 @@ void IRAM_ATTR handleButtonChange()
           systemActive = !systemActive;
           DEBUG_PRINTLN("Button pressed");
           DEBUG_PRINTLN(systemActive ? "System active" : "System inactive");
+
+          // Handle button press
+          if (!systemActive)
+          {
+            digitalWrite(RELAY_PIN, LOW);
+            controlLed(false, false, false); // Turn off LED
+          }
         }
       }
     }
@@ -180,6 +187,12 @@ void checkRelayState()
   if (httpCode == HTTP_CODE_OK)
   {
     String response = http.getString();
+
+    if (!systemActive)
+    {
+      return;
+    }
+
     if (response == "#1")
     {
       // Turn relay ON
@@ -233,19 +246,21 @@ void loop()
 {
   if (!systemActive)
   {
-    digitalWrite(RELAY_PIN, LOW);
-    controlLed(false, false, false); // Turn off LED
-    delay(1000);
     return;
   }
 
   if (buttonHeld)
   {
-    buttonHeld = false;
     DEBUG_PRINTLN("Resetting WiFi credentials");
+
+    // Disconnect and erase credentials
     WiFi.disconnect(true);
+    ESP.eraseConfig();
+
+    // Reset WiFiManager settings
     WiFiManager wifiManager;
     wifiManager.resetSettings();
+
     controlLed(false, true, false); // Set LED to blue
     connectToWiFi();
   }

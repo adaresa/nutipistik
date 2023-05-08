@@ -3,8 +3,11 @@ from OutputFuncs import *
 
 user_device_values_list = get_user_device_values()
 case_statements = ""
-current_price, average_price = get_current_average_price('ee')
+CURR_PRICE, AVG_PRICE = get_current_average_price('ee')
 for values in user_device_values_list:
+    # set temp current price, average price
+    current_price, average_price = CURR_PRICE, AVG_PRICE
+    
     # current_price, average_price = get_current_average_price(values["region"])
 
     if values["control_type"] == 1:  # Price limit
