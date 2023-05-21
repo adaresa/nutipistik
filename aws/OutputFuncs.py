@@ -3,7 +3,8 @@ import json
 import urllib3
 import pytz
     
-def PriceLimitOutput(current_price, price_limit): # If current price is lower than price limit        
+def PriceLimitOutput(current_price, price_limit): # If current price is lower than price limit
+    print(f"Current price: {current_price}") 
     if current_price <= price_limit:
         return True
     else:
